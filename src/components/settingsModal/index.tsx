@@ -17,11 +17,30 @@ export default function ChangeSettings({
     localStorage.setItem("settings", JSON.stringify(newSettings));
   };
 
+  function ResetSettings() {
+    localStorage.removeItem("settings");
+    setSettings([]);
+    location.reload();
+  }
+
   return (
     <dialog id="SettingsModal" className="modal">
       <div className="modal-box">
         <form onSubmit={handleSubmit}>
-          <h2> Settings </h2>
+          <h2 className="text-lg"> Settings </h2>
+          <div className="divider text-sm">Search Bar</div>
+          <div className="form-control w-full max-w mt-4">
+            <label className="label cursor-pointer">
+              <span className="label-text">Show Search Bar</span>
+              <input
+                type="checkbox"
+                name="searchBar"
+                className="toggle toggle-primary ml-2"
+                defaultChecked={settings.searchBar}
+              />
+            </label>
+          </div>
+
           <div className="form-control w-full max-w">
             <label className="label">
               <span className="label-text">Search Engine</span>
@@ -37,16 +56,21 @@ export default function ChangeSettings({
             </select>
           </div>
 
-          <div className="form-control w-full max-w mt-4">
-            <label className="label cursor-pointer">
-              <span className="label-text">Show Search Bar</span>
-              <input
-                type="checkbox"
-                name="searchBar"
-                className="toggle toggle-primary ml-2"
-                defaultChecked={settings.searchBar}
-              />
-            </label>
+          <div className="divider text-sm">Reset</div>
+          <div className="w-full max-w flex space-x-2">
+            <button
+              type="button"
+              onClick={ResetSettings}
+              className="btn btn-outline btn-error w-1/2"
+            >
+              Reset Settings
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline btn-error w-1/2"
+            >
+              Reset Icons
+            </button>
           </div>
           <button type="submit" className="btn btn-primary mt-4 w-full">
             Save
