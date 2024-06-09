@@ -11,6 +11,7 @@ export default function ChangeSettings({
     const newSettings = {
       searchBar: formData.get("searchBar") === "on" ? true : false,
       searchEngine: formData.get("searchEngine") as string,
+      searchBarWidth: formData.get("searchBarWidth") as string,
       background: formData.get("background") as string,
     };
     setSettings(newSettings);
@@ -56,6 +57,30 @@ export default function ChangeSettings({
             </select>
           </div>
 
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Search Bar Width</span>
+            </label>
+            <input
+              type="range"
+              min="250"
+              max="550"
+              className="range"
+              step="10"
+              name="searchBarWidth"
+              defaultValue={settings.searchBarWidth}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>250px</span>
+              <span>|</span>
+              <span>|</span>
+              <span>400px</span>
+              <span>|</span>
+              <span>|</span>
+              <span>550px</span>
+            </div>
+          </div>
+
           <div className="divider text-sm">Reset</div>
           <div className="w-full max-w flex space-x-2">
             <button
@@ -65,10 +90,7 @@ export default function ChangeSettings({
             >
               Reset Settings
             </button>
-            <button
-              type="button"
-              className="btn btn-outline btn-error w-1/2"
-            >
+            <button type="button" className="btn btn-outline btn-error w-1/2">
               Reset Icons
             </button>
           </div>

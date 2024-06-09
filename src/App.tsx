@@ -11,6 +11,7 @@ export default function App() {
       const defaultSettings = {
         searchBar: true,
         searchEngine: "google",
+        searchBarWidth: 300,
       };
       localStorage.setItem("settings", JSON.stringify(defaultSettings));
       return defaultSettings;
@@ -29,14 +30,22 @@ export default function App() {
     >
       <button
         className="fixed top-0 right-0 z-50 m-4"
-        onClick={() => document.getElementById("SettingsModal").showModal()}
+        onClick={() => {
+          const modal = document.getElementById(
+            "SettingsModal",
+          ) as HTMLDialogElement;
+          modal.showModal();
+        }}
       >
         <FiSettings />
       </button>
       <div className="flex justify-center items-center h-screen ">
         <div>
           {settings.searchBar && (
-            <Searchbar searchEngine={settings.searchEngine} />
+            <Searchbar
+              searchEngine={settings.searchEngine}
+              searchBarWidth={settings.searchBarWidth}
+            />
           )}
           <ChangeSettings setSettings={setSettings} settings={settings} />
         </div>
@@ -44,4 +53,3 @@ export default function App() {
     </div>
   );
 }
-

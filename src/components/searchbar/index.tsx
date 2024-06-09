@@ -5,6 +5,7 @@ import DuckDuckGoIcon from "../../assets/icons/search-engine/icons8-duckduckgo.s
 
 interface Props {
   searchEngine: string;
+  searchBarWidth: number;
 }
 
 const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
@@ -20,7 +21,7 @@ const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
   }
 };
 
-const SearchBar: React.FC<Props> = ({ searchEngine }) => {
+const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       search(searchEngine);
@@ -54,9 +55,8 @@ const SearchBar: React.FC<Props> = ({ searchEngine }) => {
   return (
     <div
       className="flex items-center max-w-lg mx-auto"
-      style={{ maxWidth: "400px" }}
     >
-      <div className="relative w-full">
+      <div className="relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
           <EngineIcon searchEngine={searchEngine} />
         </div>
@@ -66,6 +66,7 @@ const SearchBar: React.FC<Props> = ({ searchEngine }) => {
           className="bg-gray-50 border border-gray-300 text-gray-900 
           text-sm rounded-full focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
           placeholder="Search"
+          style={searchBarWidth ? { width: `${searchBarWidth}px` } : { width: "300px" }}
           required
           onKeyDown={handleKeyPress}
         />
