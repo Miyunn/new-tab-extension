@@ -1,14 +1,15 @@
 import { useState } from "react";
 import "./App.css";
-import { FiSettings } from "react-icons/fi";
 import Searchbar from "./components/searchbar";
-import ChangeSettings from "./components/settingsModal";
+import ChangeSettings from "./components/settings-modal";
+import ControlIcons from "./components/control-icons";
 
 export default function App() {
   const [settings, setSettings] = useState(() => {
     const localValue = localStorage.getItem("settings");
     if (localValue == null) {
       const defaultSettings = {
+        version: "0.1",
         searchBar: true,
         searchEngine: "google",
         searchBarWidth: 300,
@@ -28,17 +29,7 @@ export default function App() {
       }}
       className="antialiased overflow-hidden"
     >
-      <button
-        className="fixed top-0 right-0 z-50 m-4"
-        onClick={() => {
-          const modal = document.getElementById(
-            "SettingsModal",
-          ) as HTMLDialogElement;
-          modal.showModal();
-        }}
-      >
-        <FiSettings />
-      </button>
+      <ControlIcons />
       <div className="flex justify-center items-center h-screen ">
         <div>
           {settings.searchBar && (

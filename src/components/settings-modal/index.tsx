@@ -1,3 +1,5 @@
+import { FaGitAlt } from "react-icons/fa6";
+
 export default function ChangeSettings({
   setSettings,
   settings,
@@ -13,6 +15,7 @@ export default function ChangeSettings({
       searchEngine: formData.get("searchEngine") as string,
       searchBarWidth: formData.get("searchBarWidth") as string,
       background: formData.get("background") as string,
+      version: settings.version,
     };
     setSettings(newSettings);
     localStorage.setItem("settings", JSON.stringify(newSettings));
@@ -98,6 +101,10 @@ export default function ChangeSettings({
             Save
           </button>
         </form>
+
+        <div className="text-right text-sm text-slate-600 pt-2">
+          Version : {settings.version}
+        </div>
       </div>
       <form method="dialog" className="modal-backdrop overflow-hidden">
         <button>close</button>
