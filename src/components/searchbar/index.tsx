@@ -54,7 +54,7 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
 
   return (
     <div
-      className="flex items-center max-w-lg mx-auto"
+      className="flex items-center"
     >
       <div className="relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

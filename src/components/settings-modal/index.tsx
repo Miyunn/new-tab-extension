@@ -1,5 +1,3 @@
-import { FaGitAlt } from "react-icons/fa6";
-
 export default function ChangeSettings({
   setSettings,
   settings,
@@ -15,6 +13,12 @@ export default function ChangeSettings({
       searchEngine: formData.get("searchEngine") as string,
       searchBarWidth: formData.get("searchBarWidth") as string,
       background: formData.get("background") as string,
+      iconVisibility: formData.get("iconVisibility") === "on" ? true : false,
+      layoutStyle: formData.get("layoutStyle") as string,
+      iconLabel: formData.get("iconLabel") === "on" ? true : false,
+      iconSize: formData.get("iconSize") as string,
+      iconColumns: formData.get("iconColumns") as string,
+      iconGap: formData.get("iconGap") as string,
       version: settings.version,
     };
     setSettings(newSettings);
@@ -84,19 +88,141 @@ export default function ChangeSettings({
             </div>
           </div>
 
+          <div className="divider text-sm pt-2">Icons</div>
+          <div className="form-control w-full max-w mt-4">
+            <label className="label cursor-pointer">
+              <span className="label-text">Show Icons</span>
+              <input
+                type="checkbox"
+                name="iconVisibility"
+                className="toggle toggle-primary ml-2"
+                defaultChecked={settings.iconVisibility}
+              />
+            </label>
+          </div>
+
+          <div className="form-control w-full max-w">
+            <label className="label">
+              <span className="label-text">Icon Layout</span>
+            </label>
+            <select
+              name="layoutStyle"
+              className="select select-bordered w-full max-w"
+              defaultValue={settings.searchEngine}
+            >
+              <option value="grid">Grid Style</option>
+              <option disabled>Other Styles are coming soon</option>
+            </select>
+          </div>
+
+          <div className="form-control w-full max-w mt-4">
+            <label className="label cursor-pointer">
+              <span className="label-text">Icons Labels</span>
+              <input
+                type="checkbox"
+                name="iconLabel"
+                className="toggle toggle-primary ml-2"
+                defaultChecked={settings.iconLabel}
+              />
+            </label>
+          </div>
+
+           <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Icon Size</span>
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="100"
+              className="range"
+              step="1"
+              name="iconSize"
+              defaultValue={settings.iconSize}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>0</span>
+              <span>|</span>
+              <span>|</span>
+              <span>50</span>
+              <span>|</span>
+              <span>|</span>
+              <span>100</span>
+            </div>
+          </div>
+
+           <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Icon Spacing</span>
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="50"
+              className="range"
+              step="1"
+              name="iconGap"
+              defaultValue={settings.iconGap}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>0</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>50</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>100</span>
+            </div>
+          </div>
+
+           <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Grid Columns</span>
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="9"
+              className="range"
+              step="1"
+              name="iconColumns"
+              defaultValue={settings.iconColumns}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+              <span>5</span>
+              <span>6</span>
+              <span>7</span>
+              <span>8</span>
+              <span>9</span>
+            </div>
+          </div>
+
           <div className="divider text-sm">Reset</div>
-          <div className="w-full max-w flex space-x-2">
+
+          <div className="flex w-full max-w ">
             <button
               type="button"
               onClick={ResetSettings}
-              className="btn btn-outline btn-error w-1/2"
+              className="btn btn-outline btn-error flex-grow mr-2"
             >
               Reset Settings
             </button>
-            <button type="button" className="btn btn-outline btn-error w-1/2">
+            <button
+              type="button"
+              className="btn btn-outline btn-error w-1/2  ml-2"
+            >
               Reset Icons
             </button>
           </div>
+
           <button type="submit" className="btn btn-primary mt-4 w-full">
             Save
           </button>
