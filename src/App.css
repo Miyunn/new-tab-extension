@@ -1,1 +1,15 @@
+.custom-drawer .ant-drawer-body {
+  background-color: black;
+}
 
+.custom-drawer .ant-drawer-content {
+  background-color: black;
+}
+
+.custom-drawer .ant-drawer-header {
+  background-color: black;
+}
+
+body {
+  background-color: black;
+}

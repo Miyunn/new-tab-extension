@@ -1,6 +1,10 @@
 import { FiSettings, FiPlusSquare } from "react-icons/fi";
 
-export default function ControlIcons() {
+export default function ControlIcons({
+  showDrawer,
+}: {
+  showDrawer: () => void;
+}) {
   return (
     <div className="fixed top-0 right-0 z-50 m-4 flex flex-col space-y-2">
       <div className="tooltip tooltip-left" data-tip="Add Icons">
@@ -10,14 +14,7 @@ export default function ControlIcons() {
       </div>
 
       <div className="tooltip tooltip-left" data-tip="Settings">
-        <button
-          onClick={() => {
-            const modal = document.getElementById(
-              "SettingsModal",
-            ) as HTMLDialogElement;
-            modal.showModal();
-          }}
-        >
+        <button onClick={showDrawer}>
           <FiSettings />
         </button>
       </div>

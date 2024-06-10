@@ -1,6 +1,6 @@
-.icon{
+.icon {
   transition: filter 350ms;
-  cursor: pointer
+  cursor: pointer;
 }
 .icon:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
@@ -8,5 +8,5 @@
 
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
-  animation: roate
+  animation: roate;
 }

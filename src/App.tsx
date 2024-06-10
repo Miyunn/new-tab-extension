@@ -1,9 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 import Searchbar from "./components/searchbar";
-import ChangeSettings from "./components/settings-modal";
+import ChangeSettings from "./components/settings-drawer-content";
 import ControlIcons from "./components/control-icons";
 import IconGrid from "./layouts/icon-grind";
+import { Drawer } from "antd";
 
 export default function App() {
   const [settings, setSettings] = useState(() => {
@@ -27,6 +28,16 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
+  const [open, setOpen] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div
       style={{
@@ -36,8 +47,18 @@ export default function App() {
       }}
       className="antialiased overflow-hidden"
     >
-      {/* TODO: orgnaize the code here*/}
-      <ControlIcons />
+      <Drawer
+        placement="right"
+        onClose={onClose}
+        open={open}
+        closable={false}
+        width={400}
+        className="custom-drawer"
+      >
+        <ChangeSettings setSettings={setSettings} settings={settings} />
+      </Drawer>
+
+      <ControlIcons showDrawer={showDrawer} />
       <div className="flex flex-col justify-center items-center h-screen ">
         {settings.searchBar && (
           <Searchbar
@@ -47,9 +68,13 @@ export default function App() {
         )}
         {settings.iconVisibility &&
           (settings.layoutStyle === "grid" ? (
-            <IconGrid heightWidth={settings.iconSize} labels={settings.iconLabel} columns={settings.iconColumns} gap={settings.iconGap} />
+            <IconGrid
+              heightWidth={settings.iconSize}
+              labels={settings.iconLabel}
+              columns={settings.iconColumns}
+              gap={settings.iconGap}
+            />
           ) : null)}
-        <ChangeSettings setSettings={setSettings} settings={settings} />
       </div>
     </div>
   );
