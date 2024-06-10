@@ -9,13 +9,13 @@ export default function ControlIcons({
     <div className="fixed top-0 right-0 z-50 m-4 flex flex-col space-y-2">
       <div className="tooltip tooltip-left" data-tip="Add Icons">
         <button>
-          <FiPlusSquare />
+          <FiPlusSquare size={16}/>
         </button>
       </div>
 
       <div className="tooltip tooltip-left" data-tip="Settings">
         <button onClick={showDrawer}>
-          <FiSettings />
+          <FiSettings size={16}/>
         </button>
       </div>
     </div>
