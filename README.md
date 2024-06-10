@@ -1,4 +1,5 @@
-# React + TypeScript + Vite
+![logo](https://github.com/Miyunn/new-tab-extension/blob/master/public/icon180.png?raw=true)
+# New Tab
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
