@@ -1,0 +1,20 @@
+{
+  "name": "New Tab",
+  "manifest_version": 3,
+  "version": "0.1",
+  "description": "Replaces default chrome new tab with a custom page",
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "background": {
+  },
+  "host_permissions": ["<all_urls>"],
+    "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "180": "icon180.png",
+    "192": "icon32.png",
+    "512": "icon180.png"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  }
+}
