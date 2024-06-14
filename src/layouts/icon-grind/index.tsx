@@ -1,6 +1,5 @@
 import Icon from "./components/icon";
 import "./styles.css";
-import NoIconOptions from "../../components/no-icons-options";
 
 interface Props {
   heightWidth: number;
