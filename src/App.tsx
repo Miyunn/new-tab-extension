@@ -5,6 +5,7 @@ import ChangeSettings from "./components/settings-drawer-content";
 import ControlIcons from "./components/control-icons";
 import IconGrid from "./layouts/icon-grind";
 import { Drawer } from "antd";
+import AddIconForm from "./components/add-icon-modal-content";
 
 export default function App() {
   const [settings, setSettings] = useState(() => {
@@ -28,16 +29,25 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
-  const [open, setOpen] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
 
-  const showDrawer = () => {
-    setOpen(true);
+  const showSettings = () => {
+    setOpenSettings(true);
   };
 
-  const onClose = () => {
-    setOpen(false);
+  const onCloseSettings = () => {
+    setOpenSettings(false);
   };
 
+  const [openAddIcon, setOpenAddIcon] = useState(false);
+
+  const showAddIcons = () => {
+    setOpenAddIcon(true);
+  };
+
+  const onCloseShowIcons = () => {
+    setOpenAddIcon(false);
+  };
   return (
     <div
       style={{
@@ -49,8 +59,8 @@ export default function App() {
     >
       <Drawer
         placement="right"
-        onClose={onClose}
-        open={open}
+        onClose={onCloseSettings}
+        open={openSettings}
         closable={false}
         width={400}
         className="custom-drawer"
@@ -58,7 +68,18 @@ export default function App() {
         <ChangeSettings setSettings={setSettings} settings={settings} />
       </Drawer>
 
-      <ControlIcons showDrawer={showDrawer} />
+      <Drawer
+        placement="top"
+        onClose={onCloseShowIcons}
+        open={openAddIcon}
+        closable={false}
+        height={530}
+        className="custom-drawer"
+      >
+        <AddIconForm />
+      </Drawer>
+
+      <ControlIcons showDrawer={showSettings} showAddIconModal={showAddIcons} />
       <div className="flex flex-col justify-center items-center h-screen ">
         {settings.searchBar && (
           <Searchbar
