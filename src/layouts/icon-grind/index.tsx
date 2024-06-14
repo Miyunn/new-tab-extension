@@ -23,21 +23,17 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
   ));
 
 const IconGrid = ({ heightWidth, labels, gap, columns, iconData }: Props) => {
-  if (iconData === null || iconData?.length === 0) return <NoIconOptions />;
-  else
-    return (
-      <>
-        <div
-          className="grid mt-10"
-          style={{
-            gap: `${gap}px`,
-            gridTemplateColumns: `repeat(${columns}, 1fr)`,
-          }}
-        >
-          {icons(heightWidth, labels, iconData || [])}
-        </div>
-      </>
-    );
+  return (
+    <div
+      className="grid mt-10"
+      style={{
+        gap: `${gap}px`,
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+      }}
+    >
+      {icons(heightWidth, labels, iconData || [])}
+    </div>
+  );
 };
 
 export default IconGrid;

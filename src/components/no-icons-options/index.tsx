@@ -1,11 +1,14 @@
 import { FiPlusSquare } from "react-icons/fi";
 
-export default function NoIconOptions() {
+export default function NoIconOptions({
+  showAddIconDrawer,
+}: {
+  showAddIconDrawer: () => void;
+}) {
   return (
     <div className="flex flex-col items-center justify-center text-center">
       <div className="tooltip tooltip-bottom mt-10">
-        <button>
-          {/* TODO: Summon the add icon modal on button press*/}
+        <button onClick={showAddIconDrawer}>
           <FiPlusSquare size={35} />
         </button>
       </div>

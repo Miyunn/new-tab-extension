@@ -8,8 +8,14 @@ import { Drawer } from "antd";
 import AddIconForm from "./components/add-icon-modal-content";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
+import NoIconOptions from "./components/no-icons-options";
 
 export default function App() {
+  // Fetching Icon data from here
+  // live detects changes in the database and updates the UI
+  const iconTable = db.table("icons");
+  const icons = useLiveQuery(() => iconTable.toArray(), []);
+
   const [settings, setSettings] = useState(() => {
     const localValue = localStorage.getItem("settings");
     if (localValue == null) {
@@ -30,13 +36,6 @@ export default function App() {
     }
     return JSON.parse(localValue);
   });
-
-  // Fetching Icon data from here
-  // useLiveQuery is a hook that returns the result of a query as a live object.
-  // The query is re-executed whenever the data it depends on changes.
-  // At least that's what they say.
-  const iconTable = db.table("icons");
-  const iconData = useLiveQuery(() => iconTable.toArray(), []);
 
   const [openSettings, setOpenSettings] = useState(false);
 
@@ -88,8 +87,8 @@ export default function App() {
         <AddIconForm />
       </Drawer>
 
-      <ControlIcons showDrawer={showSettings} showAddIconModal={showAddIcons} />
-      <div className="flex flex-col justify-center items-center h-screen ">
+      <ControlIcons showDrawer={showSettings} showAddIconDrawer={showAddIcons} />
+      <div className="flex flex-col justify-center items-center h-screen">
         {settings.searchBar && (
           <Searchbar
             searchEngine={settings.searchEngine}
@@ -97,9 +96,11 @@ export default function App() {
           />
         )}
         {settings.iconVisibility &&
-          (settings.layoutStyle === "grid" ? (
+          (icons === null || icons?.length === 0 ? (
+            <NoIconOptions showAddIconDrawer={showAddIcons} />
+          ) : settings.layoutStyle === "grid" ? (
             <IconGrid
-              iconData={iconData}
+              iconData={icons}
               heightWidth={settings.iconSize}
               labels={settings.iconLabel}
               columns={settings.iconColumns}

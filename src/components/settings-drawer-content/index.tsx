@@ -5,9 +5,9 @@ export default function ChangeSettings({
   setSettings: [] | any;
   settings: [] | any;
 }) {
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.currentTarget);
     const newSettings = {
       searchBar: formData.get("searchBar") === "on" ? true : false,
       searchEngine: formData.get("searchEngine") as string,
@@ -208,7 +208,7 @@ export default function ChangeSettings({
             type="button"
             className="btn btn-outline btn-error w-1/2  ml-2"
           >
-            Reset Icons
+            Remove Icons 
           </button>
         </div>
         <button type="submit" className="btn btn-primary mt-4 w-full">
