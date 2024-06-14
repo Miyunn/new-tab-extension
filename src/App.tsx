@@ -6,6 +6,8 @@ import ControlIcons from "./components/control-icons";
 import IconGrid from "./layouts/icon-grind";
 import { Drawer } from "antd";
 import AddIconForm from "./components/add-icon-modal-content";
+import { useLiveQuery } from "dexie-react-hooks";
+import db from "./database/indexDb";
 
 export default function App() {
   const [settings, setSettings] = useState(() => {
@@ -28,6 +30,13 @@ export default function App() {
     }
     return JSON.parse(localValue);
   });
+
+  // Fetching Icon data from here
+  // useLiveQuery is a hook that returns the result of a query as a live object.
+  // The query is re-executed whenever the data it depends on changes.
+  // At least that's what they say.
+  const iconTable = db.table("icons");
+  const iconData = useLiveQuery(() => iconTable.toArray(), []);
 
   const [openSettings, setOpenSettings] = useState(false);
 
@@ -90,6 +99,7 @@ export default function App() {
         {settings.iconVisibility &&
           (settings.layoutStyle === "grid" ? (
             <IconGrid
+              iconData={iconData}
               heightWidth={settings.iconSize}
               labels={settings.iconLabel}
               columns={settings.iconColumns}

@@ -1,7 +1,5 @@
 import Icon from "./components/icon";
-import db from "../../database/indexDb";
 import "./styles.css";
-import { useLiveQuery } from "dexie-react-hooks";
 import NoIconOptions from "../../components/no-icons-options";
 
 interface Props {
@@ -9,6 +7,7 @@ interface Props {
   columns: number;
   gap: number;
   labels: boolean;
+  iconData: any;
 }
 
 const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
@@ -23,10 +22,7 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
     </Icon>
   ));
 
-const IconGrid = ({ heightWidth, labels, gap, columns }: Props) => {
-  const iconTable = db.table("icons");
-  const iconData = useLiveQuery(() => iconTable.toArray(), []);
-
+const IconGrid = ({ heightWidth, labels, gap, columns, iconData }: Props) => {
   if (iconData === null || iconData?.length === 0) return <NoIconOptions />;
   else
     return (

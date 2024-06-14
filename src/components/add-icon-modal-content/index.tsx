@@ -1,16 +1,37 @@
 import { useState } from "react";
 import "./styles.css";
+import db from "../../database/indexDb";
 
 export default function AddIconForm() {
-  const [useIconURLToggle, setUseIconURLToggle] = useState(false);
+  const [useIconURLToggle, setUseIconURLToggle] = useState(true);
 
   const handleUseIconURLToggle = () => {
     setUseIconURLToggle(!useIconURLToggle);
   };
 
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    const newIcon = {
+      name: formData.get("name") as string,
+      destination: formData.get("destination") as string,
+      iconURL: formData.get("iconURL") as string,
+    };
+
+    //@ts-ignore
+    await db.icons.add({
+      name: newIcon.name,
+      src: newIcon.iconURL,
+      url: newIcon.destination,
+    });
+  };
+
   return (
     <div className="bg-black flex justify-center items-center">
-      <form className="max-w-md">
+      <form className="max-w-md" onSubmit={handleSubmit}>
         <div className="divider text-sm">Add Icon</div>
         <div className="form-control mt-4">
           <label className="label">
@@ -18,6 +39,7 @@ export default function AddIconForm() {
           </label>
           <input
             type="text"
+            name="name"
             placeholder="Icon label"
             className="input input-bordered add-icon-form-input"
           />
@@ -28,6 +50,7 @@ export default function AddIconForm() {
           </label>
           <input
             type="text"
+            name="destination"
             placeholder="Where to?"
             className="input input-bordered add-icon-form-input"
           />
@@ -41,6 +64,7 @@ export default function AddIconForm() {
               className="toggle toggle-primary ml-2"
               checked={useIconURLToggle}
               onChange={handleUseIconURLToggle}
+              disabled
             />
           </label>
         </div>
@@ -51,6 +75,7 @@ export default function AddIconForm() {
             </label>
             <input
               type="text"
+              name="iconURL"
               placeholder="Image URL here"
               className="input input-bordered add-icon-form-input"
             />
