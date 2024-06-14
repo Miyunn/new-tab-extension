@@ -2,22 +2,11 @@ import Dexie from "dexie";
 
 const db = new Dexie("new-tab");
 db.version(1).stores({
-  theme: "++id, name, active, style, searchBar, searchClient, columns, bgColor",
   icons: "++id, name, url, src",
 });
 
+// Remove this later, no need to auto populate icons in prod 
 db.on("populate", async () => {
-  // @ts-ignore
-  await db.theme.add({
-    name: "Default",
-    active: true,
-    style: "basicGrid",
-    searchBar: true,
-    searchEngine: "google",
-    columns: 5,
-    bgColor: "bg-gray-900",
-  });
-
   // @ts-ignore
   await db.icons.bulkAdd([
     {
