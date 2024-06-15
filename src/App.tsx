@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Searchbar from "./components/searchbar";
 import ChangeSettings from "./components/settings-drawer-content";
@@ -11,11 +11,6 @@ import db from "./database/indexDb";
 import NoIconOptions from "./components/no-icons-options";
 
 export default function App() {
-  // Fetching Icon data from here
-  // live detects changes in the database and updates the UI
-  const iconTable = db.table("icons");
-  const icons = useLiveQuery(() => iconTable.toArray(), []);
-
   const [settings, setSettings] = useState(() => {
     const localValue = localStorage.getItem("settings");
     if (localValue == null) {
@@ -27,6 +22,7 @@ export default function App() {
         iconVisibility: true,
         layoutStyle: "grid",
         iconLabel: true,
+        iconOrder: "position",
         iconSize: 50,
         iconColumns: 5,
         iconGap: 20,
@@ -36,6 +32,17 @@ export default function App() {
     }
     return JSON.parse(localValue);
   });
+
+  // Fetching Icon data from here
+  // live detects changes in the database and updates the UI
+  // Updated on changes in the settings
+  const iconTable = db.table("icons");
+  const icons = useLiveQuery(
+    () => iconTable.orderBy(settings.iconOrder || "id").toArray(),
+    [settings],
+  );
+
+  useEffect(() => {});
 
   const [openSettings, setOpenSettings] = useState(false);
 
@@ -87,7 +94,10 @@ export default function App() {
         <AddIconForm />
       </Drawer>
 
-      <ControlIcons showDrawer={showSettings} showAddIconDrawer={showAddIcons} />
+      <ControlIcons
+        showDrawer={showSettings}
+        showAddIconDrawer={showAddIcons}
+      />
       <div className="flex flex-col justify-center items-center h-screen">
         {settings.searchBar && (
           <Searchbar

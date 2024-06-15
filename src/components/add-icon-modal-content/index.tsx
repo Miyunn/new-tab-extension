@@ -22,10 +22,18 @@ export default function AddIconForm() {
     };
 
     //@ts-ignore
+    const highestPositionIcon = await db.icons.orderBy("position").last();
+    const newPosition = highestPositionIcon
+      ? highestPositionIcon.position + 1
+      : 0;
+
+    //@ts-ignore
     await db.icons.add({
+      id: crypto.randomUUID(),
       name: newIcon.name,
       src: newIcon.iconURL,
       url: newIcon.destination,
+      position: newPosition,
     });
   };
 

@@ -19,6 +19,7 @@ export default function ChangeSettings({
       iconSize: formData.get("iconSize") as string,
       iconColumns: formData.get("iconColumns") as string,
       iconGap: formData.get("iconGap") as string,
+      iconOrder: formData.get("iconOrder") as string,
       version: settings.version,
     };
     setSettings(newSettings);
@@ -103,10 +104,23 @@ export default function ChangeSettings({
           <select
             name="layoutStyle"
             className="select select-bordered w-full max-w"
-            defaultValue={settings.searchEngine}
+            defaultValue={settings.iconLayout}
           >
             <option value="grid">Grid Style</option>
             <option disabled>Other Styles are coming soon</option>
+          </select>
+        </div>
+        <div className="form-control w-full max-w">
+          <label className="label">
+            <span className="label-text">Icon Order</span>
+          </label>
+          <select
+            name="iconOrder"
+            className="select select-bordered w-full max-w"
+            defaultValue={settings.iconOrder}
+          >
+            <option value="name">Name</option>
+            <option value="position">User</option>
           </select>
         </div>
         <div className="form-control w-full max-w mt-4">
@@ -208,7 +222,7 @@ export default function ChangeSettings({
             type="button"
             className="btn btn-outline btn-error w-1/2  ml-2"
           >
-            Remove Icons 
+            Remove Icons
           </button>
         </div>
         <button type="submit" className="btn btn-primary mt-4 w-full">
