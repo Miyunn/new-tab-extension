@@ -3,6 +3,7 @@ import Icon from "./components/icon";
 import "./styles.css";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/lib/icons/EditOutlined";
+import db from "../../database/indexDb";
 
 interface Props {
   heightWidth: number;
@@ -12,45 +13,55 @@ interface Props {
   iconData: any;
 }
 
-const items: MenuProps["items"] = [
-  {
-    label: "Edit",
-    key: "1",
-    icon: <EditOutlined />,
-  },
-  {
-    label: "Delete",
-    key: "2",
-    danger: true,
-    icon: <DeleteOutlined />,
-  },
-];
+const deleteIcon = async (id: string) => {
+  //@ts-ignore
+  await db.icons.delete(id);
+};
 
 const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
-  iconData.map((icon) => (
-    <Dropdown
-      menu={{ items }}
-      trigger={["contextMenu"]}
-      key={icon.id}
-      placement="bottomLeft"
-    >
-      <div>
-        <Icon
-          key={icon.name}
-          iconName={icon.name}
-          url={icon.url}
-          labels={labels}
-        >
-          <img
-            width={heightWidth}
-            height={heightWidth}
-            src={icon.src}
-            alt={icon.name}
-          />
-        </Icon>
-      </div>
-    </Dropdown>
-  ));
+  iconData.map((icon) => {
+    const menuItems: MenuProps["items"] = [
+      {
+        label: "Edit",
+        key: "edit",
+        icon: <EditOutlined />,
+      },
+      {
+        label: "Delete",
+        key: "delete",
+        danger: true,
+        icon: <DeleteOutlined />,
+        onClick: () => {
+          deleteIcon(icon.id);
+        },
+      },
+    ];
+
+    return (
+      <Dropdown
+        menu={{ items: menuItems }}
+        trigger={["contextMenu"]}
+        key={icon.id}
+        placement="bottomLeft"
+      >
+        <div>
+          <Icon
+            key={icon.name}
+            iconName={icon.name}
+            url={icon.url}
+            labels={labels}
+          >
+            <img
+              width={heightWidth}
+              height={heightWidth}
+              src={icon.src}
+              alt={icon.name}
+            />
+          </Icon>
+        </div>
+      </Dropdown>
+    );
+  });
 
 const IconGrid = ({ heightWidth, labels, gap, columns, iconData }: Props) => {
   return (
