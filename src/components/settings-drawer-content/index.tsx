@@ -120,7 +120,7 @@ export default function ChangeSettings({
             defaultValue={settings.iconOrder}
           >
             <option value="name">Name</option>
-            <option value="position">User</option>
+            <option value="position">Custom</option>
           </select>
         </div>
         <div className="form-control w-full max-w mt-4">
