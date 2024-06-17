@@ -28,7 +28,7 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
       {
         label: icon.name,
         key: "logo",
-        style: { fontWeight: "bold" },
+        style: { fontWeight: "bold", pointerEvents: "none" },
         icon: <img width={16} height={16} src={icon.src} />,
       },
       {
@@ -59,7 +59,7 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
       >
         <div>
           <Icon
-            key={icon.name}
+            key={icon.id}
             iconName={icon.name}
             url={icon.url}
             labels={labels}
