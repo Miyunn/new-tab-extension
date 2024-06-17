@@ -18,13 +18,26 @@ const deleteIcon = async (id: string) => {
   await db.icons.delete(id);
 };
 
+const editIcon = (iconData: any) => {
+  console.log(iconData);
+};
+
 const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
   iconData.map((icon) => {
     const menuItems: MenuProps["items"] = [
       {
+        label: icon.name,
+        key: "logo",
+        style: { fontWeight: "bold" },
+        icon: <img width={16} height={16} src={icon.src} />,
+      },
+      {
         label: "Edit",
         key: "edit",
         icon: <EditOutlined />,
+        onClick: () => {
+          editIcon(iconData);
+        },
       },
       {
         label: "Delete",
