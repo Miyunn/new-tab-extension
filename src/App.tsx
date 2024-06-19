@@ -33,17 +33,25 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
+  const [loading, setLoading] = useState(true);
+
   // Fetching Icon data from here
   // live detects changes in the database and updates the UI
   // Updated on changes in the settings
   const iconTable = db.table("icons");
-  const icons = useLiveQuery(
-    () => iconTable.orderBy(settings.iconOrder || "id").toArray(),
-    [settings],
-  );
+  const icons = useLiveQuery(async () => {
+    const result = await iconTable
+      .orderBy(settings.iconOrder || "id")
+      .toArray();
+    setLoading(false);
+    return result;
+  }, [settings]);
 
-  useEffect(() => {});
-
+  useEffect(() => {
+    if (icons === undefined) {
+      setLoading(true);
+    }
+  }, [icons]);
   const [openSettings, setOpenSettings] = useState(false);
 
   const showSettings = () => {
@@ -63,6 +71,19 @@ export default function App() {
   const onCloseShowIcons = () => {
     setOpenAddIcon(false);
   };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          backgroundColor: "#120312",
+          backgroundImage:
+            "linear-gradient(296deg, #120312 1%, #020e18 50%, #0f0414 97%)",
+        }}
+        className="antialiased overflow-hidden fade-in"
+      ></div>
+    );
+  }
   return (
     <div
       style={{
@@ -70,7 +91,7 @@ export default function App() {
         backgroundImage:
           "linear-gradient(296deg, #120312 1%, #020e18 50%, #0f0414 97%)",
       }}
-      className="antialiased overflow-hidden"
+      className="antialiased overflow-hidden fade-in"
     >
       <Drawer
         placement="right"
