@@ -2,17 +2,26 @@ import { useState } from "react";
 import "./styles.css";
 import db from "../../database/indexDb";
 
-export default function AddIconForm() {
+export default function AddIconForm({
+  closeDrawer,
+}: {
+  closeDrawer: () => void;
+}) {
   const [useIconURLToggle, setUseIconURLToggle] = useState(true);
 
   const handleUseIconURLToggle = () => {
     setUseIconURLToggle(!useIconURLToggle);
   };
 
+  const [pending, setPending] = useState(false);
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     event.preventDefault();
+
+    setPending(true);
+
     const formData = new FormData(event.currentTarget);
 
     const newIcon = {
@@ -27,14 +36,23 @@ export default function AddIconForm() {
       ? highestPositionIcon.position + 1
       : 0;
 
-    //@ts-ignore
-    await db.icons.add({
-      id: crypto.randomUUID(),
-      name: newIcon.name,
-      src: newIcon.iconURL,
-      url: newIcon.destination,
-      position: newPosition,
-    });
+    try {
+      // wait 1 second
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      //@ts-ignore
+      await db.icons.add({
+        id: crypto.randomUUID(),
+        name: newIcon.name,
+        src: newIcon.iconURL,
+        url: newIcon.destination,
+        position: newPosition,
+      });
+    } catch (error) {
+      console.error("Error adding icon", error);
+    }
+
+    setPending(false);
+    closeDrawer();
   };
 
   return (
@@ -99,8 +117,12 @@ export default function AddIconForm() {
             />
           </div>
         )}
-        <button type="submit" className="btn btn-primary mt-6 w-full">
-          Save
+        <button
+          type="submit"
+          className="btn btn-primary mt-6 w-full"
+          disabled={pending}
+        >
+          {pending ? "Adding Icon..." : "Add Icon"}
         </button>
       </form>
     </div>

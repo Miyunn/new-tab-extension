@@ -1,11 +1,18 @@
+import { useState } from "react";
+
 export default function ChangeSettings({
   setSettings,
   settings,
+  closeDrawer,
 }: {
   setSettings: [] | any;
   settings: [] | any;
+  closeDrawer: () => void;
 }) {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [pending, setPending] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setPending(true);
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const newSettings = {
@@ -22,8 +29,17 @@ export default function ChangeSettings({
       iconOrder: formData.get("iconOrder") as string,
       version: settings.version,
     };
-    setSettings(newSettings);
-    localStorage.setItem("settings", JSON.stringify(newSettings));
+
+    try {
+      setSettings(newSettings);
+      localStorage.setItem("settings", JSON.stringify(newSettings));
+    } catch (error) {
+      console.error("Error adding icon", error);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    setPending(false);
+    closeDrawer();
   };
 
   function ResetSettings() {
@@ -225,8 +241,12 @@ export default function ChangeSettings({
             Remove Icons
           </button>
         </div>
-        <button type="submit" className="btn btn-primary mt-4 w-full">
-          Save
+        <button
+          type="submit"
+          className="btn btn-primary mt-4 w-full"
+          disabled={pending}
+        >
+          {pending ? "Saved" : "Save"}
         </button>
       </form>
 

@@ -101,7 +101,7 @@ export default function App() {
         width={400}
         className="custom-drawer"
       >
-        <ChangeSettings setSettings={setSettings} settings={settings} />
+        <ChangeSettings setSettings={setSettings} settings={settings} closeDrawer = {onCloseSettings} />
       </Drawer>
 
       <Drawer
@@ -112,7 +112,7 @@ export default function App() {
         height={530}
         className="custom-drawer"
       >
-        <AddIconForm />
+        <AddIconForm closeDrawer={onCloseShowIcons} />
       </Drawer>
 
       <ControlIcons
