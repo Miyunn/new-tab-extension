@@ -54,7 +54,14 @@ export default function App() {
     bg = {
       backgroundColor: settings.backgroundColor,
     };
+  } else if (settings.backgroundType === "image") {
+    bg = {
+      backgroundImage: `url(${settings.backgroundImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    };
   }
+
   const [loading, setLoading] = useState(true);
 
   // Fetching Icon data from here

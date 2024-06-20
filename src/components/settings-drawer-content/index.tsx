@@ -15,6 +15,26 @@ export default function ChangeSettings({
     settings.backgroundColor || "#1677ff",
   );
 
+  const [backgroundType, setBackgroundType] = useState(
+    settings.backgroundType || "dark",
+  );
+
+  const handleImageUpload = (file: File) => {
+    return new Promise<String>((resolve, reject) => {
+      if (file.size > 8 * 1024 * 1024) {
+        reject(new Error("File size is too large"));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setPending(true);
     event.preventDefault();
@@ -32,12 +52,17 @@ export default function ChangeSettings({
       iconGap: formData.get("iconGap") as string,
       iconOrder: formData.get("iconOrder") as string,
       backgroundType: formData.get("backgroundType") as string,
-      backgroundImage: formData.get("backgroundImage") as string,
       backgroundColor: `#${backgroundColor}`,
       version: settings.version,
+      backgroundImage: settings.backgroundImage,
     };
 
     try {
+      const backgroundImageFile = formData.get("backgroundImage") as File;
+      if (backgroundImageFile && backgroundImageFile.size > 0) {
+        newSettings.backgroundImage =
+          await handleImageUpload(backgroundImageFile);
+      }
       setSettings(newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));
     } catch (error) {
@@ -68,28 +93,50 @@ export default function ChangeSettings({
             name="backgroundType"
             className="select select-bordered w-full max-w"
             defaultValue={settings.backgroundType}
+            onChange={(e) => setBackgroundType(e.target.value)}
           >
             <option value="dark">Dark Gradient</option>
             <option value="light" disabled>
               Light Gradient
             </option>
             <option value="color">Solid Color</option>
-            <option value="image" disabled>
-              Custom Image
-            </option>
+            <option value="image">Custom Image</option>
           </select>
         </div>
 
-        <div className="form-control w-full max-w">
-          <label className="label">
-            <span className="label-text">Background Color</span>
-          </label>
-          <ColorPicker
-            showText
-            defaultValue={backgroundColor}
-            onChange={(color) => setBackgroundColor(color.toHex())}
-          />
-        </div>
+        {backgroundType === "color" && (
+          <div className="form-control w-full max-w">
+            <label className="label">
+              <span className="label-text">Background Color</span>
+            </label>
+            <ColorPicker
+              showText
+              defaultValue={backgroundColor}
+              onChange={(color) => setBackgroundColor(color.toHex())}
+            />
+          </div>
+        )}
+
+        {backgroundType === "image" && (
+          <div className="form-control w-full max-w">
+            <label className="form-control w-full max-w-xs">
+              <div className="label">
+                <span className="label-text">Pick an image</span>
+              </div>
+              <input
+                type="file"
+                className="file-input file-input-bordered"
+                name="backgroundImage"
+                max={800}
+                style={{ width: "335.35px" }}
+              />
+              <div className="label">
+                <span className="label-text-alt"></span>
+                <span className="label-text-alt">Max file size: 8MB</span>
+              </div>
+            </label>
+          </div>
+        )}
         <div className="divider text-sm">Search Bar</div>
         <div className="form-control w-full max-w mt-4">
           <label className="label cursor-pointer">
