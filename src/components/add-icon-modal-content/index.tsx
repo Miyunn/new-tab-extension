@@ -15,6 +15,15 @@ export default function AddIconForm({
 
   const [pending, setPending] = useState(false);
 
+  const clearForm = () => {
+    const form = document.querySelector(
+      "form[name='addIconForm']",
+    ) as HTMLFormElement;
+    if (form) {
+      form.reset();
+    }
+  };
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
@@ -53,11 +62,12 @@ export default function AddIconForm({
 
     setPending(false);
     closeDrawer();
+    clearForm();
   };
 
   return (
     <div className="bg-black flex justify-center items-center">
-      <form className="max-w-md" onSubmit={handleSubmit}>
+      <form className="max-w-md" onSubmit={handleSubmit} name="addIconForm">
         <div className="divider text-sm">Add Icon</div>
         <div className="form-control mt-4">
           <label className="label">
@@ -68,6 +78,7 @@ export default function AddIconForm({
             name="name"
             placeholder="Icon label"
             className="input input-bordered add-icon-form-input"
+            required
           />
         </div>
         <div className="form-control mt-4">
@@ -79,6 +90,7 @@ export default function AddIconForm({
             name="destination"
             placeholder="Where to?"
             className="input input-bordered add-icon-form-input"
+            required
           />
         </div>
         <div className="form-control w-full max-w mt-4">
