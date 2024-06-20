@@ -21,7 +21,7 @@ export default function ChangeSettings({
 
   const handleImageUpload = (file: File) => {
     return new Promise<String>((resolve, reject) => {
-      if (file.size > 8 * 1024 * 1024) {
+      if (file.size > 4 * 1024 * 1024) {
         reject(new Error("File size is too large"));
         return;
       }
@@ -55,6 +55,10 @@ export default function ChangeSettings({
       backgroundColor: `#${backgroundColor}`,
       version: settings.version,
       backgroundImage: settings.backgroundImage,
+      backgroundTintIntensity: formData.get(
+        "backgroundTintIntensity",
+      ) as string,
+      blurValue: formData.get("blurValue") as string,
     };
 
     try {
@@ -66,7 +70,7 @@ export default function ChangeSettings({
       setSettings(newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));
     } catch (error) {
-      console.error("Error adding icon", error);
+      console.error("Error adding background", error);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 700));
@@ -84,10 +88,10 @@ export default function ChangeSettings({
     <div className="bg-black">
       <form onSubmit={handleSubmit}>
         <h2 className="text-lg"> Settings </h2>
-        <div className="divider text-sm">Background</div>
+        <div className="divider text-sm">Wallpaper</div>
         <div className="form-control w-full max-w">
           <label className="label">
-            <span className="label-text">Background Type</span>
+            <span className="label-text">Wallpaper Type</span>
           </label>
           <select
             name="backgroundType"
@@ -95,12 +99,9 @@ export default function ChangeSettings({
             defaultValue={settings.backgroundType}
             onChange={(e) => setBackgroundType(e.target.value)}
           >
-            <option value="dark">Dark Gradient</option>
-            <option value="light" disabled>
-              Light Gradient
-            </option>
+            <option value="dark">Default</option>
             <option value="color">Solid Color</option>
-            <option value="image">Custom Image</option>
+            <option value="image">Image</option>
           </select>
         </div>
 
@@ -118,24 +119,73 @@ export default function ChangeSettings({
         )}
 
         {backgroundType === "image" && (
-          <div className="form-control w-full max-w">
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Pick an image</span>
-              </div>
+          <>
+            <div className="form-control w-full max-w">
+              <label className="form-control w-full max-w-xs">
+                <div className="label">
+                  <span className="label-text">Pick an image</span>
+                </div>
+                <input
+                  type="file"
+                  className="file-input file-input-bordered"
+                  name="backgroundImage"
+                  style={{ width: "335.35px" }}
+                />
+              </label>
+            </div>
+
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper tint</span>
+              </label>
               <input
-                type="file"
-                className="file-input file-input-bordered"
-                name="backgroundImage"
-                max={800}
-                style={{ width: "335.35px" }}
+                type="range"
+                min="0"
+                max="1"
+                className="range"
+                step="0.001"
+                name="backgroundTintIntensity"
+                defaultValue={settings.backgroundTintIntensity}
               />
-              <div className="label">
-                <span className="label-text-alt"></span>
-                <span className="label-text-alt">Max file size: 8MB</span>
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>No Tint</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>Black</span>
               </div>
-            </label>
-          </div>
+            </div>
+
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper blur</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                className="range"
+                step="0.01"
+                name="blurValue"
+                defaultValue={settings.blurValue}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>0%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>100</span>
+              </div>
+            </div>
+          </>
         )}
         <div className="divider text-sm">Search Bar</div>
         <div className="form-control w-full max-w mt-4">

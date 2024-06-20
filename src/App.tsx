@@ -29,6 +29,8 @@ export default function App() {
         backgroundType: "dark",
         backgroundImage: "",
         backgroundColor: "#120312",
+        backgroundTintIntensity: 0.5,
+        blurValue: 0,
       };
       localStorage.setItem("settings", JSON.stringify(defaultSettings));
       return defaultSettings;
@@ -56,9 +58,11 @@ export default function App() {
     };
   } else if (settings.backgroundType === "image") {
     bg = {
+      backgroundColor: "black",
       backgroundImage: `url(${settings.backgroundImage})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
+      filter: `blur(${settings.blurValue}px)`,
     };
   }
 
@@ -105,56 +109,69 @@ export default function App() {
     return <> </>;
   }
   return (
-    <div style={bg} className="antialiased overflow-hidden fade-in">
-      <Drawer
-        placement="right"
-        onClose={onCloseSettings}
-        open={openSettings}
-        closable={false}
-        width={400}
-        className="custom-drawer"
-      >
-        <ChangeSettings
-          setSettings={setSettings}
-          settings={settings}
-          closeDrawer={onCloseSettings}
-        />
-      </Drawer>
-
-      <Drawer
-        placement="top"
-        onClose={onCloseShowIcons}
-        open={openAddIcon}
-        closable={false}
-        height={530}
-        className="custom-drawer"
-      >
-        <AddIconForm closeDrawer={onCloseShowIcons} />
-      </Drawer>
-
-      <ControlIcons
-        showDrawer={showSettings}
-        showAddIconDrawer={showAddIcons}
-      />
-      <div className="flex flex-col justify-center items-center h-screen">
-        {settings.searchBar && (
-          <Searchbar
-            searchEngine={settings.searchEngine}
-            searchBarWidth={settings.searchBarWidth}
+    <div className="antialiased overflow-hidden fade-in relative">
+      <div style={bg} className="absolute inset-0">
+        {settings.backgroundType === "image" && (
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
           />
         )}
-        {settings.iconVisibility &&
-          (icons === null || icons?.length === 0 ? (
-            <NoIconOptions showAddIconDrawer={showAddIcons} />
-          ) : settings.layoutStyle === "grid" ? (
-            <IconGrid
-              iconData={icons}
-              heightWidth={settings.iconSize}
-              labels={settings.iconLabel}
-              columns={settings.iconColumns}
-              gap={settings.iconGap}
+      </div>
+      <div className="relative z-10">
+        <Drawer
+          placement="right"
+          onClose={onCloseSettings}
+          open={openSettings}
+          closable={false}
+          width={400}
+          className="custom-drawer"
+        >
+          <ChangeSettings
+            setSettings={setSettings}
+            settings={settings}
+            closeDrawer={onCloseSettings}
+          />
+        </Drawer>
+
+        <Drawer
+          placement="top"
+          onClose={onCloseShowIcons}
+          open={openAddIcon}
+          closable={false}
+          height={530}
+          className="custom-drawer"
+        >
+          <AddIconForm closeDrawer={onCloseShowIcons} />
+        </Drawer>
+
+        <ControlIcons
+          showDrawer={showSettings}
+          showAddIconDrawer={showAddIcons}
+        />
+        <div className="flex flex-col justify-center items-center h-screen">
+          {settings.searchBar && (
+            <Searchbar
+              searchEngine={settings.searchEngine}
+              searchBarWidth={settings.searchBarWidth}
             />
-          ) : null)}
+          )}
+          {settings.iconVisibility &&
+            (icons === null || icons?.length === 0 ? (
+              <NoIconOptions showAddIconDrawer={showAddIcons} />
+            ) : settings.layoutStyle === "grid" ? (
+              <IconGrid
+                iconData={icons}
+                heightWidth={settings.iconSize}
+                labels={settings.iconLabel}
+                columns={settings.iconColumns}
+                gap={settings.iconGap}
+              />
+            ) : null)}
+        </div>
       </div>
     </div>
   );
