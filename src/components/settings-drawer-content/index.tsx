@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { ColorPicker } from "antd";
 export default function ChangeSettings({
   setSettings,
   settings,
@@ -10,6 +10,10 @@ export default function ChangeSettings({
   closeDrawer: () => void;
 }) {
   const [pending, setPending] = useState(false);
+
+  const [backgroundColor, setBackgroundColor] = useState(
+    settings.backgroundColor || "#1677ff",
+  );
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setPending(true);
@@ -27,6 +31,9 @@ export default function ChangeSettings({
       iconColumns: formData.get("iconColumns") as string,
       iconGap: formData.get("iconGap") as string,
       iconOrder: formData.get("iconOrder") as string,
+      backgroundType: formData.get("backgroundType") as string,
+      backgroundImage: formData.get("backgroundImage") as string,
+      backgroundColor: `#${backgroundColor}`,
       version: settings.version,
     };
 
@@ -52,6 +59,37 @@ export default function ChangeSettings({
     <div className="bg-black">
       <form onSubmit={handleSubmit}>
         <h2 className="text-lg"> Settings </h2>
+        <div className="divider text-sm">Background</div>
+        <div className="form-control w-full max-w">
+          <label className="label">
+            <span className="label-text">Background Type</span>
+          </label>
+          <select
+            name="backgroundType"
+            className="select select-bordered w-full max-w"
+            defaultValue={settings.backgroundType}
+          >
+            <option value="dark">Dark Gradient</option>
+            <option value="light" disabled>
+              Light Gradient
+            </option>
+            <option value="color">Solid Color</option>
+            <option value="image" disabled>
+              Custom Image
+            </option>
+          </select>
+        </div>
+
+        <div className="form-control w-full max-w">
+          <label className="label">
+            <span className="label-text">Background Color</span>
+          </label>
+          <ColorPicker
+            showText
+            defaultValue={backgroundColor}
+            onChange={(color) => setBackgroundColor(color.toHex())}
+          />
+        </div>
         <div className="divider text-sm">Search Bar</div>
         <div className="form-control w-full max-w mt-4">
           <label className="label cursor-pointer">

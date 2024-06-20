@@ -26,6 +26,9 @@ export default function App() {
         iconSize: 50,
         iconColumns: 5,
         iconGap: 20,
+        backgroundType: "dark",
+        backgroundImage: "",
+        backgroundColor: "#120312",
       };
       localStorage.setItem("settings", JSON.stringify(defaultSettings));
       return defaultSettings;
@@ -33,6 +36,25 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
+  let bg = {};
+
+  if (settings.backgroundType === "dark") {
+    bg = {
+      backgroundColor: "#120312",
+      backgroundImage:
+        "linear-gradient(296deg, #120312 1%, #020e18 50%, #0f0414 97%)",
+    };
+  } else if (settings.backgroundType === "light") {
+    bg = {
+      backgroundColor: "#f6def1",
+      backgroundImage:
+        "linear-gradient(308deg, #f6def1 0%, #cfb3e2 50%, #86cdff 100%)",
+    };
+  } else if (settings.backgroundType === "color") {
+    bg = {
+      backgroundColor: settings.backgroundColor,
+    };
+  }
   const [loading, setLoading] = useState(true);
 
   // Fetching Icon data from here
@@ -73,26 +95,10 @@ export default function App() {
   };
 
   if (loading) {
-    return (
-      <div
-        style={{
-          backgroundColor: "#120312",
-          backgroundImage:
-            "linear-gradient(296deg, #120312 1%, #020e18 50%, #0f0414 97%)",
-        }}
-        className="antialiased overflow-hidden fade-in"
-      ></div>
-    );
+    return <> </>;
   }
   return (
-    <div
-      style={{
-        backgroundColor: "#120312",
-        backgroundImage:
-          "linear-gradient(296deg, #120312 1%, #020e18 50%, #0f0414 97%)",
-      }}
-      className="antialiased overflow-hidden fade-in"
-    >
+    <div style={bg} className="antialiased overflow-hidden fade-in">
       <Drawer
         placement="right"
         onClose={onCloseSettings}
@@ -101,7 +107,11 @@ export default function App() {
         width={400}
         className="custom-drawer"
       >
-        <ChangeSettings setSettings={setSettings} settings={settings} closeDrawer = {onCloseSettings} />
+        <ChangeSettings
+          setSettings={setSettings}
+          settings={settings}
+          closeDrawer={onCloseSettings}
+        />
       </Drawer>
 
       <Drawer
