@@ -24,6 +24,22 @@ export default function AddIconForm({
     }
   };
 
+  const handleIconUpload = (file: File) => {
+    return new Promise<String>((resolve, reject) => {
+      if (file.type.startsWith("image/") && file.size < 3 * 1024 * 1024) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result as string);
+        };
+
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      } else {
+        reject(new Error("Invalid file type"));
+      }
+    });
+  };
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
@@ -36,7 +52,7 @@ export default function AddIconForm({
     const newIcon = {
       name: formData.get("name") as string,
       destination: formData.get("destination") as string,
-      iconURL: formData.get("iconURL") as string,
+      iconURL: formData.get("iconURL") as String,
     };
 
     //@ts-ignore
@@ -44,6 +60,16 @@ export default function AddIconForm({
     const newPosition = highestPositionIcon
       ? highestPositionIcon.position + 1
       : 0;
+
+    if (!useIconURLToggle) {
+      const iconImage = formData.get("iconUpload") as File;
+      if (iconImage && iconImage.size > 0) {
+        newIcon.iconURL = await handleIconUpload(iconImage);
+        console.log("I'm inside the if");
+      }
+    }
+
+    console.log(newIcon);
 
     try {
       // wait 1 second
@@ -102,7 +128,6 @@ export default function AddIconForm({
               className="toggle toggle-primary ml-2"
               checked={useIconURLToggle}
               onChange={handleUseIconURLToggle}
-              disabled
             />
           </label>
         </div>
@@ -126,6 +151,7 @@ export default function AddIconForm({
             <input
               type="file"
               className="file-input file-input-bordered w-full max-w-xs add-icon-form-input"
+              name="iconUpload"
             />
           </div>
         )}
