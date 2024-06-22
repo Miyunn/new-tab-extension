@@ -7,13 +7,15 @@ export default function AddIconForm({
 }: {
   closeDrawer: () => void;
 }) {
-  const [useIconURLToggle, setUseIconURLToggle] = useState(true);
+  const [useIconURLToggle, setUseIconURLToggle] = useState(false);
 
   const handleUseIconURLToggle = () => {
     setUseIconURLToggle(!useIconURLToggle);
+    setError("");
   };
 
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
 
   const clearForm = () => {
     const form = document.querySelector(
@@ -22,22 +24,22 @@ export default function AddIconForm({
     if (form) {
       form.reset();
     }
+    setError("");
   };
 
-  const handleIconUpload = (file: File) => {
-    return new Promise<String>((resolve, reject) => {
-      if (file.type.startsWith("image/") && file.size < 3 * 1024 * 1024) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          resolve(reader.result as string);
-        };
-
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      } else {
-        reject(new Error("Invalid file type"));
+  const handleIconUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        setError("Invalid file type");
+        return;
       }
-    });
+      if (file.size > 3 * 1024 * 1024) {
+        setError("File size must be less than 3MB");
+        return;
+      }
+      setError("");
+    }
   };
 
   const handleSubmit = async (
@@ -64,12 +66,32 @@ export default function AddIconForm({
     if (!useIconURLToggle) {
       const iconImage = formData.get("iconUpload") as File;
       if (iconImage && iconImage.size > 0) {
-        newIcon.iconURL = await handleIconUpload(iconImage);
-        console.log("I'm inside the if");
+        try {
+          newIcon.iconURL = await new Promise<string>((resolve, reject) => {
+            if (
+              iconImage.type.startsWith("image/") &&
+              iconImage.size < 3 * 1024 * 1024
+            ) {
+              const reader = new FileReader();
+              reader.onload = () => {
+                resolve(reader.result as string);
+              };
+
+              reader.onerror = () => {
+                reject(new Error("Error reading file"));
+              };
+              reader.readAsDataURL(iconImage);
+            } else {
+              reject(new Error("Invalid file type or size"));
+            }
+          });
+        } catch {
+          setError("Error reading file");
+          setPending(false);
+          return;
+        }
       }
     }
-
-    console.log(newIcon);
 
     try {
       // wait 1 second
@@ -141,6 +163,7 @@ export default function AddIconForm({
               name="iconURL"
               placeholder="Image URL here"
               className="input input-bordered add-icon-form-input"
+              required
             />
           </div>
         ) : (
@@ -152,13 +175,16 @@ export default function AddIconForm({
               type="file"
               className="file-input file-input-bordered w-full max-w-xs add-icon-form-input"
               name="iconUpload"
+              onChange={handleIconUpload}
+              required
             />
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
         )}
         <button
           type="submit"
           className="btn btn-primary mt-6 w-full"
-          disabled={pending}
+          disabled={pending || (error !== "" ? true : false)}
         >
           {pending ? "Adding Icon..." : "Add Icon"}
         </button>

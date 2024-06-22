@@ -142,7 +142,7 @@ export default function App() {
           onClose={onCloseShowIcons}
           open={openAddIcon}
           closable={false}
-          height={530}
+          height={540}
           className="custom-drawer"
         >
           <AddIconForm closeDrawer={onCloseShowIcons} />
