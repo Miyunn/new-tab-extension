@@ -1,5 +1,21 @@
 import { useState } from "react";
 import { ColorPicker } from "antd";
+
+const handleImageUpload = (file: File) => {
+  return new Promise<String>((resolve, reject) => {
+    if (file.size > 4 * 1024 * 1024 || !file.type.startsWith("image/")) {
+      reject(new Error("File size is too large"));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function ChangeSettings({
   setSettings,
   settings,
@@ -10,6 +26,24 @@ export default function ChangeSettings({
   closeDrawer: () => void;
 }) {
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+
+  const imageUploadValidation = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        setError("Invalid file type");
+        return;
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        setError("File size must be less than 4MB");
+        return;
+      }
+      setError("");
+    }
+  };
 
   const [backgroundColor, setBackgroundColor] = useState(
     settings.backgroundColor || "#1677ff",
@@ -18,22 +52,6 @@ export default function ChangeSettings({
   const [backgroundType, setBackgroundType] = useState(
     settings.backgroundType || "dark",
   );
-
-  const handleImageUpload = (file: File) => {
-    return new Promise<String>((resolve, reject) => {
-      if (file.size > 4 * 1024 * 1024) {
-        reject(new Error("File size is too large"));
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setPending(true);
@@ -69,13 +87,11 @@ export default function ChangeSettings({
       }
       setSettings(newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));
+      setPending(false);
+      closeDrawer();
     } catch (error) {
-      console.error("Error adding background", error);
+      setError("Error saving settings");
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 700));
-    setPending(false);
-    closeDrawer();
   };
 
   function ResetSettings() {
@@ -130,8 +146,10 @@ export default function ChangeSettings({
                   className="file-input file-input-bordered"
                   name="backgroundImage"
                   style={{ width: "335.35px" }}
+                  onChange={imageUploadValidation}
                 />
               </label>
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
 
             <div className="form-control w-full max-w py-2">
@@ -372,6 +390,7 @@ export default function ChangeSettings({
           <button
             type="button"
             className="btn btn-outline btn-error w-1/2  ml-2"
+            disabled
           >
             Remove Icons
           </button>
@@ -379,13 +398,13 @@ export default function ChangeSettings({
         <button
           type="submit"
           className="btn btn-primary mt-4 w-full"
-          disabled={pending}
+          disabled={pending || (error !== "" ? true : false)}
         >
-          {pending ? "Saved" : "Save"}
+          {pending ? "Saving..." : error !== "" ? error : "Save"}
         </button>
       </form>
 
-      <div className="text-right text-sm text-slate-600 pt-2">
+      <div className="text-right text-xs text-slate-600 pt-2">
         Version : {settings.version}
       </div>
     </div>

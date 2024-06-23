@@ -38,6 +38,20 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
+  const [loading, setLoading] = useState(true);
+
+  // Fetching Icon data from here
+  // live detects changes in the database and updates the UI
+  // Updated on changes in the settings
+  const iconTable = db.table("icons");
+  const icons = useLiveQuery(async () => {
+    const result = await iconTable
+      .orderBy(settings.iconOrder || "id")
+      .toArray();
+    setLoading(false);
+    return result;
+  }, [settings]);
+
   let bg = {};
 
   if (settings.backgroundType === "dark") {
@@ -66,25 +80,12 @@ export default function App() {
     };
   }
 
-  const [loading, setLoading] = useState(true);
-
-  // Fetching Icon data from here
-  // live detects changes in the database and updates the UI
-  // Updated on changes in the settings
-  const iconTable = db.table("icons");
-  const icons = useLiveQuery(async () => {
-    const result = await iconTable
-      .orderBy(settings.iconOrder || "id")
-      .toArray();
-    setLoading(false);
-    return result;
-  }, [settings]);
-
   useEffect(() => {
     if (icons === undefined) {
       setLoading(true);
     }
   }, [icons]);
+
   const [openSettings, setOpenSettings] = useState(false);
 
   const showSettings = () => {
