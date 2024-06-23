@@ -1,21 +1,67 @@
 import { useState } from "react";
 import { ColorPicker } from "antd";
 import db from "../../database/indexDb";
+import { FastAverageColor } from "fast-average-color";
 
-async function handleImageUpload(file: File) {
-  return new Promise<String>((resolve, reject) => {
-    if (file.size > 4 * 1024 * 1024 || !file.type.startsWith("image/")) {
-      reject(new Error("File size is too large"));
+const fac = new FastAverageColor();
+
+async function handleImageUpload(file: File): Promise<string> {
+  try {
+    const imageDataUrl = await uploadImage(file);
+
+    // @ts-ignore
+    await db.wallpaper.update(1, { data: imageDataUrl });
+
+    const colorHex = await getColorFromImage(imageDataUrl);
+
+    console.log("Color from image:", colorHex);
+
+    return colorHex;
+  } catch (error) {
+    throw error;
+  }
+}
+
+function uploadImage(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    if (file.size > 8 * 1024 * 1024 || !file.type.startsWith("image/")) {
+      reject(new Error("File size is too large or not an image file"));
       return;
     }
+
     const reader = new FileReader();
-    reader.onload = async () => {
-      resolve(reader.result as string);
-      // @ts-ignore
-      await db.wallpaper.update(1, { data: reader.result });
+
+    reader.onload = () => {
+      const imageDataUrl = reader.result as string;
+      resolve(imageDataUrl);
     };
-    reader.onerror = reject;
+
+    reader.onerror = () => {
+      reader.abort();
+      reject(new Error("Error reading file"));
+    };
+
     reader.readAsDataURL(file);
+  });
+}
+
+async function getColorFromImage(imageDataUrl: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const img = new Image();
+    img.onload = async () => {
+      try {
+        const color = await fac.getColorAsync(img);
+        resolve(color.hex);
+      } catch (error) {
+        reject(error); // Propagate getColorAsync error
+      }
+    };
+
+    img.onerror = () => {
+      reject(new Error("Failed to load the image"));
+    };
+
+    img.src = imageDataUrl;
   });
 }
 
@@ -40,7 +86,7 @@ export default function ChangeSettings({
         setError("Invalid file type");
         return;
       }
-      if (file.size > 4 * 1024 * 1024) {
+      if (file.size > 8 * 1024 * 1024) {
         setError("File size must be less than 4MB");
         return;
       }
@@ -75,7 +121,6 @@ export default function ChangeSettings({
       backgroundType: formData.get("backgroundType") as string,
       backgroundColor: `#${backgroundColor}`,
       version: settings.version,
-      backgroundImage: settings.backgroundImage,
       backgroundTintIntensity: formData.get(
         "backgroundTintIntensity",
       ) as string,
@@ -85,7 +130,8 @@ export default function ChangeSettings({
     try {
       const backgroundImageFile = formData.get("backgroundImage") as File;
       if (backgroundImageFile && backgroundImageFile.size > 0) {
-        await handleImageUpload(backgroundImageFile);
+        const colorHex = await handleImageUpload(backgroundImageFile);
+        newSettings.backgroundColor = colorHex;
       }
       setSettings(newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));

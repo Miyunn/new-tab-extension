@@ -38,18 +38,15 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
+  document.body.style.backgroundColor = settings.backgroundColor;
+
   const [loading, setLoading] = useState(true);
 
-  let wallpaperData = null;
-
-  if (settings.backgroundType === "image") {
-    const wallpaperTable = db.table("wallpaper");
-    wallpaperData = useLiveQuery(async () => {
-      const result = await wallpaperTable.where("id").equals(1).toArray();
-      console.log("Query result:", result);
-      return result.map((item) => item.data);
-    });
-  }
+  const wallpaperTable = db.table("wallpaper");
+  const wallpaperData = useLiveQuery(async () => {
+    const result = await wallpaperTable.where("id").equals(1).toArray();
+    return result.map((item) => item.data);
+  }, []);
 
   // live detects changes in the database and updates the UI
   // Updated on changes in the settings
@@ -66,7 +63,6 @@ export default function App() {
 
   if (settings.backgroundType === "image") {
     bg = {
-      backgroundColor: "black",
       backgroundImage: `url(${wallpaperData})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
@@ -84,10 +80,6 @@ export default function App() {
       backgroundColor: "#f6def1",
       backgroundImage:
         "linear-gradient(308deg, #f6def1 0%, #cfb3e2 50%, #86cdff 100%)",
-    };
-  } else if (settings.backgroundType === "color") {
-    bg = {
-      backgroundColor: settings.backgroundColor,
     };
   }
 
