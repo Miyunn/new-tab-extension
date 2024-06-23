@@ -3,6 +3,7 @@ import Dexie from "dexie";
 const db = new Dexie("new-tab");
 db.version(1).stores({
   icons: "id, name, url, src, position",
+  wallpaper: "id, data",
 });
 
 // Remove this later, no need to auto populate icons in prod
@@ -66,6 +67,12 @@ db.on("populate", async () => {
       position: 7,
     },
   ]);
+
+  // @ts-ignore
+  await db.wallpaper.add({
+    id: 1,
+    data: "",
+  });
 });
 
 export default db;

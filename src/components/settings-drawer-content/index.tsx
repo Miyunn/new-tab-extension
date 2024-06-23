@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { ColorPicker } from "antd";
+import db from "../../database/indexDb";
 
-const handleImageUpload = (file: File) => {
+async function handleImageUpload(file: File) {
   return new Promise<String>((resolve, reject) => {
     if (file.size > 4 * 1024 * 1024 || !file.type.startsWith("image/")) {
       reject(new Error("File size is too large"));
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       resolve(reader.result as string);
+      // @ts-ignore
+      await db.wallpaper.update(1, { data: reader.result });
     };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
-};
+}
 
 export default function ChangeSettings({
   setSettings,
@@ -82,8 +85,7 @@ export default function ChangeSettings({
     try {
       const backgroundImageFile = formData.get("backgroundImage") as File;
       if (backgroundImageFile && backgroundImageFile.size > 0) {
-        newSettings.backgroundImage =
-          await handleImageUpload(backgroundImageFile);
+        await handleImageUpload(backgroundImageFile);
       }
       setSettings(newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));

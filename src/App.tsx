@@ -40,7 +40,17 @@ export default function App() {
 
   const [loading, setLoading] = useState(true);
 
-  // Fetching Icon data from here
+  let wallpaperData = null;
+
+  if (settings.backgroundType === "image") {
+    const wallpaperTable = db.table("wallpaper");
+    wallpaperData = useLiveQuery(async () => {
+      const result = await wallpaperTable.where("id").equals(1).toArray();
+      console.log("Query result:", result);
+      return result.map((item) => item.data);
+    });
+  }
+
   // live detects changes in the database and updates the UI
   // Updated on changes in the settings
   const iconTable = db.table("icons");
@@ -54,7 +64,16 @@ export default function App() {
 
   let bg = {};
 
-  if (settings.backgroundType === "dark") {
+  if (settings.backgroundType === "image") {
+    bg = {
+      backgroundColor: "black",
+      backgroundImage: `url(${wallpaperData})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      filter: `blur(${settings.blurValue}px)`,
+      animation: "bgFade 1s",
+    };
+  } else if (settings.backgroundType === "dark") {
     bg = {
       backgroundColor: "#120312",
       backgroundImage:
@@ -69,14 +88,6 @@ export default function App() {
   } else if (settings.backgroundType === "color") {
     bg = {
       backgroundColor: settings.backgroundColor,
-    };
-  } else if (settings.backgroundType === "image") {
-    bg = {
-      backgroundColor: "black",
-      backgroundImage: `url(${settings.backgroundImage})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      filter: `blur(${settings.blurValue}px)`,
     };
   }
 
