@@ -27,15 +27,17 @@ export default function AddIconForm({
     setError("");
   };
 
-  const handleIconUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const imageUploadValidation = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
         setError("Invalid file type");
         return;
       }
-      if (file.size > 3 * 1024 * 1024) {
-        setError("File size must be less than 3MB");
+      if (file.size > 2 * 1024 * 1024) {
+        setError("File size must be less than 2MB");
         return;
       }
       setError("");
@@ -94,8 +96,6 @@ export default function AddIconForm({
     }
 
     try {
-      // wait 1 second
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       //@ts-ignore
       await db.icons.add({
         id: crypto.randomUUID(),
@@ -104,13 +104,13 @@ export default function AddIconForm({
         url: newIcon.destination,
         position: newPosition,
       });
+      setPending(false);
+      closeDrawer();
+      clearForm();
     } catch (error) {
-      console.error("Error adding icon", error);
+      setError("Error adding icon");
+      setPending(false);
     }
-
-    setPending(false);
-    closeDrawer();
-    clearForm();
   };
 
   return (
@@ -175,7 +175,7 @@ export default function AddIconForm({
               type="file"
               className="file-input file-input-bordered w-full max-w-xs add-icon-form-input"
               name="iconUpload"
-              onChange={handleIconUpload}
+              onChange={imageUploadValidation}
               required
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
