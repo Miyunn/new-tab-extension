@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import "./App.css";
 import Searchbar from "./components/searchbar";
-import ChangeSettings from "./components/settings-drawer-content";
 import ControlIcons from "./components/control-icons";
 import IconGrid from "./layouts/icon-grind";
 import { Drawer } from "antd";
-import AddIconForm from "./components/add-icon-modal-content";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
 import NoIconOptions from "./components/no-icons-options";
+
+const ChangeSettings = lazy(
+  () => import("./components/settings-drawer-content"),
+);
+
+const AddIconForm = lazy(() => import("./components/add-icon-modal-content"));
 
 export default function App() {
   const [settings, setSettings] = useState(() => {
@@ -112,9 +116,11 @@ export default function App() {
   if (loading) {
     return <> </>;
   }
+
+  console.log("Hello");
   return (
     <div className="antialiased overflow-hidden fade-in relative">
-      <div style={bg} className="absolute inset-0">
+      <div style={bg} className="absolute inset-0 AnimateBG">
         {settings.backgroundType === "image" && (
           <div
             style={{
@@ -134,11 +140,13 @@ export default function App() {
           width={400}
           className="custom-drawer"
         >
-          <ChangeSettings
-            setSettings={setSettings}
-            settings={settings}
-            closeDrawer={onCloseSettings}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ChangeSettings
+              setSettings={setSettings}
+              settings={settings}
+              closeDrawer={onCloseSettings}
+            />
+          </Suspense>
         </Drawer>
 
         <Drawer
@@ -149,7 +157,9 @@ export default function App() {
           height={540}
           className="custom-drawer"
         >
-          <AddIconForm closeDrawer={onCloseShowIcons} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <AddIconForm closeDrawer={onCloseShowIcons} />
+          </Suspense>
         </Drawer>
 
         <ControlIcons
