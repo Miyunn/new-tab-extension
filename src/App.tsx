@@ -42,7 +42,7 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
-  document.body.style.backgroundColor = settings.backgroundColor;
+  // document.body.style.backgroundColor = settings.backgroundColor;
 
   const [loading, setLoading] = useState(true);
 
@@ -71,7 +71,7 @@ export default function App() {
       backgroundSize: "cover",
       backgroundPosition: "center",
       filter: `blur(${settings.blurValue}px)`,
-      animation: "bgFade 1s",
+      transform: "scale(1.04)",
     };
   } else if (settings.backgroundType === "dark") {
     bg = {
@@ -84,6 +84,10 @@ export default function App() {
       backgroundColor: "#f6def1",
       backgroundImage:
         "linear-gradient(308deg, #f6def1 0%, #cfb3e2 50%, #86cdff 100%)",
+    };
+  } else {
+    bg = {
+      backgroundColor: settings.backgroundColor,
     };
   }
 
@@ -117,10 +121,9 @@ export default function App() {
     return <> </>;
   }
 
-  console.log("Hello");
   return (
-    <div className="antialiased overflow-hidden fade-in relative">
-      <div style={bg} className="absolute inset-0 AnimateBG">
+    <div className="antialiased overflow-hidden relative">
+      <div style={bg} className="absolute inset-0 fade-in">
         {settings.backgroundType === "image" && (
           <div
             style={{
