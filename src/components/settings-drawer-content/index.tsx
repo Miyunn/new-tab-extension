@@ -120,6 +120,7 @@ export default function ChangeSettings({
       iconOrder: formData.get("iconOrder") as string,
       backgroundType: formData.get("backgroundType") as string,
       backgroundColor: `#${backgroundColor}`,
+      backgroundUrl: formData.get("backgroundUrl") as string,
       version: settings.version,
       backgroundTintIntensity: formData.get(
         "backgroundTintIntensity",
@@ -166,6 +167,7 @@ export default function ChangeSettings({
             <option value="dark">Default</option>
             <option value="color">Solid Color</option>
             <option value="image">Image</option>
+            <option value="url">URL</option>
           </select>
         </div>
 
@@ -183,23 +185,45 @@ export default function ChangeSettings({
         )}
 
         {backgroundType === "image" && (
-          <>
-            <div className="form-control w-full max-w">
-              <label className="form-control w-full max-w-xs">
-                <div className="label">
-                  <span className="label-text">Pick an image</span>
-                </div>
-                <input
-                  type="file"
-                  className="file-input file-input-bordered"
-                  name="backgroundImage"
-                  style={{ width: "335.35px" }}
-                  onChange={imageUploadValidation}
-                />
-              </label>
-              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            </div>
+          <div className="form-control w-full max-w">
+            <label className="form-control w-full max-w-xs">
+              <div className="label">
+                <span className="label-text">Pick an image</span>
+              </div>
+              <input
+                type="file"
+                className="file-input file-input-bordered"
+                name="backgroundImage"
+                style={{ width: "335.35px" }}
+                onChange={imageUploadValidation}
+              />
+            </label>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          </div>
+        )}
 
+        {backgroundType === "url" && (
+          <div className="form-control w-full max-w">
+            <label className="form-control w-full max-w-xs">
+              <div className="label">
+                <span className="label-text">Image URL</span>
+              </div>
+              <input
+                type="text"
+                className="input input-bordered"
+                placeholder="Paste URL here"
+                name="backgroundUrl"
+                required
+                defaultValue={settings.backgroundUrl}
+                style={{ width: "335.35px" }}
+              />
+            </label>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          </div>
+        )}
+
+        {(backgroundType === "image" || backgroundType === "url") && (
+          <>
             <div className="form-control w-full max-w py-2">
               <label className="label">
                 <span className="label-text">Wallpaper tint</span>

@@ -31,8 +31,8 @@ export default function App() {
         iconColumns: 5,
         iconGap: 20,
         backgroundType: "dark",
-        backgroundImage: "",
-        backgroundColor: "#120312",
+        bacfgroundColor: "#120312",
+        backgroundUrl: "",
         backgroundTintIntensity: 0.5,
         blurValue: 0,
       };
@@ -65,9 +65,15 @@ export default function App() {
 
   let bg = {};
 
-  if (settings.backgroundType === "image") {
+  if (
+    settings.backgroundType === "image" ||
+    settings.backgroundType === "url"
+  ) {
     bg = {
-      backgroundImage: `url(${wallpaperData})`,
+      backgroundImage:
+        settings.backgroundType === "image"
+          ? `url(${wallpaperData})`
+          : `url(${settings.backgroundUrl})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       filter: `blur(${settings.blurValue}px)`,
@@ -124,7 +130,7 @@ export default function App() {
   return (
     <div className="antialiased overflow-hidden relative">
       <div style={bg} className="absolute inset-0 fade-in">
-        {settings.backgroundType === "image" && (
+        {(settings.backgroundType === "image" || settings.backgroundType === "url") && (
           <div
             style={{
               backgroundColor: "black",
