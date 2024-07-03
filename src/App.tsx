@@ -7,6 +7,7 @@ import { Drawer } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
 import NoIconOptions from "./components/no-icons-options";
+import { defaultSettings } from "./database/defaultSettings";
 
 const ChangeSettings = lazy(
   () => import("./components/settings-drawer-content"),
@@ -18,24 +19,6 @@ export default function App() {
   const [settings, setSettings] = useState(() => {
     const localValue = localStorage.getItem("settings");
     if (localValue == null) {
-      const defaultSettings = {
-        version: "0.1",
-        searchBar: true,
-        searchEngine: "google",
-        searchBarWidth: 300,
-        iconVisibility: true,
-        layoutStyle: "grid",
-        iconLabel: true,
-        iconOrder: "position",
-        iconSize: 50,
-        iconColumns: 5,
-        iconGap: 20,
-        backgroundType: "dark",
-        bacfgroundColor: "#120312",
-        backgroundUrl: "",
-        backgroundTintIntensity: 0.5,
-        blurValue: 0,
-      };
       localStorage.setItem("settings", JSON.stringify(defaultSettings));
       return defaultSettings;
     }
@@ -130,15 +113,16 @@ export default function App() {
   return (
     <div className="antialiased overflow-hidden relative">
       <div style={bg} className="absolute inset-0 fade-in">
-        {(settings.backgroundType === "image" || settings.backgroundType === "url") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+        {(settings.backgroundType === "image" ||
+          settings.backgroundType === "url") && (
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
       <div className="relative z-10">
         <Drawer
