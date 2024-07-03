@@ -6,7 +6,6 @@ db.version(1).stores({
   wallpaper: "id, data",
 });
 
-// Remove this later, no need to auto populate icons in prod
 db.on("populate", async () => {
   // @ts-ignore
   await db.icons.bulkAdd([
@@ -58,13 +57,6 @@ db.on("populate", async () => {
       src: "https://img.icons8.com/color/48/reddit.png",
       url: "https://www.reddit.com",
       position: 6,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "WhatsApp",
-      src: "https://img.icons8.com/color/48/whatsapp--v1.png",
-      url: "https://web.whatsapp.com/",
-      position: 7,
     },
   ]);
 
