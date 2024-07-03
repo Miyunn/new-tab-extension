@@ -4,6 +4,7 @@ import { FastAverageColor } from "fast-average-color";
 import WallpaperSettings from "./components/wallpaper-settings";
 import SearchbarSettings from "./components/searchbar-settings";
 import IconSettings from "./components/icon-settings";
+import ResetOptionSettings from "./components/reset-options";
 
 const fac = new FastAverageColor();
 
@@ -165,23 +166,7 @@ export default function ChangeSettings({
         <SearchbarSettings settings={settings} />
         <IconSettings settings={settings} />
 
-        <div className="divider text-sm">Reset</div>
-        <div className="flex w-full max-w ">
-          <button
-            type="button"
-            onClick={ResetSettings}
-            className="btn btn-outline btn-error flex-grow mr-2"
-          >
-            Reset Settings
-          </button>
-          <button
-            type="button"
-            className="btn btn-outline btn-error w-1/2  ml-2"
-            disabled
-          >
-            Remove Icons
-          </button>
-        </div>
+        <ResetOptionSettings resetSettings={ResetSettings} />
         <button
           type="submit"
           className="btn btn-primary mt-4 w-full"
