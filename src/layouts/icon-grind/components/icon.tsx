@@ -6,8 +6,13 @@ interface Props {
   labels: boolean;
 }
 const Icon = ({ iconName, children, url, labels }: Props) => {
-  const handleIconClick = () => {
-    window.location.href = url;
+  const handleIconClick = (event: React.MouseEvent) => {
+    if (event.button === 1) {
+      // handle middle click to open in a new tab
+      window.open(url, "_blank");
+    } else if (event.button === 0) {
+      window.location.href = url;
+    }
   };
 
   return (
@@ -15,7 +20,7 @@ const Icon = ({ iconName, children, url, labels }: Props) => {
       <a
         aria-label={iconName}
         className="flex flex-col items-center"
-        onClick={handleIconClick}
+        onMouseDown={handleIconClick}
       >
         <div className="rounded-full items-center justify-center">
           {children}
