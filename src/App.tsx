@@ -133,7 +133,13 @@ export default function App() {
           width={400}
           className="custom-drawer"
         >
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-full">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            }
+          >
             <ChangeSettings
               setSettings={setSettings}
               settings={settings}
@@ -150,7 +156,13 @@ export default function App() {
           height={540}
           className="custom-drawer"
         >
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center h-full">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            }
+          >
             <AddIconForm closeDrawer={onCloseShowIcons} />
           </Suspense>
         </Drawer>
