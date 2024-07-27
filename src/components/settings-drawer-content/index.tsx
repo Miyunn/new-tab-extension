@@ -5,6 +5,7 @@ import WallpaperSettings from "./components/wallpaper-settings";
 import SearchbarSettings from "./components/searchbar-settings";
 import IconSettings from "./components/icon-settings";
 import ResetOptionSettings from "./components/reset-options";
+import BackupAndRestore from "./components/export-import-settings";
 
 const fac = new FastAverageColor();
 
@@ -165,6 +166,7 @@ export default function ChangeSettings({
         />
         <SearchbarSettings settings={settings} />
         <IconSettings settings={settings} />
+        <BackupAndRestore />
 
         <ResetOptionSettings resetSettings={ResetSettings} />
         <button
