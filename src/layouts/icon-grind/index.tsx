@@ -79,7 +79,7 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
 const IconGrid = ({ heightWidth, labels, gap, columns, iconData }: Props) => {
   return (
     <div
-      className="grid mt-10"
+      className="grid my-10"
       style={{
         gap: `${gap}px`,
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
