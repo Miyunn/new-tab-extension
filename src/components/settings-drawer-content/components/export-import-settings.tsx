@@ -54,7 +54,8 @@ export default function BackupAndRestore() {
                     console.error("Import failed: ", err);
                   } else {
                     console.log("Imported data successfully");
-                    window.location.reload();
+                    // window.location.reload();
+                    // The reload code here sometimes breaks the import, have to find a different solution
                   }
                 },
               );
