@@ -1,7 +1,7 @@
 .icon {
-  transition: filter 350ms;
+  transition: filter 350ms ease;
   cursor: pointer;
 }
 .icon:hover {
-  filter: brightness(1.15);
+  filter: brightness(1.2);
 }
