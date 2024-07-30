@@ -48,7 +48,7 @@ function uploadImage(file: File): Promise<string> {
 }
 
 // grabs the most common colour from the wallpaper
-// function not in use yet, but will put to use later :>
+// function not in use yet, but I have plans for this :>
 async function getColorFromImage(imageDataUrl: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const img = new Image();
@@ -86,6 +86,8 @@ export default function ChangeSettings({
   const [backgroundType, setBackgroundType] = useState(
     settings.backgroundType || "dark",
   );
+
+  const [openMoreSettings, setOpenMoreSettings] = useState(false);
 
   //Validates image when selected and blocks upload (disable save button)
   const imageUploadValidation = (
@@ -166,9 +168,6 @@ export default function ChangeSettings({
         />
         <SearchbarSettings settings={settings} />
         <IconSettings settings={settings} />
-        <BackupAndRestore />
-
-        <ResetOptionSettings resetSettings={ResetSettings} />
         <button
           type="submit"
           className="btn btn-primary mt-4 w-full"
@@ -177,6 +176,21 @@ export default function ChangeSettings({
           {pending ? "Saving..." : error !== "" ? error : "Save"}
         </button>
       </form>
+
+      <div className="collapse-arrow">
+        <div
+          className="collapse-title text-lg cursor-pointer"
+          onClick={() => setOpenMoreSettings(!openMoreSettings)}
+        >
+          More Settings
+        </div>
+        {openMoreSettings && (
+          <div>
+            <BackupAndRestore />
+            <ResetOptionSettings resetSettings={ResetSettings} />
+          </div>
+        )}
+      </div>
       <div className="text-right text-xs text-slate-600 pt-2">
         Version : {settings.version}
       </div>
