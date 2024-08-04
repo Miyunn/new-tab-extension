@@ -115,7 +115,7 @@ export default function BackupAndRestore() {
           onClick={backupIcons}
           className="btn btn-outline flex-grow mr-2"
         >
-          Backup Icons
+          Save Backup
         </button>
         <button
           type="button"
@@ -127,7 +127,7 @@ export default function BackupAndRestore() {
             modal.showModal();
           }}
         >
-          Import Icons
+          Restore
         </button>
       </div>
     </>

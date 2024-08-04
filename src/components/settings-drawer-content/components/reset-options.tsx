@@ -70,7 +70,7 @@ export default function ResetOptionSettings({
           </div>
         </div>
       </dialog>
-      <div className="divider text-sm">Delete</div>
+      <div className="divider text-sm">Reset</div>
       <div className="flex w-full max-w ">
         <button
           type="button"
