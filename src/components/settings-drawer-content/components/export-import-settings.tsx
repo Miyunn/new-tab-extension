@@ -78,6 +78,9 @@ export default function BackupAndRestore() {
                       setBusy(false);
                     } else {
                       console.log("Imported data successfully");
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 2000); // A 2 sec buffer is set before the page reloads to ensure index db gets updated safely
                     }
                   },
                 );
