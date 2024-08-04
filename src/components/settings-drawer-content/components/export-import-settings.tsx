@@ -80,6 +80,34 @@ export default function BackupAndRestore() {
 
   return (
     <>
+      <dialog id="import_icon_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Restore Data</h3>
+          <p className="py-4">
+            Importing will override all existing data, are you sure you want to
+            continue?
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <input
+                type="file"
+                id="fileInput"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                className="btn btn-primary flex-grow mr-2"
+                onClick={() => document.getElementById("fileInput")?.click()}
+              >
+                Select File
+              </button>
+              <button className="btn">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
       <div className="divider text-sm">Backup And Restore</div>
       <div className="flex w-full max-w">
         <button
@@ -89,16 +117,15 @@ export default function BackupAndRestore() {
         >
           Backup Icons
         </button>
-        <input
-          type="file"
-          id="fileInput"
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
         <button
           type="button"
           className="btn btn-outline w-1/2 ml-2"
-          onClick={() => document.getElementById("fileInput")?.click()}
+          onClick={() => {
+            const modal = document.getElementById(
+              "import_icon_modal",
+            ) as HTMLDialogElement;
+            modal.showModal();
+          }}
         >
           Import Icons
         </button>
