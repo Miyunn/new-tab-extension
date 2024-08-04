@@ -16,6 +16,7 @@ function nukeDatabase() {
           console.error("Clear database failed: ", err);
         } else {
           console.log("Database cleared successfully");
+          window.location.reload();
         }
       });
     })
