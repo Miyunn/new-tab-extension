@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense, MouseEvent } from "react";
 import "./App.css";
 import Searchbar from "./components/searchbar";
 import ControlIcons from "./components/control-icons";
@@ -34,6 +34,10 @@ export default function App() {
     const result = await wallpaperTable.where("id").equals(1).toArray();
     return result.map((item) => item.data);
   }, []);
+
+  const disableRightClick = (e: MouseEvent) => {
+    e.preventDefault();
+  };
 
   // live detects changes in the database and updates the UI
   // Updated on changes in the settings
@@ -78,7 +82,7 @@ export default function App() {
     bg = {
       backgroundColor: settings.backgroundColor,
     };
-  }
+  } // Function to disable the right-click context menu
 
   useEffect(() => {
     if (icons === undefined) {
@@ -111,7 +115,10 @@ export default function App() {
   }
 
   return (
-    <div className="antialiased overflow-hidden relative">
+    <div
+      className="antialiased overflow-hidden relative"
+      onContextMenu={disableRightClick}
+    >
       <div style={bg} className="absolute inset-0 fade-in">
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url") && (
