@@ -25,8 +25,6 @@ export default function App() {
     return JSON.parse(localValue);
   });
 
-  // document.body.style.backgroundColor = settings.backgroundColor;
-
   const [loading, setLoading] = useState(true);
 
   const wallpaperTable = db.table("wallpaper");
@@ -82,7 +80,7 @@ export default function App() {
     bg = {
       backgroundColor: settings.backgroundColor,
     };
-  } // Function to disable the right-click context menu
+  }
 
   useEffect(() => {
     if (icons === undefined) {
