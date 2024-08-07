@@ -34,6 +34,7 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
       {
         label: "Edit",
         key: "edit",
+        disabled: true,
         icon: <EditOutlined />,
         onClick: () => {
           editIcon(iconData);
