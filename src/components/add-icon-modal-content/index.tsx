@@ -114,7 +114,7 @@ export default function AddIconForm({
   };
 
   return (
-    <div className="bg-black flex justify-center items-center">
+    <div className="flex justify-center items-center">
       <form className="max-w-md" onSubmit={handleSubmit} name="addIconForm">
         <div className="divider text-sm">Add Icon</div>
         <div className="form-control mt-4">
@@ -136,7 +136,7 @@ export default function AddIconForm({
           <input
             type="text"
             name="destination"
-            placeholder="Where to?"
+            placeholder="Destination URL"
             className="input input-bordered add-icon-form-input"
             required
           />
@@ -186,7 +186,7 @@ export default function AddIconForm({
           className="btn btn-primary mt-6 w-full"
           disabled={pending || (error !== "" ? true : false)}
         >
-          {pending ? "Adding Icon..." : "Add Icon"}
+          {pending ? "Saving Icon..." : "Save Icon"}
         </button>
       </form>
     </div>

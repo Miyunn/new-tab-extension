@@ -64,7 +64,7 @@ export default function ResetOptionSettings({
                 className="btn btn-error flex-grow mr-2"
                 onClick={nukeDatabase}
               >
-                Reset
+                Delete
               </button>
               <button className="btn">Cancel</button>
             </form>

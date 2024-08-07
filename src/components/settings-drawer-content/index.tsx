@@ -154,7 +154,7 @@ export default function ChangeSettings({
     location.reload();
   }
   return (
-    <div className="bg-black">
+    <div>
       <form onSubmit={handleSubmit}>
         <h2 className="text-lg"> Settings </h2>
         <WallpaperSettings
@@ -177,7 +177,7 @@ export default function ChangeSettings({
         </button>
       </form>
 
-      <div className="collapse-arrow">
+      <div className="collapse-arrow max-w">
         <div
           className="collapse-title text-lg cursor-pointer"
           onClick={() => setOpenMoreSettings(!openMoreSettings)}

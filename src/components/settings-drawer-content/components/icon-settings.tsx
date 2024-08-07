@@ -27,7 +27,6 @@ export default function IconSettings({ settings }: IconSettingsProps) {
           defaultValue={settings.iconLayout}
         >
           <option value="grid">Grid Style</option>
-          <option disabled>Other Styles are coming soon</option>
         </select>
       </div>
       <div className="form-control w-full max-w">
@@ -39,7 +38,7 @@ export default function IconSettings({ settings }: IconSettingsProps) {
           className="select select-bordered w-full max-w"
           defaultValue={settings.iconOrder}
         >
-          <option value="name">Name</option>
+          <option value="name">Name (ASC)</option>
           <option value="position">Custom</option>
         </select>
       </div>
