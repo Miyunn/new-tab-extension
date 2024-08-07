@@ -64,6 +64,7 @@ const icons = (heightWidth: number, labels: boolean, iconData: any[]) =>
             iconName={icon.name}
             url={icon.url}
             labels={labels}
+            height={heightWidth}
           >
             <img
               width={heightWidth}

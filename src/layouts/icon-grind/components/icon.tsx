@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
+
 interface Props {
   iconName: string;
   children: ReactNode;
   url: string;
   labels: boolean;
+  height: number;
 }
-const Icon = ({ iconName, children, url, labels }: Props) => {
+
+const Icon = ({ iconName, children, url, labels, height }: Props) => {
   const handleIconClick = (event: React.MouseEvent) => {
     if (event.button === 1) {
       // handle middle click to open in a new tab
@@ -22,12 +25,15 @@ const Icon = ({ iconName, children, url, labels }: Props) => {
         className="flex flex-col items-center"
         onMouseDown={handleIconClick}
       >
-        <div className="rounded-full items-center justify-center">
+        <div
+          className="flex items-center justify-center"
+          style={{ height: `${height}px` }}
+        >
           {children}
         </div>
         {labels && (
           <p
-            className="mt-1 text-xs text-center text-gray-500 dark:text-gray-400 truncate"
+            className="mt-1.5 text-xs text-center text-gray-500 dark:text-gray-400 truncate"
             style={{ maxWidth: "75px" }}
           >
             {iconName}
