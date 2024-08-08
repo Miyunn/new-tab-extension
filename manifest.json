@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "version": "0.2",
   "description": "Replaces default chrome new tab with a custom page",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["scripting"],
   "background": {},
   "host_permissions": ["chrome://newtab"],
   "icons": {
