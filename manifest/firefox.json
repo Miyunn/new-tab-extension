@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
 
   "browser_specific_settings": {
     "gecko": {
@@ -8,7 +8,7 @@
     }
   },
 
-  "name": "New Tab (public beta)",
+  "name": "New Tab (beta)",
   "version": "0.2",
   "description": "Replaced default new tab page with a customizable page",
 
@@ -17,17 +17,11 @@
     "32": "icon32.png"
   },
 
-  "chrome_url_overrides": {
-    "newtab": "index.html"
+  "chrome_settings_overrides": {
+    "homepage": "index.html"
   },
 
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
-
-  "content_security_policy": "script-src 'self' https://example.com; object-src 'self'",
-
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"]
-    }
-  ]
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  }
 }
