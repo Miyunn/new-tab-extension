@@ -6,7 +6,7 @@
 
 ## Download Links
 
-Google Chrome
+[Google Chrome](https://chromewebstore.google.com/detail/new-tab/efkjicbjocdcgnbppfgfmppfjpfcfhaj)
 
 [Firefox](https://addons.mozilla.org/en-US/firefox/addon/new-tab-public-beta/)
 
