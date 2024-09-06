@@ -38,7 +38,7 @@ export default function IconSettings({ settings }: IconSettingsProps) {
           className="select select-bordered w-full max-w"
           defaultValue={settings.iconOrder}
         >
-          <option value="name">Name (ASC)</option>
+          <option value="name">Name</option>
           <option value="position">Custom</option>
         </select>
       </div>

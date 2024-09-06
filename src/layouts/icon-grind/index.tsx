@@ -16,6 +16,7 @@ interface Props {
   labels: boolean;
   iconData: IconData[];
   setIconData: React.Dispatch<React.SetStateAction<IconData[]>>;
+  sortType: string;
 }
 
 const updateAllIconPositions = async (icons: IconData[]) => {
@@ -112,6 +113,7 @@ const IconGrid = ({
   columns,
   iconData,
   setIconData,
+  sortType,
 }: Props) => {
   const [draggingIcons, setDraggingIcons] = useState(false);
 
@@ -142,24 +144,45 @@ const IconGrid = ({
   };
 
   return (
-    <DndContext onDragStart={startDrag} onDragEnd={handleDragEnd}>
-      <div
-        className="grid my-10"
-        style={{
-          gap: `${gap}px`,
-          gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        }}
-      >
-        <SortableContext items={iconData}>
-          <IconComponent
-            heightWidth={heightWidth}
-            labels={labels}
-            iconData={iconData}
-            draggable={draggingIcons}
-          />
-        </SortableContext>
-      </div>
-    </DndContext>
+    <>
+      {sortType === "position" ? (
+        <DndContext onDragStart={startDrag} onDragEnd={handleDragEnd}>
+          <div
+            className="grid my-10"
+            style={{
+              gap: `${gap}px`,
+              gridTemplateColumns: `repeat(${columns}, 1fr)`,
+            }}
+          >
+            <SortableContext items={iconData}>
+              <IconComponent
+                heightWidth={heightWidth}
+                labels={labels}
+                iconData={iconData}
+                draggable={draggingIcons}
+              />
+            </SortableContext>
+          </div>
+        </DndContext>
+      ) : (
+        <div
+          className="grid my-10"
+          style={{
+            gap: `${gap}px`,
+            gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          }}
+        >
+          <SortableContext items={iconData}>
+            <IconComponent
+              heightWidth={heightWidth}
+              labels={labels}
+              iconData={iconData}
+              draggable={draggingIcons}
+            />
+          </SortableContext>
+        </div>
+      )}
+    </>
   );
 };
 
