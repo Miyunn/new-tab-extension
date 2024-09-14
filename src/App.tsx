@@ -121,14 +121,14 @@ export default function App() {
       <div style={bg} className="absolute inset-0 fade-in">
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
       <div className="relative z-10">
         <Drawer
@@ -196,6 +196,10 @@ export default function App() {
                 gap={settings.iconGap}
                 setIconData={setIconData}
                 sortType={settings.iconOrder}
+                iconBackground={settings.iconBackground}
+                iconBackgroundColor={settings.iconBackgroundColor}
+                iconBackgroundOpacity={settings.iconBackgroundOpacity}
+                iconBackgroundRadius={settings.iconBackgroundRadius}
               />
             ) : null)}
         </div>

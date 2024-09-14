@@ -6,6 +6,7 @@ import SearchbarSettings from "./components/searchbar-settings";
 import IconSettings from "./components/icon-settings";
 import ResetOptionSettings from "./components/reset-options";
 import BackupAndRestore from "./components/export-import-settings";
+import IconBackground from "./components/icon-background";
 
 const fac = new FastAverageColor();
 
@@ -86,6 +87,9 @@ export default function ChangeSettings({
   const [backgroundType, setBackgroundType] = useState(
     settings.backgroundType || "dark",
   );
+  const [iconBackgroundColor, setIconBackgroundColor] = useState(
+    settings.backgroundColor || "#ffffff",
+  );
 
   const [openMoreSettings, setOpenMoreSettings] = useState(false);
 
@@ -126,6 +130,10 @@ export default function ChangeSettings({
       backgroundType: formData.get("backgroundType") as string,
       backgroundColor: `#${backgroundColor}`,
       backgroundUrl: formData.get("backgroundUrl") as string,
+      iconBackground: formData.get("iconBackground") === "on" ? true : false,
+      iconBackgroundColor: `#${iconBackgroundColor}`,
+      iconBackgroundOpacity: formData.get("iconBackgroundOpacity") as string,
+      iconBackgroundRadius: formData.get("iconBackgroundRadius") as string,
       version: settings.version,
       backgroundTintIntensity: formData.get(
         "backgroundTintIntensity",
@@ -168,6 +176,10 @@ export default function ChangeSettings({
         />
         <SearchbarSettings settings={settings} />
         <IconSettings settings={settings} />
+        <IconBackground
+          settings={settings}
+          setIconBackgroundColor={setIconBackgroundColor}
+        />
         <button
           type="submit"
           className="btn btn-primary mt-4 w-full"

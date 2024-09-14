@@ -17,6 +17,10 @@ interface Props {
   iconData: IconData[];
   setIconData: React.Dispatch<React.SetStateAction<IconData[]>>;
   sortType: string;
+  iconBackground: boolean;
+  iconBackgroundColor: string;
+  iconBackgroundOpacity: number;
+  iconBackgroundRadius: number;
 }
 
 const updateAllIconPositions = async (icons: IconData[]) => {
@@ -43,11 +47,19 @@ const IconComponent = ({
   labels,
   iconData,
   draggable,
+  iconBackground,
+  iconBackgroundColor,
+  iconBackgroundOpacity,
+  iconBackgroundRadius,
 }: {
   heightWidth: number;
   labels: boolean;
   iconData: IconData[];
   draggable: boolean;
+  iconBackground: boolean;
+  iconBackgroundColor: string;
+  iconBackgroundOpacity: number;
+  iconBackgroundRadius: number;
 }) =>
   iconData.map((icon: IconData) => {
     const menuItems: MenuProps["items"] = [
@@ -93,6 +105,10 @@ const IconComponent = ({
             labels={labels}
             height={heightWidth}
             draggable={draggable}
+            iconBackground={iconBackground}
+            iconBackgroundColor={iconBackgroundColor}
+            iconBackgroundOpacity={iconBackgroundOpacity}
+            iconBackgroundRadius={iconBackgroundRadius}
           >
             <img
               width={heightWidth}
@@ -114,6 +130,10 @@ const IconGrid = ({
   iconData,
   setIconData,
   sortType,
+  iconBackground,
+  iconBackgroundColor,
+  iconBackgroundOpacity,
+  iconBackgroundRadius,
 }: Props) => {
   const [draggingIcons, setDraggingIcons] = useState(false);
 
@@ -160,6 +180,10 @@ const IconGrid = ({
                 labels={labels}
                 iconData={iconData}
                 draggable={draggingIcons}
+                iconBackground={iconBackground}
+                iconBackgroundColor={iconBackgroundColor}
+                iconBackgroundOpacity={iconBackgroundOpacity}
+                iconBackgroundRadius={iconBackgroundRadius}
               />
             </SortableContext>
           </div>
@@ -178,6 +202,10 @@ const IconGrid = ({
               labels={labels}
               iconData={iconData}
               draggable={draggingIcons}
+              iconBackground={iconBackground}
+              iconBackgroundColor={iconBackgroundColor}
+              iconBackgroundOpacity={iconBackgroundOpacity}
+              iconBackgroundRadius={iconBackgroundRadius}
             />
           </SortableContext>
         </div>

@@ -5,7 +5,7 @@ interface IconSettingsProps {
 export default function IconSettings({ settings }: IconSettingsProps) {
   return (
     <>
-      <div className="divider text-sm pt-2">Icons</div>
+      <div className="divider text-sm pt-2">Icon Layout</div>
       <div className="form-control w-full max-w mt-4">
         <label className="label cursor-pointer">
           <span className="label-text">Show Icons</span>

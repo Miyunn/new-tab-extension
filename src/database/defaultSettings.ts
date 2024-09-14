@@ -15,4 +15,8 @@ export const defaultSettings = {
   backgroundUrl: "",
   backgroundTintIntensity: 0.5,
   blurValue: 0,
+  iconBackground: true,
+  iconBackgroundColor: "#ffffff",
+  iconBackgroundOpacity: 0.9,
+  iconBackgroundRadius: 50,
 };
