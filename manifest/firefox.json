@@ -8,9 +8,9 @@
     }
   },
 
-  "name": "New Tab (beta)",
-  "version": "0.2.1",
-  "description": "Replaced default new tab page with a customizable page",
+  "name": "New Tab",
+  "version": "0.3",
+  "description": "Customize your homepage and new tab page with custom shorcuts, wallpapers and more",
 
   "icons": {
     "16": "icon16.png",
