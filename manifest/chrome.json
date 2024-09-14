@@ -1,8 +1,8 @@
 {
   "name": "New Tab",
   "manifest_version": 3,
-  "version": "0.2",
-  "description": "Replaces default chrome new tab with a custom page",
+  "version": "0.3",
+  "description": "Customize your new tab page with custom shorcuts, wallpapers and more",
   "background": {},
   "host_permissions": ["chrome://newtab"],
   "icons": {
