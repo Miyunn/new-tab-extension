@@ -204,7 +204,7 @@ export default function ChangeSettings({
         )}
       </div>
       <div className="text-right text-xs text-slate-600 pt-2">
-        Version : {settings.version}
+        Version : 0.3 (alpha)
       </div>
     </div>
   );
