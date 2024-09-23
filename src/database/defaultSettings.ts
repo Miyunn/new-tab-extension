@@ -1,5 +1,5 @@
 export const defaultSettings = {
-  version: "0.3",
+  version: "0.3.1",
   searchBar: true,
   searchEngine: "google",
   searchBarWidth: 300,

@@ -9,8 +9,8 @@
   },
 
   "name": "New Tab",
-  "version": "0.3",
-  "description": "Customize your homepage and new tab page with custom shorcuts, wallpapers and more",
+  "version": "0.3.1",
+  "description": "Customize your new tab and home page with custom shortcuts, wallpapers and more",
 
   "icons": {
     "16": "icon16.png",

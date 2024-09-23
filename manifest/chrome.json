@@ -1,8 +1,8 @@
 {
   "name": "New Tab",
   "manifest_version": 3,
-  "version": "0.3",
-  "description": "Customize your new tab page with custom shorcuts, wallpapers and more",
+  "version": "0.3.1",
+  "description": "Customize your new tab with custom shortcuts, wallpapers and more",
   "background": {},
   "host_permissions": ["chrome://newtab"],
   "icons": {
