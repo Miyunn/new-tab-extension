@@ -6,7 +6,7 @@ import IconGrid from "./layouts/icon-grind";
 import { Drawer } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
-import NoIconOptions from "./components/no-icons-options";
+// import NoIconOptions from "./components/no-icons-options";
 import { defaultSettings } from "./database/defaultSettings";
 import { IconData } from "./types/iconData";
 
@@ -28,16 +28,6 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
 
-  const wallpaperTable = db.table("wallpaper");
-  const wallpaperData = useLiveQuery(async () => {
-    const result = await wallpaperTable.where("id").equals(1).toArray();
-    return result.map((item) => item.data);
-  }, []);
-
-  const disableRightClick = (e: MouseEvent) => {
-    e.preventDefault();
-  };
-
   // live detects changes in the database and updates the UI
   // Updated on changes in the settings
   const iconTable = db.table("icons");
@@ -54,6 +44,16 @@ export default function App() {
       setIconData(icons);
     }
   }, [icons]);
+
+  const wallpaperTable = db.table("wallpaper");
+  const wallpaperData = useLiveQuery(async () => {
+    const result = await wallpaperTable.where("id").equals(1).toArray();
+    return result.map((item) => item.data);
+  }, []);
+
+  const disableRightClick = (e: MouseEvent) => {
+    e.preventDefault();
+  };
 
   let bg = {};
 
@@ -131,6 +131,33 @@ export default function App() {
         )}
       </div>
       <div className="relative z-10">
+        <div className="flex flex-col justify-center items-center h-screen">
+          {settings.searchBar && (
+            <Searchbar
+              searchEngine={settings.searchEngine}
+              searchBarWidth={settings.searchBarWidth}
+            />
+          )}
+          {settings.iconVisibility &&
+            (iconData.length === 0 ? (
+              <> </>
+            ) : // <NoIconOptions showAddIconDrawer={showAddIcons} />
+            settings.layoutStyle === "grid" ? (
+              <IconGrid
+                iconData={iconData}
+                heightWidth={settings.iconSize}
+                labels={settings.iconLabel}
+                columns={settings.iconColumns}
+                gap={settings.iconGap}
+                setIconData={setIconData}
+                sortType={settings.iconOrder}
+                iconBackground={settings.iconBackground}
+                iconBackgroundColor={settings.iconBackgroundColor}
+                iconBackgroundOpacity={settings.iconBackgroundOpacity}
+                iconBackgroundRadius={settings.iconBackgroundRadius}
+              />
+            ) : null)}
+        </div>
         <Drawer
           placement="right"
           onClose={onCloseSettings}
@@ -177,32 +204,6 @@ export default function App() {
           showDrawer={showSettings}
           showAddIconDrawer={showAddIcons}
         />
-        <div className="flex flex-col justify-center items-center h-screen">
-          {settings.searchBar && (
-            <Searchbar
-              searchEngine={settings.searchEngine}
-              searchBarWidth={settings.searchBarWidth}
-            />
-          )}
-          {settings.iconVisibility &&
-            (iconData.length === 0 ? (
-              <NoIconOptions showAddIconDrawer={showAddIcons} />
-            ) : settings.layoutStyle === "grid" ? (
-              <IconGrid
-                iconData={iconData}
-                heightWidth={settings.iconSize}
-                labels={settings.iconLabel}
-                columns={settings.iconColumns}
-                gap={settings.iconGap}
-                setIconData={setIconData}
-                sortType={settings.iconOrder}
-                iconBackground={settings.iconBackground}
-                iconBackgroundColor={settings.iconBackgroundColor}
-                iconBackgroundOpacity={settings.iconBackgroundOpacity}
-                iconBackgroundRadius={settings.iconBackgroundRadius}
-              />
-            ) : null)}
-        </div>
       </div>
     </div>
   );
