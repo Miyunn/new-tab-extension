@@ -6,7 +6,7 @@ import IconGrid from "./layouts/icon-grind";
 import { Drawer } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
-// import NoIconOptions from "./components/no-icons-options";
+import NoIconOptions from "./components/no-icons-options";
 import { defaultSettings } from "./database/defaultSettings";
 import { IconData } from "./types/iconData";
 
@@ -121,16 +121,16 @@ export default function App() {
       <div style={bg} className="absolute inset-0 fade-in">
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
-      <div className="relative z-10">
+      <div className="relative z-10 fade-in">
         <div className="flex flex-col justify-center items-center h-screen">
           {settings.searchBar && (
             <Searchbar
@@ -140,11 +140,10 @@ export default function App() {
           )}
           {settings.iconVisibility &&
             (iconData.length === 0 ? (
-              <> </>
-            ) : // <NoIconOptions showAddIconDrawer={showAddIcons} />
-            settings.layoutStyle === "grid" ? (
+              <NoIconOptions showAddIconDrawer={showAddIcons} />
+            ) : settings.layoutStyle === "grid" ? (
               <IconGrid
-                iconData={iconData}
+                iconData={icons as IconData[]}
                 heightWidth={settings.iconSize}
                 labels={settings.iconLabel}
                 columns={settings.iconColumns}
