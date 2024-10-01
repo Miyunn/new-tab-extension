@@ -2,7 +2,7 @@ import { useEffect, useState, lazy, Suspense, MouseEvent } from "react";
 import "./App.css";
 import Searchbar from "./components/searchbar";
 import ControlIcons from "./components/control-icons";
-import IconGrid from "./layouts/icon-grind";
+import IconGrid from "./layouts/icon-grid";
 import { Drawer } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
@@ -121,14 +121,14 @@ export default function App() {
       <div style={bg} className="absolute inset-0 fade-in">
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
       <div className="relative z-10 fade-in">
         <div className="flex flex-col justify-center items-center h-screen">
