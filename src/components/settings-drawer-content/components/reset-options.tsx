@@ -9,12 +9,21 @@ interface ResetOptionSettingsProps {
 
 function nukeDatabase() {
   db.open()
-    .then(() => {
+    .then(async () => {
       const idbDatabase = db.backendDB();
-      IDBExportImport.clearDatabase(idbDatabase, (err: Error | null) => {
+      IDBExportImport.clearDatabase(idbDatabase, async (err: Error | null) => {
         if (err) {
           console.error("Clear database failed: ", err);
         } else {
+          try {
+            // @ts-ignore
+            await db.wallpaper.add({
+              id: 1,
+              data: "",
+            });
+          } catch (error) {
+            console.error("Error adding wallpaper:", error);
+          }
           console.log("Database cleared successfully");
           window.location.reload();
         }
@@ -24,7 +33,6 @@ function nukeDatabase() {
       console.error("Database open failed: ", err);
     });
 }
-
 export default function ResetOptionSettings({
   resetSettings,
 }: ResetOptionSettingsProps) {
