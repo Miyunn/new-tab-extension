@@ -88,7 +88,7 @@ export default function ChangeSettings({
     settings.backgroundType || "dark",
   );
   const [iconBackgroundColor, setIconBackgroundColor] = useState(
-    settings.backgroundColor || "#ffffff",
+    settings.iconBackgroundColor || "#ffffff",
   );
 
   const [openMoreSettings, setOpenMoreSettings] = useState(false);
@@ -204,7 +204,7 @@ export default function ChangeSettings({
         )}
       </div>
       <div className="text-right text-xs text-slate-600 pt-2">
-        Version : 0.3.2 (alpha)
+        Version : 0.3.3 (alpha)
       </div>
     </div>
   );
