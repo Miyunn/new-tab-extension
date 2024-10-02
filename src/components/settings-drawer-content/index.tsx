@@ -17,7 +17,6 @@ async function handleImageUpload(file: File): Promise<string> {
     // @ts-ignore
     await db.wallpaper.update(1, { data: imageDataUrl });
     const colorHex = await getColorFromImage(imageDataUrl);
-    console.log("Color from image:", colorHex);
     return colorHex;
   } catch (error) {
     throw error;
@@ -129,10 +128,10 @@ export default function ChangeSettings({
       iconGap: formData.get("iconGap") as string,
       iconOrder: formData.get("iconOrder") as string,
       backgroundType: formData.get("backgroundType") as string,
-      backgroundColor: `#${backgroundColor}`,
+      backgroundColor: `${backgroundColor}`,
       backgroundUrl: formData.get("backgroundUrl") as string,
       iconBackground: formData.get("iconBackground") === "on" ? true : false,
-      iconBackgroundColor: `#${iconBackgroundColor}`,
+      iconBackgroundColor: `${iconBackgroundColor}`,
       iconBackgroundOpacity: formData.get("iconBackgroundOpacity") as string,
       iconBackgroundRadius: formData.get("iconBackgroundRadius") as string,
       version: settings.version,

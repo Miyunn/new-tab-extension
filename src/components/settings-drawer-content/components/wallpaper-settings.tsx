@@ -48,7 +48,7 @@ export default function WallpaperSettings({
           <ColorPicker
             showText
             defaultValue={backgroundColor}
-            onChange={(color) => setBackgroundColor(color.toHex())}
+            onChange={(color) => setBackgroundColor(`#${color.toHex()}`)}
           />
         </div>
       )}

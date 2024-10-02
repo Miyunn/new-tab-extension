@@ -73,7 +73,7 @@ export default function IconBackground({
         <ColorPicker
           showText
           defaultValue={settings.iconBackgroundColor}
-          onChange={(color) => setIconBackgroundColor(color.toHex())}
+          onChange={(color) => setIconBackgroundColor(`#${color.toHex()}`)}
         />
       </div>
     </>
