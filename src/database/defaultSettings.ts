@@ -19,4 +19,5 @@ export const defaultSettings = {
   iconBackgroundColor: "#ffffff",
   iconBackgroundOpacity: 0.9,
   iconBackgroundRadius: 50,
+  accentColor: "#000000",
 };

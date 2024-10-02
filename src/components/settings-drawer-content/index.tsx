@@ -90,6 +90,7 @@ export default function ChangeSettings({
   const [iconBackgroundColor, setIconBackgroundColor] = useState(
     settings.iconBackgroundColor || "#ffffff",
   );
+  const [accentColor] = useState(settings.accentColor || "#000000");
 
   const [openMoreSettings, setOpenMoreSettings] = useState(false);
 
@@ -139,13 +140,14 @@ export default function ChangeSettings({
         "backgroundTintIntensity",
       ) as string,
       blurValue: formData.get("blurValue") as string,
+      accentColor: `${accentColor}`,
     };
 
     try {
       const backgroundImageFile = formData.get("backgroundImage") as File;
       if (backgroundImageFile && backgroundImageFile.size > 0) {
         const colorHex = await handleImageUpload(backgroundImageFile);
-        newSettings.backgroundColor = colorHex;
+        newSettings.accentColor = colorHex;
       }
       setSettings(newSettings);
       localStorage.setItem("settings", JSON.stringify(newSettings));
