@@ -1,5 +1,5 @@
 export const defaultSettings = {
-  version: "0.3.1",
+  version: "0.3.3",
   searchBar: true,
   searchEngine: "google",
   searchBarWidth: 300,
@@ -15,9 +15,9 @@ export const defaultSettings = {
   backgroundUrl: "",
   backgroundTintIntensity: 0.5,
   blurValue: 0,
-  iconBackground: true,
-  iconBackgroundColor: "#ffffff",
-  iconBackgroundOpacity: 0.9,
-  iconBackgroundRadius: 50,
+  iconBackground: false,
+  iconBackgroundColor: "#8b8b8b",
+  iconBackgroundOpacity: 0.17,
+  iconBackgroundRadius: 26,
   accentColor: "#000000",
 };
