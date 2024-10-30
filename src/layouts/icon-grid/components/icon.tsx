@@ -82,7 +82,7 @@ const Icon = ({
       </div>
       {labels && (
         <p
-          className="mt-1.5 text-xs text-center text-gray-500 dark:text-gray-400 truncate"
+          className="mt-1.5 text-xs text-center text-gray-400 truncate"
           style={{ maxWidth: "75px" }}
         >
           {iconName}
