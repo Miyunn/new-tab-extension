@@ -8,6 +8,7 @@ import { DndContext } from "@dnd-kit/core";
 import { IconData } from "../../types/iconData";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
+import EditIconForm from "./components/editIconModal";
 
 interface Props {
   heightWidth: number;
@@ -24,22 +25,18 @@ interface Props {
 }
 
 const updateAllIconPositions = async (icons: IconData[]) => {
-  //@ts-ignore
+  // @ts-ignore
   await db.transaction("rw", db.icons, async () => {
     for (const icon of icons) {
-      //@ts-ignore
+      // @ts-ignore
       await db.icons.update(icon.id, { position: icon.position });
     }
   });
 };
 
 const deleteIcon = async (id: string) => {
-  //@ts-ignore
+  // @ts-ignore
   await db.icons.delete(id);
-};
-
-const editIcon = (iconData: IconData[]) => {
-  console.log(iconData);
 };
 
 const IconComponent = ({
@@ -51,6 +48,7 @@ const IconComponent = ({
   iconBackgroundColor,
   iconBackgroundOpacity,
   iconBackgroundRadius,
+  onEditIcon,
 }: {
   heightWidth: number;
   labels: boolean;
@@ -60,6 +58,7 @@ const IconComponent = ({
   iconBackgroundColor: string;
   iconBackgroundOpacity: number;
   iconBackgroundRadius: number;
+  onEditIcon: (icon: IconData) => void;
 }) =>
   iconData.map((icon: IconData) => {
     const menuItems: MenuProps["items"] = [
@@ -72,20 +71,15 @@ const IconComponent = ({
       {
         label: "Edit",
         key: "edit",
-        disabled: true,
         icon: <EditOutlined />,
-        onClick: () => {
-          editIcon(iconData);
-        },
+        onClick: () => onEditIcon(icon),
       },
       {
         label: "Delete",
         key: "delete",
         danger: true,
         icon: <DeleteOutlined />,
-        onClick: () => {
-          deleteIcon(icon.id);
-        },
+        onClick: () => deleteIcon(icon.id),
       },
     ];
 
@@ -136,6 +130,7 @@ const IconGrid = ({
   iconBackgroundRadius,
 }: Props) => {
   const [draggingIcons, setDraggingIcons] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
 
   const startDrag = () => {
     setDraggingIcons(true);
@@ -163,6 +158,18 @@ const IconGrid = ({
     setDraggingIcons(false);
   };
 
+  const handleEditIcon = (icon: IconData): void => {
+    setSelectedIcon(icon);
+    (
+      document.getElementById("edit-icon-modal") as HTMLDialogElement
+    )?.showModal();
+  };
+
+  const closeModal = (): void => {
+    (document.getElementById("edit-icon-modal") as HTMLDialogElement)?.close();
+    setSelectedIcon(null);
+  };
+
   return (
     <>
       {sortType === "position" ? (
@@ -184,6 +191,7 @@ const IconGrid = ({
                 iconBackgroundColor={iconBackgroundColor}
                 iconBackgroundOpacity={iconBackgroundOpacity}
                 iconBackgroundRadius={iconBackgroundRadius}
+                onEditIcon={handleEditIcon}
               />
             </SortableContext>
           </div>
@@ -206,10 +214,33 @@ const IconGrid = ({
               iconBackgroundColor={iconBackgroundColor}
               iconBackgroundOpacity={iconBackgroundOpacity}
               iconBackgroundRadius={iconBackgroundRadius}
+              onEditIcon={handleEditIcon}
             />
           </SortableContext>
         </div>
       )}
+
+      <dialog id="edit-icon-modal" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            <button
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={closeModal}
+            >
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Edit {selectedIcon?.name} Icon</h3>
+          {selectedIcon && (
+            <div>
+              <EditIconForm
+                selectedIcon={selectedIcon}
+                closeModal={closeModal}
+              />
+            </div>
+          )}
+        </div>
+      </dialog>
     </>
   );
 };
