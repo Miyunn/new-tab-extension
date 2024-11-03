@@ -5,3 +5,7 @@
 .icon:hover {
   filter: brightness(1.2);
 }
+
+.edit-icon-form-input {
+  min-width: 350px;
+}

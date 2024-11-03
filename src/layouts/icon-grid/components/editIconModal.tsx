@@ -108,7 +108,7 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
             name="name"
             placeholder="Icon label"
             defaultValue={selectedIcon.name}
-            className="input input-bordered add-icon-form-input"
+            className="input input-bordered edit-icon-form-input"
             required
           />
         </div>
@@ -121,7 +121,7 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
             name="destination"
             placeholder="Destination URL"
             defaultValue={selectedIcon.url}
-            className="input input-bordered add-icon-form-input"
+            className="input input-bordered edit-icon-form-input"
             required
           />
         </div>
@@ -147,7 +147,7 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
               name="iconURL"
               placeholder="Image URL here"
               defaultValue={selectedIcon.src}
-              className="input input-bordered add-icon-form-input"
+              className="input input-bordered edit-icon-form-input"
               required
             />
           </div>
@@ -158,7 +158,7 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
             </label>
             <input
               type="file"
-              className="file-input file-input-bordered w-full max-w-xs add-icon-form-input"
+              className="file-input file-input-bordered w-full max-w-xs edit-icon-form-input"
               name="iconUpload"
               onChange={imageUploadValidation}
               required={iconSrc === ""}
