@@ -55,7 +55,7 @@ export default function WallpaperSettings({
 
       {backgroundType === "image" && (
         <div className="form-control w-full max-w">
-          <label className="form-control w-full max-w-xs">
+          <label className="form-control w-full max-w">
             <div className="label">
               <span className="label-text">Pick an image</span>
             </div>
@@ -63,7 +63,6 @@ export default function WallpaperSettings({
               type="file"
               className="file-input file-input-bordered"
               name="backgroundImage"
-              style={{ width: "335.35px" }}
               onChange={imageUploadValidation}
             />
           </label>
@@ -73,7 +72,7 @@ export default function WallpaperSettings({
 
       {backgroundType === "url" && (
         <div className="form-control w-full max-w">
-          <label className="form-control w-full max-w-xs">
+          <label className="form-control w-full max-w">
             <div className="label">
               <span className="label-text">Image URL</span>
             </div>
@@ -84,7 +83,6 @@ export default function WallpaperSettings({
               name="backgroundUrl"
               required
               defaultValue={settings.backgroundUrl}
-              style={{ width: "335.35px" }}
             />
           </label>
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
