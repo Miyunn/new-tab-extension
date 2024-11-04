@@ -146,7 +146,9 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
               type="text"
               name="iconURL"
               placeholder="Image URL here"
-              defaultValue={selectedIcon.src}
+              defaultValue={
+                selectedIcon.src.startsWith("data:") ? "" : selectedIcon.src
+              }
               className="input input-bordered edit-icon-form-input"
               required
             />
