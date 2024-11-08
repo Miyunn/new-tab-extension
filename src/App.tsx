@@ -9,6 +9,7 @@ import db from "./database/indexDb";
 import NoIconOptions from "./components/no-icons-options";
 import { defaultSettings } from "./database/defaultSettings";
 import { IconData } from "./types/iconData";
+const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
 
 const ChangeSettings = lazy(
   () => import("./components/settings-drawer-content"),
@@ -27,7 +28,15 @@ export default function App() {
 
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
-  const [unsplashImage, setUnsplashImage] = useState<string | null>(null);
+  const [unsplashImage, setUnsplashImage] = useState<{
+    imageUrl: string;
+    timestamp: number;
+    artist: string;
+    profilePic: string;
+    artistLink: string;
+    imageLink: string;
+    type: string;
+  } | null>(null);
 
   const iconTable = db.table("icons");
   const icons = useLiveQuery(async () => {
@@ -67,28 +76,32 @@ export default function App() {
       unsplashData.imageUrl &&
       currentTime - unsplashData.timestamp < ONE_HOUR
     ) {
-      setUnsplashImage(unsplashData.imageUrl);
+      setUnsplashImage(unsplashData);
       console.log("Using cached Unsplash image");
       return;
-    }
-
-    // Fetch a new image if no valid cache is found
+    } // Fetch a new image if no valid cache is found
     try {
       const response = await fetch(
         `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=nature`,
       );
       const data = await response.json();
       console.log(data);
-      const newImageUrl = data.urls.regular;
-      console.log("New Unsplash image fetched successfully");
+
+      const newImageData = {
+        imageUrl: data.urls.regular,
+        timestamp: currentTime,
+        artist: data.user.name,
+        profilePic: data.user.profile_image.small,
+        type: data.asset_type,
+        artistLink: data.user.links.html,
+        imageLink: data.links.html,
+      };
 
       // Update localStorage with the new image and current timestamp
-      localStorage.setItem(
-        "unsplashData",
-        JSON.stringify({ imageUrl: newImageUrl, timestamp: currentTime }),
-      );
-      // Update the state with the new image
-      setUnsplashImage(newImageUrl);
+      localStorage.setItem("unsplashData", JSON.stringify(newImageData));
+
+      // Update the state with the new image data
+      setUnsplashImage(newImageData);
       console.log("Unsplash image fetched successfully");
     } catch (error) {
       console.error("Error fetching Unsplash image:", error);
@@ -120,7 +133,7 @@ export default function App() {
     };
   } else if (settings.backgroundType === "unsplash" && unsplashImage) {
     bg = {
-      backgroundImage: `url(${unsplashImage})`,
+      backgroundImage: `url(${unsplashImage.imageUrl})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       filter: `blur(${settings.blurValue}px)`,
@@ -177,15 +190,28 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
+
+      {settings.backgroundType === "unsplash" && (
+        <div className="absolute bottom-0 right-0 z-50">
+          <UnsplashCredits
+            imageUrl={unsplashImage?.imageUrl || ""}
+            type={unsplashImage?.type || ""}
+            artist={unsplashImage?.artist || ""}
+            profilePic={unsplashImage?.profilePic || ""}
+            artistLink={unsplashImage?.artistLink || ""}
+            imageLink={unsplashImage?.imageLink || ""}
+          />
+        </div>
+      )}
       <div className="relative z-10 fade-in">
         <div className="flex flex-col justify-center items-center h-screen">
           {settings.searchBar && (
