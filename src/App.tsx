@@ -27,9 +27,8 @@ export default function App() {
 
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
+  const [unsplashImage, setUnsplashImage] = useState<string | null>(null);
 
-  // live detects changes in the database and updates the UI
-  // Updated on changes in the settings
   const iconTable = db.table("icons");
   const icons = useLiveQuery(async () => {
     const result = await iconTable
@@ -55,17 +54,73 @@ export default function App() {
     e.preventDefault();
   };
 
+  const ONE_HOUR = 60 * 60 * 100;
+
+  const fetchUnsplashImage = async () => {
+    const unsplashData = JSON.parse(
+      localStorage.getItem("unsplashData") || "{}",
+    );
+    const currentTime = new Date().getTime();
+
+    // Check if we have valid cached data within the one-hour limit
+    if (
+      unsplashData.imageUrl &&
+      currentTime - unsplashData.timestamp < ONE_HOUR
+    ) {
+      setUnsplashImage(unsplashData.imageUrl);
+      console.log("Using cached Unsplash image");
+      return;
+    }
+
+    // Fetch a new image if no valid cache is found
+    try {
+      const response = await fetch(
+        `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=nature`,
+      );
+      const data = await response.json();
+      console.log(data);
+      const newImageUrl = data.urls.regular;
+      console.log("New Unsplash image fetched successfully");
+
+      // Update localStorage with the new image and current timestamp
+      localStorage.setItem(
+        "unsplashData",
+        JSON.stringify({ imageUrl: newImageUrl, timestamp: currentTime }),
+      );
+      // Update the state with the new image
+      setUnsplashImage(newImageUrl);
+      console.log("Unsplash image fetched successfully");
+    } catch (error) {
+      console.error("Error fetching Unsplash image:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (settings.backgroundType === "unsplash") {
+      fetchUnsplashImage();
+    }
+  }, [settings.backgroundType]);
   let bg = {};
 
-  if (
-    settings.backgroundType === "image" ||
-    settings.backgroundType === "url"
-  ) {
+  if (settings.backgroundType === "image" && wallpaperData) {
     bg = {
-      backgroundImage:
-        settings.backgroundType === "image"
-          ? `url(${wallpaperData})`
-          : `url(${settings.backgroundUrl})`,
+      backgroundImage: `url(${wallpaperData})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      filter: `blur(${settings.blurValue}px)`,
+      transform: "scale(1.04)",
+    };
+  } else if (settings.backgroundType === "url") {
+    bg = {
+      backgroundImage: `url(${settings.backgroundUrl})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      filter: `blur(${settings.blurValue}px)`,
+      transform: "scale(1.04)",
+    };
+  } else if (settings.backgroundType === "unsplash" && unsplashImage) {
+    bg = {
+      backgroundImage: `url(${unsplashImage})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       filter: `blur(${settings.blurValue}px)`,
@@ -120,7 +175,8 @@ export default function App() {
     >
       <div style={bg} className="absolute inset-0 fade-in">
         {(settings.backgroundType === "image" ||
-          settings.backgroundType === "url") && (
+          settings.backgroundType === "url" ||
+          settings.backgroundType === "unsplash") && (
           <div
             style={{
               backgroundColor: "black",

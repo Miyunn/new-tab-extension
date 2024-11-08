@@ -37,6 +37,7 @@ export default function WallpaperSettings({
           <option value="color">Solid Color</option>
           <option value="image">Image</option>
           <option value="url">URL</option>
+          <option value="unsplash">Random Wallpaper (Unsplashed)</option>
         </select>
       </div>
 
@@ -89,7 +90,9 @@ export default function WallpaperSettings({
         </div>
       )}
 
-      {(backgroundType === "image" || backgroundType === "url") && (
+      {(backgroundType === "image" ||
+        backgroundType === "url" ||
+        backgroundType === "unsplash") && (
         <>
           <div className="form-control w-full max-w py-2">
             <label className="label">
