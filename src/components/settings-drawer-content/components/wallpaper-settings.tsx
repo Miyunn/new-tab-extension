@@ -93,59 +93,73 @@ export default function WallpaperSettings({
       {(backgroundType === "image" ||
         backgroundType === "url" ||
         backgroundType === "unsplash") && (
-        <>
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Wallpaper tint</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              className="range"
-              step="0.001"
-              name="backgroundTintIntensity"
-              defaultValue={settings.backgroundTintIntensity}
-            />
-            <div className="w-full flex justify-between text-xs px-2">
-              <span>No Tint</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>Black</span>
+          <>
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper tint</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                className="range"
+                step="0.001"
+                name="backgroundTintIntensity"
+                defaultValue={settings.backgroundTintIntensity}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>No Tint</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>Black</span>
+              </div>
             </div>
-          </div>
 
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Wallpaper blur</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="10"
-              className="range"
-              step="0.01"
-              name="blurValue"
-              defaultValue={settings.blurValue}
-            />
-            <div className="w-full flex justify-between text-xs px-2">
-              <span>0%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>100</span>
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper blur</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                className="range"
+                step="0.01"
+                name="blurValue"
+                defaultValue={settings.blurValue}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>0%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>100</span>
+              </div>
             </div>
-          </div>
-        </>
+          </>
+        )}
+      {backgroundType === "unsplash" && (
+        <div className="form-control w-full max-w py-2">
+          <label className="label">
+            <span className="label-text">Wallpaper Query</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Query unsplash for wallpapers"
+            className="input w-full max-w"
+            name="unsplashQuery"
+            defaultValue={settings.unsplashQuery}
+          />
+        </div>
       )}
     </>
   );

@@ -77,21 +77,19 @@ export default function App() {
       currentTime - unsplashData.timestamp < ONE_HOUR
     ) {
       setUnsplashImage(unsplashData);
-      console.log("Using cached Unsplash image");
       return;
     } // Fetch a new image if no valid cache is found
     try {
       const response = await fetch(
-        `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=nature`,
+        `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${settings.unsplashQuery}`,
       );
       const data = await response.json();
-      console.log(data);
 
       const newImageData = {
-        imageUrl: data.urls.regular,
+        imageUrl: data.urls.full,
         timestamp: currentTime,
         artist: data.user.name,
-        profilePic: data.user.profile_image.small,
+        profilePic: data.user.profile_image.medium,
         type: data.asset_type,
         artistLink: data.user.links.html,
         imageLink: data.links.html,
@@ -102,7 +100,6 @@ export default function App() {
 
       // Update the state with the new image data
       setUnsplashImage(newImageData);
-      console.log("Unsplash image fetched successfully");
     } catch (error) {
       console.error("Error fetching Unsplash image:", error);
     }
