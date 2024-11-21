@@ -1,5 +1,4 @@
 interface Props {
-  imageUrl: string;
   imageLink: string;
   artist: string;
   artistLink: string;

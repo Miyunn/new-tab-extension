@@ -29,7 +29,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
   const [unsplashImage, setUnsplashImage] = useState<{
-    imageUrl: string;
+    imageUrls: String[];
     timestamp: number;
     artist: string;
     profilePic: string;
@@ -87,16 +87,13 @@ export default function App() {
       );
       const data = await response.json();
 
-      const qualityUrls = [
-        data.urls.small,
-        data.urls.regular,
-        data.urls.full,
-        data.urls.raw,
-      ];
-      const selectedQuality = qualityUrls[settings.unsplashQuality || 2];
-
       const newImageData = {
-        imageUrl: selectedQuality,
+        imageUrls: [
+          data.urls.small, // Quality index 0
+          data.urls.regular, // Quality index 1
+          data.urls.full, // Quality index 2
+          data.urls.raw, // Quality index 3
+        ],
         timestamp: currentTime,
         artist: data.user.name,
         profilePic: data.user.profile_image.medium,
@@ -135,8 +132,14 @@ export default function App() {
       transform: "scale(1.04)",
     };
   } else if (settings.backgroundType === "unsplash" && unsplashImage) {
+    const qualityIndex =
+      settings.unsplashQuality >= 0 && settings.unsplashQuality <= 3
+        ? settings.unsplashQuality
+        : 2; // Default to "full" quality if the value is invalid
+
+    const selectedImageUrl = unsplashImage.imageUrls[qualityIndex];
     bg = {
-      backgroundImage: `url(${unsplashImage.imageUrl})`,
+      backgroundImage: `url(${selectedImageUrl})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       filter: `blur(${settings.blurValue}px)`,
@@ -206,7 +209,6 @@ export default function App() {
       {settings.backgroundType === "unsplash" && (
         <div className="absolute bottom-0 left-0 z-50">
           <UnsplashCredits
-            imageUrl={unsplashImage?.imageUrl || ""}
             type={unsplashImage?.type || ""}
             artist={unsplashImage?.artist || ""}
             profilePic={unsplashImage?.profilePic || ""}
