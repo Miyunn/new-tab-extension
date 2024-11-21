@@ -63,7 +63,9 @@ export default function App() {
     e.preventDefault();
   };
 
-  const ONE_HOUR = 60 * 60 * 100;
+  const ONE_HOUR = 60 * 100;
+  //
+  // const ONE_HOUR = 60 * 60 * 100;
 
   const fetchUnsplashImage = async () => {
     const unsplashData = JSON.parse(
@@ -85,8 +87,16 @@ export default function App() {
       );
       const data = await response.json();
 
+      const qualityUrls = [
+        data.urls.small,
+        data.urls.regular,
+        data.urls.full,
+        data.urls.raw,
+      ];
+      const selectedQuality = qualityUrls[settings.unsplashQuality || 2];
+
       const newImageData = {
-        imageUrl: data.urls.full,
+        imageUrl: selectedQuality,
         timestamp: currentTime,
         artist: data.user.name,
         profilePic: data.user.profile_image.medium,
@@ -95,16 +105,12 @@ export default function App() {
         imageLink: data.links.html,
       };
 
-      // Update localStorage with the new image and current timestamp
       localStorage.setItem("unsplashData", JSON.stringify(newImageData));
-
-      // Update the state with the new image data
       setUnsplashImage(newImageData);
     } catch (error) {
       console.error("Error fetching Unsplash image:", error);
     }
   };
-
   useEffect(() => {
     if (settings.backgroundType === "unsplash") {
       fetchUnsplashImage();

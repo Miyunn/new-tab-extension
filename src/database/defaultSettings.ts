@@ -20,4 +20,6 @@ export const defaultSettings = {
   iconBackgroundOpacity: 0.17,
   iconBackgroundRadius: 26,
   accentColor: "#000000",
+  unsplashQuery: "",
+  unplashQuality: 1,
 };

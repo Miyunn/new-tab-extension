@@ -148,18 +148,41 @@ export default function WallpaperSettings({
           </>
         )}
       {backgroundType === "unsplash" && (
-        <div className="form-control w-full max-w py-2">
-          <label className="label">
-            <span className="label-text">Wallpaper Query</span>
-          </label>
-          <input
-            type="text"
-            placeholder="Query unsplash for wallpapers"
-            className="input w-full max-w"
-            name="unsplashQuery"
-            defaultValue={settings.unsplashQuery}
-          />
-        </div>
+        <>
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Wallpaper Query</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Query unsplash for wallpapers"
+              className="input w-full max-w"
+              name="unsplashQuery"
+              defaultValue={settings.unsplashQuery}
+            />
+          </div>
+
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Wallpaper Quality</span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="3"
+              className="range"
+              step="1"
+              name="unsplashQuality"
+              defaultValue={settings.unsplashQuality}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>Low</span>
+              <span>Medium</span>
+              <span>High</span>
+              <span>Original</span>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

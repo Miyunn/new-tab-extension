@@ -141,6 +141,7 @@ export default function ChangeSettings({
       blurValue: formData.get("blurValue") as string,
       accentColor: `${accentColor}`,
       unsplashQuery: formData.get("unsplashQuery") as string,
+      unsplashQuality: formData.get("unsplashQuality") as string,
     };
 
     try {
