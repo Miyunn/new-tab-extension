@@ -32,10 +32,12 @@ export default function App() {
     imageUrls: String[];
     timestamp: number;
     artist: string;
+    blurhash: string;
     profilePic: string;
     artistLink: string;
     imageLink: string;
     type: string;
+    downloadLink: string;
   } | null>(null);
 
   const iconTable = db.table("icons");
@@ -63,24 +65,24 @@ export default function App() {
     e.preventDefault();
   };
 
-  const ONE_HOUR = 60 * 100;
-  //
-  // const ONE_HOUR = 60 * 60 * 100;
+  const ONE_HOUR = 60 * 60 * 1000;
 
   const fetchUnsplashImage = async () => {
     const unsplashData = JSON.parse(
-      localStorage.getItem("unsplashData") || "{}",
+      localStorage.getItem("unsplashData") || "null",
     );
     const currentTime = new Date().getTime();
 
-    // Check if we have valid cached data within the one-hour limit
     if (
-      unsplashData.imageUrl &&
+      unsplashData &&
+      unsplashData.imageUrls &&
+      unsplashData.timestamp &&
       currentTime - unsplashData.timestamp < ONE_HOUR
     ) {
       setUnsplashImage(unsplashData);
       return;
-    } // Fetch a new image if no valid cache is found
+    }
+
     try {
       const response = await fetch(
         `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${settings.unsplashQuery}`,
@@ -89,17 +91,19 @@ export default function App() {
 
       const newImageData = {
         imageUrls: [
-          data.urls.small, // Quality index 0
-          data.urls.regular, // Quality index 1
-          data.urls.full, // Quality index 2
-          data.urls.raw, // Quality index 3
+          data.urls.small,
+          data.urls.regular,
+          data.urls.full,
+          data.urls.raw,
         ],
+        blurhash: data.blur_hash,
         timestamp: currentTime,
         artist: data.user.name,
         profilePic: data.user.profile_image.medium,
         type: data.asset_type,
         artistLink: data.user.links.html,
         imageLink: data.links.html,
+        downloadLink: data.links.download,
       };
 
       localStorage.setItem("unsplashData", JSON.stringify(newImageData));
@@ -108,6 +112,7 @@ export default function App() {
       console.error("Error fetching Unsplash image:", error);
     }
   };
+
   useEffect(() => {
     if (settings.backgroundType === "unsplash") {
       fetchUnsplashImage();
@@ -135,8 +140,7 @@ export default function App() {
     const qualityIndex =
       settings.unsplashQuality >= 0 && settings.unsplashQuality <= 3
         ? settings.unsplashQuality
-        : 2; // Default to "full" quality if the value is invalid
-
+        : 2; // default quality is full
     const selectedImageUrl = unsplashImage.imageUrls[qualityIndex];
     bg = {
       backgroundImage: `url(${selectedImageUrl})`,
@@ -192,28 +196,29 @@ export default function App() {
       className="antialiased overflow-hidden relative"
       onContextMenu={disableRightClick}
     >
-      <div style={bg} className="absolute inset-0 fade-in">
+      <div style={bg} className="absolute inset-1 fade-in">
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
 
       {settings.backgroundType === "unsplash" && (
-        <div className="absolute bottom-0 left-0 z-50">
+        <div className="absolute bottom-0 left-0 z-50 fade-in">
           <UnsplashCredits
             type={unsplashImage?.type || ""}
             artist={unsplashImage?.artist || ""}
             profilePic={unsplashImage?.profilePic || ""}
             artistLink={unsplashImage?.artistLink || ""}
             imageLink={unsplashImage?.imageLink || ""}
+            downloadLink={unsplashImage?.downloadLink || ""}
           />
         </div>
       )}
