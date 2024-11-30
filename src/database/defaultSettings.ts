@@ -11,7 +11,7 @@ export const defaultSettings = {
   iconColumns: 5,
   iconGap: 20,
   backgroundType: "dark",
-  bacfgroundColor: "#120312",
+  backgroundColor: "#000000",
   backgroundUrl: "",
   backgroundTintIntensity: 0.5,
   blurValue: 0,
