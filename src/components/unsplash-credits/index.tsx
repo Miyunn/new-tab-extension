@@ -23,13 +23,20 @@ export default function UnsplashCredits({
     return text.charAt(0).toUpperCase() + text.slice(1);
   };
 
+  const createUTMUrl = (baseUrl: string, params: Record<string, string>) => {
+    const url = new URL(baseUrl);
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.set(key, value);
+    });
+    return url.toString();
+  };
+
   const handleDownload = async () => {
     setDownloading(true);
     try {
-      // Parse the download link to extract photo-id and ixid
       const url = new URL(downloadLink);
-      const pathnameParts = url.pathname.split("/"); // Split the path into segments
-      const photoId = pathnameParts[2]; // Extract photo-id (3rd segment in the path)
+      const pathnameParts = url.pathname.split("/");
+      const photoId = pathnameParts[2];
       const ixid = url.searchParams.get("ixid");
 
       if (!photoId) {
@@ -39,14 +46,9 @@ export default function UnsplashCredits({
         throw new Error("Missing ixid parameter in the download link.");
       }
 
-      // Construct your API URL with photo-id and ixid
       const apiUrl = `https://newtab-backend-proxy.vercel.app/api/downloadUnsplashImage?photoId=${encodeURIComponent(
         photoId,
       )}&ixid=${encodeURIComponent(ixid)}&filename=unsplash-image.jpg`;
-
-      console.log("Photo ID:", photoId);
-      console.log("IXID:", ixid);
-      console.log("API URL:", apiUrl);
 
       const response = await fetch(apiUrl);
 
@@ -54,27 +56,31 @@ export default function UnsplashCredits({
         throw new Error(`Failed to download image. Status: ${response.status}`);
       }
 
-      // Convert the response into a blob
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
 
-      // Trigger download
       const a = document.createElement("a");
       a.href = imageUrl;
       a.download = `unsplash-${artist.replace(/\s+/g, "-").toLowerCase()}.jpg`;
       document.body.appendChild(a);
       a.click();
 
-      // Clean up
       document.body.removeChild(a);
       URL.revokeObjectURL(imageUrl);
     } catch (error: any) {
-      console.error("Error during image download:", error.message);
       alert("There was an error downloading the image. Please try again.");
     } finally {
       setDownloading(false);
     }
   };
+
+  const utmParams = {
+    utm_source: "NewTab",
+    utm_medium: "referral",
+  };
+
+  const utmImageLink = createUTMUrl(imageLink, utmParams);
+  const utmArtistLink = createUTMUrl(artistLink, utmParams);
 
   return (
     <div className="m-4 flex items-center text-white max-w-xs">
@@ -90,7 +96,7 @@ export default function UnsplashCredits({
       <div className="info">
         <div className="text-xs">
           <a
-            href={imageLink}
+            href={utmImageLink}
             className="text-white no-underline hover:underline"
             target="_blank"
             rel="noopener noreferrer"
@@ -99,7 +105,7 @@ export default function UnsplashCredits({
           </a>
           by{" "}
           <a
-            href={artistLink}
+            href={utmArtistLink}
             className="text-white no-underline hover:underline"
             target="_blank"
             rel="noopener noreferrer"
