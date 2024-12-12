@@ -23,6 +23,8 @@ export default function UnsplashCredits({
     return text.charAt(0).toUpperCase() + text.slice(1);
   };
 
+  console.log(imageLink, artistLink);
+
   const createUTMUrl = (baseUrl: string, params: Record<string, string>) => {
     const url = new URL(baseUrl);
     Object.entries(params).forEach(([key, value]) => {

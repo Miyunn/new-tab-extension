@@ -28,7 +28,7 @@ export default function App() {
 
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
-  const [unsplashImage, setUnsplashImage] = useState<{
+  const [unsplashImage, setUnslpahImage] = useState<{
     imageUrls: String[];
     timestamp: number;
     artist: string;
@@ -65,59 +65,73 @@ export default function App() {
     e.preventDefault();
   };
 
-  const ONE_HOUR = 60 * 60 * 1000;
-
-  const fetchUnsplashImage = async () => {
-    const unsplashData = JSON.parse(
-      localStorage.getItem("unsplashData") || "null",
-    );
-    const currentTime = new Date().getTime();
-
-    if (
-      unsplashData &&
-      unsplashData.imageUrls &&
-      unsplashData.timestamp &&
-      currentTime - unsplashData.timestamp < ONE_HOUR
-    ) {
-      setUnsplashImage(unsplashData);
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${settings.unsplashQuery}`,
+  const startBackgroundFetch = (query: string, cacheDuration: number) => {
+    const fetchUnsplashImageBackground = async () => {
+      const unsplashData = JSON.parse(
+        localStorage.getItem("unsplashData") || "null",
       );
-      const data = await response.json();
+      const currentTime = new Date().getTime();
 
-      const newImageData = {
-        imageUrls: [
-          data.urls.small,
-          data.urls.regular,
-          data.urls.full,
-          data.urls.raw,
-        ],
-        blurhash: data.blur_hash,
-        timestamp: currentTime,
-        artist: data.user.name,
-        profilePic: data.user.profile_image.medium,
-        type: data.asset_type,
-        artistLink: data.user.links.html,
-        imageLink: data.links.html,
-        downloadLink: data.links.download,
-      };
+      // Immediately display the cached wallpaper
+      if (unsplashData && unsplashData.imageUrls) {
+        console.info("Displaying cached Unsplash image.");
+        setUnslpahImage(unsplashData); // Display the old image
+      }
 
-      localStorage.setItem("unsplashData", JSON.stringify(newImageData));
-      setUnsplashImage(newImageData);
-    } catch (error) {
-      console.error("Error fetching Unsplash image:", error);
-    }
+      if (
+        unsplashData &&
+        unsplashData.timestamp &&
+        currentTime - unsplashData.timestamp < cacheDuration
+      ) {
+        console.info("Unsplash image is still fresh.");
+        return;
+      }
+
+      // Fetch a new wallpaper in the background
+      try {
+        const response = await fetch(
+          `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${query}`,
+        );
+        const data = await response.json();
+
+        const newImageData = {
+          imageUrls: [
+            data.urls.small,
+            data.urls.regular,
+            data.urls.full,
+            data.urls.raw,
+          ],
+          blurhash: data.blur_hash,
+          timestamp: currentTime,
+          artist: data.user.name,
+          profilePic: data.user.profile_image.medium,
+          type: data.asset_type,
+          artistLink: data.user.links.html,
+          imageLink: data.links.html,
+          downloadLink: data.links.download,
+        };
+
+        localStorage.setItem("unsplashData", JSON.stringify(newImageData));
+        console.info("Fetched and stored new Unsplash image:", newImageData);
+
+        // Optionally update the displayed image after fetching
+        // setUnslpahImage(newImageData);
+      } catch (error) {
+        console.error("Error fetching Unsplash image:", error);
+      }
+    };
+
+    fetchUnsplashImageBackground(); // Initial fetch
+    setInterval(fetchUnsplashImageBackground, cacheDuration); // Schedule periodic fetches
   };
 
   useEffect(() => {
     if (settings.backgroundType === "unsplash") {
-      fetchUnsplashImage();
+      const ONE_HOUR = 1 * 60 * 1000;
+      startBackgroundFetch(settings.unsplashQuery, ONE_HOUR);
     }
-  }, [settings.backgroundType]);
+  }, [settings.backgroundType, settings.unsplashQuery]);
+
   let bg = {};
 
   if (settings.backgroundType === "image" && wallpaperData) {
@@ -136,19 +150,24 @@ export default function App() {
       filter: `blur(${settings.blurValue}px)`,
       transform: "scale(1.04)",
     };
-  } else if (settings.backgroundType === "unsplash" && unsplashImage) {
-    const qualityIndex =
-      settings.unsplashQuality >= 0 && settings.unsplashQuality <= 3
-        ? settings.unsplashQuality
-        : 2; // default quality is full
-    const selectedImageUrl = unsplashImage.imageUrls[qualityIndex];
-    bg = {
-      backgroundImage: `url(${selectedImageUrl})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      filter: `blur(${settings.blurValue}px)`,
-      transform: "scale(1.04)",
-    };
+  } else if (settings.backgroundType === "unsplash") {
+    const unsplashData = JSON.parse(
+      localStorage.getItem("unsplashData") || "null",
+    );
+    if (unsplashData) {
+      const qualityIndex =
+        settings.unsplashQuality >= 0 && settings.unsplashQuality <= 3
+          ? settings.unsplashQuality
+          : 1; // Default quality is medium
+      const selectedImageUrl = unsplashData.imageUrls[qualityIndex];
+      bg = {
+        backgroundImage: `url(${selectedImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        filter: `blur(${settings.blurValue}px)`,
+        transform: "scale(1.04)",
+      };
+    }
   } else if (settings.backgroundType === "dark") {
     bg = {
       backgroundColor: "#120312",
@@ -200,23 +219,23 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
 
-      {settings.backgroundType === "unsplash" && (
+      {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
         <div className="absolute bottom-0 left-0 z-50 fade-in">
           <UnsplashCredits
             type={unsplashImage?.type || ""}
             artist={unsplashImage?.artist || ""}
             profilePic={unsplashImage?.profilePic || ""}
-            artistLink={unsplashImage?.artistLink || ""}
+            artistLink={unsplashImage.artistLink}
             imageLink={unsplashImage?.imageLink || ""}
             downloadLink={unsplashImage?.downloadLink || ""}
           />
