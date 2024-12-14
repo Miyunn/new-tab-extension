@@ -122,7 +122,6 @@ export default function App() {
     };
 
     fetchUnsplashImageBackground(); // Initial fetch
-    setInterval(fetchUnsplashImageBackground, cacheDuration); // Schedule periodic fetches
   };
 
   useEffect(() => {
