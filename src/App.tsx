@@ -153,7 +153,7 @@ export default function App() {
     const unsplashData = JSON.parse(
       localStorage.getItem("unsplashData") || "null",
     );
-    if (unsplashData) {
+    if (unsplashData !== null) {
       const qualityIndex =
         settings.unsplashQuality >= 0 && settings.unsplashQuality <= 3
           ? settings.unsplashQuality
@@ -218,14 +218,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
 
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
