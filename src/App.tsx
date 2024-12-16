@@ -74,7 +74,6 @@ export default function App() {
 
       // Immediately display the cached wallpaper
       if (unsplashData && unsplashData.imageUrls) {
-        console.info("Displaying cached Unsplash image.");
         setUnslpahImage(unsplashData); // Display the old image
       }
 
@@ -83,7 +82,6 @@ export default function App() {
         unsplashData.timestamp &&
         currentTime - unsplashData.timestamp < cacheDuration
       ) {
-        console.info("Unsplash image is still fresh.");
         return;
       }
 
@@ -112,8 +110,6 @@ export default function App() {
         };
 
         localStorage.setItem("unsplashData", JSON.stringify(newImageData));
-        console.info("Fetched and stored new Unsplash image:", newImageData);
-
         // Optionally update the displayed image after fetching
         // setUnslpahImage(newImageData);
       } catch (error) {
