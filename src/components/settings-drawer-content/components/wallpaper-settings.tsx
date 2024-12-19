@@ -258,9 +258,6 @@ export default function WallpaperSettings({
               </svg>
             </label>
             <div className="form-control w-full max-w py-2">
-              <label className="label">
-                <span className="label-text">Wallpaper Frequency</span>
-              </label>
               <input
                 type="range"
                 min="0"
