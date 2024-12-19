@@ -122,8 +122,9 @@ export default function App() {
 
   useEffect(() => {
     if (settings.backgroundType === "unsplash") {
-      const ONE_HOUR = 1 * 60 * 1000;
-      startBackgroundFetch(settings.unsplashQuery, ONE_HOUR);
+      const refreshRate = Math.max(settings.unsplashFrequency, 1);
+      const refresh_frequency = refreshRate * 60 * 60 * 1000;
+      startBackgroundFetch(settings.unsplashQuery, refresh_frequency);
     }
   }, [settings.backgroundType, settings.unsplashQuery]);
 

@@ -22,4 +22,5 @@ export const defaultSettings = {
   accentColor: "#000000",
   unsplashQuery: "",
   unsplashQuality: 1,
+  unsplashFrequency: 4,
 };

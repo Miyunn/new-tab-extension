@@ -91,6 +91,10 @@ export default function ChangeSettings({
   );
   const [accentColor] = useState(settings.accentColor || "#000000");
 
+  const [unsplashFrequency, setUnsplashFrequency] = useState(
+    settings.unslpashFrequency || 4,
+  );
+
   const [openMoreSettings, setOpenMoreSettings] = useState(false);
 
   //Validates image when selected and blocks upload (disable save button)
@@ -109,6 +113,15 @@ export default function ChangeSettings({
       }
       setError("");
     }
+  };
+
+  const unsplashFrequencyHours = [1, 4, 8, 12, 24];
+
+  const handleUnsplashFrequencyChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const selectedIndex = Number(event.target.value);
+    setUnsplashFrequency(unsplashFrequencyHours[selectedIndex]); // Use the index to grab value from array
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -142,6 +155,7 @@ export default function ChangeSettings({
       accentColor: `${accentColor}`,
       unsplashQuery: formData.get("unsplashQuery") as string,
       unsplashQuality: formData.get("unsplashQuality") as string,
+      unsplashFrequency: unsplashFrequency,
     };
 
     try {
@@ -175,6 +189,8 @@ export default function ChangeSettings({
           backgroundType={backgroundType}
           setBackgroundType={setBackgroundType}
           imageUploadValidation={imageUploadValidation}
+          handleUnsplashFrequencyChange={handleUnsplashFrequencyChange}
+          unsplashFrequencyHours={unsplashFrequencyHours}
           error={error}
         />
         <SearchbarSettings settings={settings} />
