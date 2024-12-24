@@ -140,19 +140,23 @@ const IconGrid = ({
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
+      const oldIndex = iconData.findIndex((icon) => icon.id === active.id);
+      const newIndex = iconData.findIndex((icon) => icon.id === over.id);
+
+      const newIconData = arrayMove(iconData, oldIndex, newIndex).map(
+        (icon, index) => ({
+          ...icon,
+          position: index,
+        }),
+      );
+
+      setIconData(newIconData);
+
       try {
-        const oldIndex = iconData.findIndex((icon) => icon.id === active.id);
-        const newIndex = iconData.findIndex((icon) => icon.id === over.id);
-
-        const newIconData = arrayMove(iconData, oldIndex, newIndex);
-        newIconData.forEach((icon, index) => {
-          icon.position = index;
-        });
-
         await updateAllIconPositions(newIconData);
-        setIconData(newIconData);
       } catch (error) {
         console.error("Failed to update icon positions:", error);
+        setIconData(iconData);
       }
     }
     setDraggingIcons(false);
