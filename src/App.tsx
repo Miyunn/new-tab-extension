@@ -215,14 +215,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
 
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
@@ -292,7 +292,7 @@ export default function App() {
           onClose={onCloseShowIcons}
           open={openAddIcon}
           closable={false}
-          height={540}
+          height={590}
           className="custom-drawer"
         >
           <Suspense
