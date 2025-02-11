@@ -24,6 +24,33 @@ export default function AddIconForm({
     setActiveTab(tabName);
   };
 
+  const handleLibraryAdd = async (icon: {
+    id: string;
+    name: string;
+    icon: string;
+    url: string;
+  }) => {
+    try {
+      //@ts-ignore
+      const highestPositionIcon = await db.icons.orderBy("position").last();
+      const newPosition = highestPositionIcon
+        ? highestPositionIcon.position + 1
+        : 0;
+
+      //@ts-ignore
+      await db.icons.add({
+        id: crypto.randomUUID(),
+        name: icon.name,
+        src: icon.icon,
+        url: icon.url,
+        position: newPosition,
+      });
+    } catch (error) {
+      setError("Error adding icon from library");
+      setPending(false);
+    }
+  };
+
   const clearForm = () => {
     const form = document.querySelector(
       "form[name='addIconForm']",
@@ -152,7 +179,9 @@ export default function AddIconForm({
             useIconURLToggle={useIconURLToggle}
           />
         )}
-        {activeTab === "Library" && <IconLibrary />}
+        {activeTab === "Library" && (
+          <IconLibrary handleLibraryAdd={handleLibraryAdd} />
+        )}
       </div>
     </div>
   );
