@@ -1,4 +1,50 @@
-export default function IconLibrary() {
+import { useState, useEffect, useRef } from "react";
+
+interface Icon {
+  id: string;
+  name: string;
+  icon: string;
+  url: string;
+}
+
+interface IconLibraryProp {
+  handleLibraryAdd: (Icon: Icon) => void;
+}
+
+export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
+  const [loading, setLoading] = useState(true);
+  const [icons, setIcons] = useState<Icon[]>([]);
+  const [error, setError] = useState(false);
+  const [visibleIconId, setVisibleIconId] = useState<string | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const fetchIconsFromLibrary = async () => {
+    try {
+      const response = await fetch(
+        `https://newtab-backend-proxy.vercel.app/api/getIcons`,
+      );
+      const data = await response.json();
+      setIcons(data.icons);
+      setLoading(false);
+    } catch (err) {
+      console.error("Could not fetch icons", err);
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchIconsFromLibrary();
+  }, []);
+
   return (
     <div className="max-w-md">
       <form>
@@ -19,8 +65,49 @@ export default function IconLibrary() {
         </label>
       </form>
 
-      <div className=" flex items-center justify-center mt-10">
-        <span className="loading loading-bars loading-lg"></span>
+      <div className="flex items-center justify-center mt-10">
+        {loading && <span className="loading loading-bars loading-lg"></span>}
+        {error && (
+          <p className="text-red-500">
+            Failed to load icons. Please try again.
+          </p>
+        )}
+        {!loading && !error && icons.length === 0 && (
+          <p className="text-gray-500">No icons available.</p>
+        )}
+        {!loading && icons.length > 0 && (
+          <div className="grid grid-cols-4 gap-4">
+            {icons.map((icon) => (
+              <div className="indicator">
+                <button
+                  key={icon.id}
+                  className="flex flex-col items-center p-2 rounded-lg hover:shadow-lg hover:bg-gray-400 transition"
+                  onClick={() => {
+                    handleLibraryAdd(icon);
+                    if (timeoutRef.current) {
+                      clearTimeout(timeoutRef.current);
+                    }
+                    setVisibleIconId(icon.id);
+                    timeoutRef.current = setTimeout(() => {
+                      setVisibleIconId(null);
+                    }, 3000);
+                  }}
+                >
+                  {visibleIconId === icon.id && (
+                    <span className="indicator-item indicator-center indicator-middle badge ">
+                      Saved
+                    </span>
+                  )}
+                  <img
+                    src={icon.icon}
+                    alt={icon.name}
+                    className="w-10 h-10 object-contain"
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
