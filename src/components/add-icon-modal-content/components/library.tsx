@@ -66,7 +66,9 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
       </form>
 
       <div className="flex items-center justify-center mt-10">
-        {loading && <span className="loading loading-bars loading-lg"></span>}
+        {loading && (
+          <span className="loading loading-spinner loading-lg"></span>
+        )}
         {error && (
           <p className="text-red-500">
             Failed to load icons. Please try again.
