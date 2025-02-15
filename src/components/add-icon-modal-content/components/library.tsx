@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Icon {
   id: string;
@@ -15,6 +15,16 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
   const [loading, setLoading] = useState(true);
   const [icons, setIcons] = useState<Icon[]>([]);
   const [error, setError] = useState(false);
+  const [visibleIconId, setVisibleIconId] = useState<string | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const fetchIconsFromLibrary = async () => {
     try {
@@ -68,17 +78,33 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
         {!loading && icons.length > 0 && (
           <div className="grid grid-cols-4 gap-4">
             {icons.map((icon) => (
-              <button
-                key={icon.id}
-                className="flex flex-col items-center p-2 rounded-lg hover:shadow-lg hover:bg-gray-400 transition"
-                onClick={() => handleLibraryAdd(icon)}
-              >
-                <img
-                  src={icon.icon}
-                  alt={icon.name}
-                  className="w-10 h-10 object-contain"
-                />
-              </button>
+              <div className="indicator">
+                <button
+                  key={icon.id}
+                  className="flex flex-col items-center p-2 rounded-lg hover:shadow-lg hover:bg-gray-400 transition"
+                  onClick={() => {
+                    handleLibraryAdd(icon);
+                    if (timeoutRef.current) {
+                      clearTimeout(timeoutRef.current);
+                    }
+                    setVisibleIconId(icon.id);
+                    timeoutRef.current = setTimeout(() => {
+                      setVisibleIconId(null);
+                    }, 3000);
+                  }}
+                >
+                  {visibleIconId === icon.id && (
+                    <span className="indicator-item indicator-center indicator-middle badge ">
+                      Saved
+                    </span>
+                  )}
+                  <img
+                    src={icon.icon}
+                    alt={icon.name}
+                    className="w-10 h-10 object-contain"
+                  />
+                </button>
+              </div>
             ))}
           </div>
         )}
