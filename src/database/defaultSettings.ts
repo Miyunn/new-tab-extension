@@ -1,7 +1,7 @@
 export const defaultSettings = {
   version: "0.5.1",
   searchBar: true,
-  searchEngine: "google",
+  searchEngine: "chromeSearch",
   searchBarWidth: 300,
   iconVisibility: true,
   layoutStyle: "grid",

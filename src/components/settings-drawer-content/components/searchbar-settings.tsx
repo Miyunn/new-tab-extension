@@ -27,6 +27,7 @@ export default function SearchbarSettings({
           className="select select-bordered w-full max-w"
           defaultValue={settings.searchEngine}
         >
+          <option value="chromeSearch">Browser Default</option>
           <option value="google">Google</option>
           <option value="bing">Bing</option>
           <option value="duckduckgo">DuckDuckGo</option>

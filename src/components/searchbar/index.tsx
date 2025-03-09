@@ -2,6 +2,7 @@ import React, { KeyboardEvent } from "react";
 import GoogleIcon from "../../assets/icons/search-engine/icons8-google.svg";
 import BingIcon from "../../assets/icons/search-engine/icons8-bing.svg";
 import DuckDuckGoIcon from "../../assets/icons/search-engine/icons8-duckduckgo.svg";
+import chromeSearch from "../../assets/icons/search-engine/chrome-svgrepo-com.svg";
 
 interface Props {
   searchEngine: string;
@@ -10,6 +11,8 @@ interface Props {
 
 const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
   switch (searchEngine) {
+    case "chromeSearch":
+      return <img src={chromeSearch} alt="Google" height={20} width={20} />;
     case "duckduckgo":
       return (
         <img src={DuckDuckGoIcon} alt="DuckDuckGo" height={25} width={25} />
@@ -17,7 +20,7 @@ const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
     case "bing":
       return <img src={BingIcon} alt="Bing" height={20} width={20} />;
     default:
-      return <img src={GoogleIcon} alt="Google Icon" height={20} width={20} />;
+      return <img src={GoogleIcon} alt="Google" height={20} width={20} />;
   }
 };
 
@@ -38,6 +41,15 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
     if (searchText) {
       let searchUrl = "";
       switch (searchEngine) {
+        case "chromeSearch":
+          if (chrome?.search) {
+            chrome.search.query({ text: searchText }, () => {
+              console.log(`Searched for: ${searchText}`);
+            });
+          } else {
+            console.error("chrome.search API is not available");
+          }
+          return;
         case "duckduckgo":
           searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`;
           break;
@@ -48,7 +60,13 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
           searchUrl = `http://www.google.com/search?q=${encodeURIComponent(searchText)}`;
           break;
       }
-      window.location.href = searchUrl;
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs.length > 0 && tabs[0].id) {
+          chrome.tabs.update(tabs[0].id, { url: searchUrl });
+        } else {
+          chrome.tabs.create({ url: searchUrl });
+        }
+      });
     }
   };
 
