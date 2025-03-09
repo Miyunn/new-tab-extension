@@ -43,11 +43,8 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
       switch (searchEngine) {
         case "chromeSearch":
           if (chrome?.search) {
-            chrome.search.query({ text: searchText }, () => {
-              console.log(`Searched for: ${searchText}`);
-            });
+            chrome.search.query({ text: searchText }, () => {});
           } else {
-            console.error("chrome.search API is not available");
           }
           return;
         case "duckduckgo":
