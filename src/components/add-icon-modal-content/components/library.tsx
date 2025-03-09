@@ -97,7 +97,7 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
                 >
                   {visibleIconId === icon.id && (
                     <span className="indicator-item indicator-center indicator-middle badge ">
-                      Saved
+                      Added
                     </span>
                   )}
                   <img
