@@ -58,11 +58,9 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
       `https://www.google.com/search?q=${encodeURIComponent(searchText)}`;
 
     if (typeof chrome == "undefined") {
-      console.log("Using backup");
       window.location.href = searchUrl;
     } else {
       if (chrome?.tabs) {
-        console.log("Using Chrome api tab");
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           const activeTab = tabs[0];
           activeTab?.id
