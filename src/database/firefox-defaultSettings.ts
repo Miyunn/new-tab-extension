@@ -1,7 +1,8 @@
-export const defaultSettings = {
-  version: "0.5.1",
+export const firefoxDefaultSettings = {
+  version: "0.5.3",
+  loadedSettings: "firefox",
   searchBar: true,
-  searchEngine: "chromeSearch",
+  searchEngine: "google",
   searchBarWidth: 300,
   iconVisibility: true,
   layoutStyle: "grid",

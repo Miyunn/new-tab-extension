@@ -12,7 +12,9 @@ interface Props {
 const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
   switch (searchEngine) {
     case "chromeSearch":
-      return <img src={chromeSearch} alt="Google" height={20} width={20} />;
+      return (
+        <img src={chromeSearch} alt="Browser Default" height={20} width={20} />
+      );
     case "duckduckgo":
       return (
         <img src={DuckDuckGoIcon} alt="DuckDuckGo" height={25} width={25} />
@@ -36,34 +38,38 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
   };
 
   const search = (searchEngine: string) => {
-    const searchText = (document.getElementById("search") as HTMLInputElement)
-      .value;
-    if (searchText) {
-      let searchUrl = "";
-      switch (searchEngine) {
-        case "chromeSearch":
-          if (chrome?.search) {
-            chrome.search.query({ text: searchText }, () => {});
-          } else {
-          }
-          return;
-        case "duckduckgo":
-          searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`;
-          break;
-        case "bing":
-          searchUrl = `http://www.bing.com/search?q=${encodeURIComponent(searchText)}`;
-          break;
-        default:
-          searchUrl = `http://www.google.com/search?q=${encodeURIComponent(searchText)}`;
-          break;
+    const searchText = (
+      document.getElementById("search") as HTMLInputElement
+    )?.value.trim();
+    if (!searchText) return;
+
+    const searchUrls: Record<string, string> = {
+      duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`,
+      bing: `https://www.bing.com/search?q=${encodeURIComponent(searchText)}`,
+    };
+
+    if (searchEngine === "chromeSearch" && chrome?.search) {
+      chrome.search.query({ text: searchText });
+      return;
+    }
+
+    const searchUrl =
+      searchUrls[searchEngine] ||
+      `https://www.google.com/search?q=${encodeURIComponent(searchText)}`;
+
+    if (typeof chrome == "undefined") {
+      console.log("Using backup");
+      window.location.href = searchUrl;
+    } else {
+      if (chrome?.tabs) {
+        console.log("Using Chrome api tab");
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const activeTab = tabs[0];
+          activeTab?.id
+            ? chrome.tabs.update(activeTab.id, { url: searchUrl })
+            : chrome.tabs.create({ url: searchUrl });
+        });
       }
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs.length > 0 && tabs[0].id) {
-          chrome.tabs.update(tabs[0].id, { url: searchUrl });
-        } else {
-          chrome.tabs.create({ url: searchUrl });
-        }
-      });
     }
   };
 
