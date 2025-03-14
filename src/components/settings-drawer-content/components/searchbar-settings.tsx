@@ -1,3 +1,5 @@
+const isFirefox = chrome.runtime?.getURL("").startsWith("moz-extension://");
+
 interface SearchbarSettingsProps {
   settings: any;
 }
@@ -27,9 +29,7 @@ export default function SearchbarSettings({
           className="select select-bordered w-full max-w"
           defaultValue={settings.searchEngine}
         >
-          {typeof chrome !== "undefined" && (
-            <option value="chromeSearch">Browser Default</option>
-          )}
+          {!isFirefox && <option value="chromeSearch">Browser Default</option>}
           <option value="google">Google</option>
           <option value="bing">Bing</option>
           <option value="duckduckgo">DuckDuckGo</option>

@@ -10,6 +10,7 @@ import NoIconOptions from "./components/no-icons-options";
 import { chromeDefaultSettings } from "./database/chrome-defaultSettings";
 import { IconData } from "./types/iconData";
 import { firefoxDefaultSettings } from "./database/firefox-defaultSettings";
+import browser from "webextension-polyfill";
 const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
 
 const ChangeSettings = lazy(
@@ -26,7 +27,7 @@ export default function App() {
     }
 
     const defaultSettings =
-      typeof chrome == "undefined"
+      typeof browser !== "undefined"
         ? firefoxDefaultSettings
         : chromeDefaultSettings;
 
