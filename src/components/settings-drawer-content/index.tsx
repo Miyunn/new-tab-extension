@@ -148,6 +148,8 @@ export default function ChangeSettings({
       iconBackgroundOpacity: formData.get("iconBackgroundOpacity") as string,
       iconBackgroundRadius: formData.get("iconBackgroundRadius") as string,
       version: settings.version,
+      lastUpdated: new Date().toISOString(),
+      detectedBrowserType: settings.detectedBrowserType,
       backgroundTintIntensity: formData.get(
         "backgroundTintIntensity",
       ) as string,
@@ -223,7 +225,7 @@ export default function ChangeSettings({
         )}
       </div>
       <div className="text-right text-xs text-slate-600 pt-2">
-        Version : 0.5.3
+        App Version : 0.5.3
       </div>
     </div>
   );

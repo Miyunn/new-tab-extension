@@ -1,6 +1,6 @@
 export const chromeDefaultSettings = {
   version: "0.5.3",
-  loadedSettings: "chrome",
+  detectedBrowserType: "chromium",
   searchBar: true,
   searchEngine: "chromeSearch",
   searchBarWidth: 300,
