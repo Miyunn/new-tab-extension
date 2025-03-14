@@ -2,6 +2,7 @@ import React, { KeyboardEvent } from "react";
 import GoogleIcon from "../../assets/icons/search-engine/icons8-google.svg";
 import BingIcon from "../../assets/icons/search-engine/icons8-bing.svg";
 import DuckDuckGoIcon from "../../assets/icons/search-engine/icons8-duckduckgo.svg";
+import chromeSearch from "../../assets/icons/search-engine/chrome-svgrepo-com.svg";
 
 interface Props {
   searchEngine: string;
@@ -10,6 +11,10 @@ interface Props {
 
 const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
   switch (searchEngine) {
+    case "chromeSearch":
+      return (
+        <img src={chromeSearch} alt="Browser Default" height={20} width={20} />
+      );
     case "duckduckgo":
       return (
         <img src={DuckDuckGoIcon} alt="DuckDuckGo" height={25} width={25} />
@@ -17,7 +22,7 @@ const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
     case "bing":
       return <img src={BingIcon} alt="Bing" height={20} width={20} />;
     default:
-      return <img src={GoogleIcon} alt="Google Icon" height={20} width={20} />;
+      return <img src={GoogleIcon} alt="Google" height={20} width={20} />;
   }
 };
 
@@ -33,22 +38,36 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
   };
 
   const search = (searchEngine: string) => {
-    const searchText = (document.getElementById("search") as HTMLInputElement)
-      .value;
-    if (searchText) {
-      let searchUrl = "";
-      switch (searchEngine) {
-        case "duckduckgo":
-          searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`;
-          break;
-        case "bing":
-          searchUrl = `http://www.bing.com/search?q=${encodeURIComponent(searchText)}`;
-          break;
-        default:
-          searchUrl = `http://www.google.com/search?q=${encodeURIComponent(searchText)}`;
-          break;
-      }
+    const searchText = (
+      document.getElementById("search") as HTMLInputElement
+    )?.value.trim();
+    if (!searchText) return;
+
+    const searchUrls: Record<string, string> = {
+      duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`,
+      bing: `https://www.bing.com/search?q=${encodeURIComponent(searchText)}`,
+    };
+
+    if (searchEngine === "chromeSearch" && chrome?.search) {
+      chrome.search.query({ text: searchText });
+      return;
+    }
+
+    const searchUrl =
+      searchUrls[searchEngine] ||
+      `https://www.google.com/search?q=${encodeURIComponent(searchText)}`;
+
+    if (typeof chrome == "undefined") {
       window.location.href = searchUrl;
+    } else {
+      if (chrome?.tabs) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const activeTab = tabs[0];
+          activeTab?.id
+            ? chrome.tabs.update(activeTab.id, { url: searchUrl })
+            : chrome.tabs.create({ url: searchUrl });
+        });
+      }
     }
   };
 
