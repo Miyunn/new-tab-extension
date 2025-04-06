@@ -1,5 +1,5 @@
 export const chromeDefaultSettings = {
-  version: "0.5.3",
+  version: "0.6",
   detectedBrowserType: "chromium",
   searchBar: true,
   searchEngine: "chromeSearch",

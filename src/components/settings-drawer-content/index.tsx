@@ -225,7 +225,7 @@ export default function ChangeSettings({
         )}
       </div>
       <div className="text-right text-xs text-slate-600 pt-2">
-        App Version : 0.5.3
+        App Version : 0.6
       </div>
     </div>
   );
