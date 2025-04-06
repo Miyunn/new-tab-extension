@@ -32,7 +32,7 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
         `https://newtab-backend-proxy.vercel.app/api/getIcons`,
       );
       const data = await response.json();
-      setIcons(data.icons);
+      setIcons(data);
       setLoading(false);
     } catch (err) {
       console.error("Could not fetch icons", err);
