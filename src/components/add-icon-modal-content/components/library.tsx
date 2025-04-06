@@ -16,6 +16,7 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
   const [icons, setIcons] = useState<Icon[]>([]);
   const [error, setError] = useState(false);
   const [visibleIconId, setVisibleIconId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -26,10 +27,10 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
     };
   }, []);
 
-  const fetchIconsFromLibrary = async () => {
+  const fetchIconsFromLibrary = async (searchTerm: string = "") => {
     try {
       const response = await fetch(
-        `https://newtab-backend-proxy.vercel.app/api/getIcons`,
+        `https://newtab-backend-proxy.vercel.app/api/getIcons?search=${searchTerm}`,
       );
       const data = await response.json();
       setIcons(data);
@@ -45,11 +46,24 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
     fetchIconsFromLibrary();
   }, []);
 
+  useEffect(() => {
+    if (searchQuery) {
+      fetchIconsFromLibrary(searchQuery);
+    } else {
+      fetchIconsFromLibrary();
+    }
+  }, [searchQuery]);
+
   return (
     <div className="max-w-md">
       <form>
         <label className="input input-bordered flex items-center gap-2 mt-4">
-          <input type="text" placeholder="Search" />
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"
@@ -75,14 +89,13 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
           </p>
         )}
         {!loading && !error && icons.length === 0 && (
-          <p className="text-gray-500">No icons available.</p>
+          <p className="text-gray-500">No icons found for "{searchQuery}".</p>
         )}
         {!loading && icons.length > 0 && (
           <div className="grid grid-cols-4 gap-4">
             {icons.map((icon) => (
-              <div className="indicator">
+              <div className="indicator" key={icon.id}>
                 <button
-                  key={icon.id}
                   className="flex flex-col items-center p-2 rounded-lg hover:shadow-lg hover:bg-gray-400 transition"
                   onClick={() => {
                     handleLibraryAdd(icon);
