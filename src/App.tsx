@@ -7,10 +7,10 @@ import { Drawer } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";
 import NoIconOptions from "./components/no-icons-options";
-import { chromeDefaultSettings } from "./database/chrome-defaultSettings";
 import { IconData } from "./types/iconData";
+import { chromeDefaultSettings } from "./database/chrome-defaultSettings";
 import { firefoxDefaultSettings } from "./database/firefox-defaultSettings";
-import browser from "webextension-polyfill";
+import { unsplashData } from "./database/unsplash-data";
 const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
 
 const ChangeSettings = lazy(
@@ -20,18 +20,20 @@ const AddIconForm = lazy(() => import("./components/add-icon-modal-content"));
 
 export default function App() {
   const [settings, setSettings] = useState(() => {
-    const localValue = localStorage.getItem("settings");
+    const localSettings = localStorage.getItem("settings");
 
-    if (localValue !== null) {
-      return JSON.parse(localValue);
+    if (localSettings !== null) {
+      return JSON.parse(localSettings);
     }
 
-    const defaultSettings =
-      typeof browser !== "undefined"
-        ? firefoxDefaultSettings
-        : chromeDefaultSettings;
+    const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+
+    const defaultSettings = isFirefox
+      ? firefoxDefaultSettings
+      : chromeDefaultSettings;
 
     localStorage.setItem("settings", JSON.stringify(defaultSettings));
+    localStorage.setItem("unsplashData", JSON.stringify(unsplashData));
     return defaultSettings;
   });
 
