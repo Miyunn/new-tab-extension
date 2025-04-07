@@ -149,10 +149,9 @@ export default function AddIconForm({
 
   return (
     <div className="flex justify-center items-center">
-      <div className="max-w-md">
+      <div>
         <div className="divider text-sm">Add Icon</div>
-
-        <div role="tablist" className="tabs tabs-lifted w-full max-w-md">
+        <div role="tablist" className="tabs tabs-lifted">
           <a
             role="tab"
             className={`tab w-full ${activeTab === "Library" ? "tab-active" : ""}`}

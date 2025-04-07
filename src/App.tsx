@@ -281,7 +281,20 @@ export default function App() {
           open={openSettings}
           closable={false}
           width={400}
-          className="custom-drawer"
+          styles={{
+            content: {
+              backgroundColor: "rgba(0, 0, 0, 0.65)",
+              backdropFilter: "blur(8px)",
+              boxShadow: "none",
+            },
+            header: {
+              backgroundColor: "transparent",
+              borderBottom: "none",
+            },
+            body: {
+              backgroundColor: "transparent",
+            },
+          }}
         >
           <Suspense
             fallback={
@@ -299,12 +312,25 @@ export default function App() {
         </Drawer>
 
         <Drawer
-          placement="top"
+          placement="right"
           onClose={onCloseShowIcons}
           open={openAddIcon}
           closable={false}
           height={590}
-          className="custom-drawer"
+          styles={{
+            content: {
+              backgroundColor: "rgba(0, 0, 0, 0.65)",
+              backdropFilter: "blur(8px)",
+              boxShadow: "none",
+            },
+            header: {
+              backgroundColor: "transparent",
+              borderBottom: "none",
+            },
+            body: {
+              backgroundColor: "transparent",
+            },
+          }}
         >
           <Suspense
             fallback={

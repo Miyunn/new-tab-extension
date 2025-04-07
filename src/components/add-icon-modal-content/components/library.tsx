@@ -96,7 +96,7 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
             {icons.map((icon) => (
               <div className="indicator" key={icon.id}>
                 <button
-                  className="flex flex-col items-center p-2 rounded-lg hover:shadow-lg hover:bg-gray-400 transition"
+                  className="flex flex-col bg-gray-700 items-center p-2 rounded-lg hover:shadow-lg hover:bg-gray-400 transition"
                   onClick={() => {
                     handleLibraryAdd(icon);
                     if (timeoutRef.current) {
