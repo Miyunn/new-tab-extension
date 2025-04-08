@@ -8,19 +8,20 @@ interface Props {
 }
 
 export default function EditIconForm({ selectedIcon, closeModal }: Props) {
-  const [useIconURLToggle, setUseIconURLToggle] = useState(!!selectedIcon.src);
+  const [useUrlForIconToggle, setUseUrlForIconToggle] = useState(
+    !!selectedIcon.src,
+  );
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  const [iconSrc] = useState(selectedIcon.src);
 
   useEffect(() => {
     if (selectedIcon.src && selectedIcon.src.startsWith("data:")) {
-      setUseIconURLToggle(false);
+      setUseUrlForIconToggle(false);
     }
   }, [selectedIcon]);
 
   const handleUseIconURLToggle = () => {
-    setUseIconURLToggle(!useIconURLToggle);
+    setUseUrlForIconToggle((prev) => !prev);
     setError("");
   };
 
@@ -53,10 +54,10 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
     const updatedIcon = {
       name: formData.get("name") as string,
       destination: formData.get("destination") as string,
-      iconURL: selectedIcon.src, // Default to old icon URL
+      iconURL: selectedIcon.src,
     };
 
-    if (!useIconURLToggle) {
+    if (!useUrlForIconToggle) {
       const iconImage = formData.get("iconUpload") as File;
       if (iconImage && iconImage.size > 0) {
         try {
@@ -71,12 +72,8 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
           setPending(false);
           return;
         }
-      } else {
-        // If no new icon is uploaded, keep the old icon URL
-        updatedIcon.iconURL = selectedIcon.src;
       }
     } else {
-      // If using URL toggle, get the URL from the form
       updatedIcon.iconURL = formData.get("iconURL") as string;
     }
 
@@ -98,8 +95,12 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
 
   return (
     <div className="flex justify-center items-center">
-      <form className="max-w-md" onSubmit={handleSubmit} name="editIconForm">
-        <div className="form-control mt-4">
+      <form
+        className="max-w-md w-full"
+        onSubmit={handleSubmit}
+        name="editIconForm"
+      >
+        <div className="form-control mt-3">
           <label className="label">
             <span className="label-text">Name</span>
           </label>
@@ -108,11 +109,12 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
             name="name"
             placeholder="Icon label"
             defaultValue={selectedIcon.name}
-            className="input input-bordered edit-icon-form-input"
+            className="input input-bordered"
             required
           />
         </div>
-        <div className="form-control mt-4">
+
+        <div className="form-control mt-3">
           <label className="label">
             <span className="label-text">Destination</span>
           </label>
@@ -121,24 +123,25 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
             name="destination"
             placeholder="Destination URL"
             defaultValue={selectedIcon.url}
-            className="input input-bordered edit-icon-form-input"
+            className="input input-bordered"
             required
           />
         </div>
-        <div className="form-control w-full max-w mt-4">
-          <label className="label">
+
+        <div className="form-control w-full mt-3">
+          <label className="label cursor-pointer">
             <span className="label-text">Use Image URL for Icon</span>
             <input
               type="checkbox"
-              name="searchBar"
               className="toggle toggle-primary ml-2"
-              checked={useIconURLToggle}
+              checked={useUrlForIconToggle}
               onChange={handleUseIconURLToggle}
             />
           </label>
         </div>
-        {useIconURLToggle ? (
-          <div className="form-control w-full max-w mt-4">
+
+        {useUrlForIconToggle ? (
+          <div className="form-control w-full mt-2">
             <label className="label">
               <span className="label-text">Icon URL</span>
             </label>
@@ -149,29 +152,30 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
               defaultValue={
                 selectedIcon.src.startsWith("data:") ? "" : selectedIcon.src
               }
-              className="input input-bordered edit-icon-form-input"
+              className="input input-bordered"
               required
             />
           </div>
         ) : (
-          <div className="form-control w-full max-w mt-4">
+          <div className="form-control w-full mt-2">
             <label className="label">
               <span className="label-text">Upload new Icon</span>
             </label>
             <input
               type="file"
-              className="file-input file-input-bordered w-full max-w-xs edit-icon-form-input"
+              className="file-input file-input-bordered w-full"
               name="iconUpload"
               onChange={imageUploadValidation}
-              required={iconSrc === ""}
-              defaultValue={selectedIcon.src}
+              required={selectedIcon.src === ""}
             />
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
         )}
+
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
         <button
           type="submit"
-          className="btn btn-primary mt-6 w-full"
+          className="btn btn-primary mt-5 mb-3 w-full"
           disabled={pending || error !== ""}
         >
           {pending ? "Saving Icon..." : "Save Icon"}
