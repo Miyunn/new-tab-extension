@@ -95,8 +95,6 @@ export default function ChangeSettings({
     settings.unslpashFrequency || 4,
   );
 
-  const [openMoreSettings, setOpenMoreSettings] = useState(false);
-
   //Validates image when selected and blocks upload (disable save button)
   const imageUploadValidation = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -183,7 +181,6 @@ export default function ChangeSettings({
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <h2 className="text-lg"> Settings </h2>
         <WallpaperSettings
           settings={settings}
           backgroundColor={backgroundColor}
@@ -203,26 +200,16 @@ export default function ChangeSettings({
         />
         <button
           type="submit"
-          className="btn btn-primary mt-4 w-full"
+          className="btn btn-primary mt-6 w-full"
           disabled={pending || (error !== "" ? true : false)}
         >
           {pending ? "Saving..." : error !== "" ? error : "Save"}
         </button>
       </form>
 
-      <div className="collapse-arrow max-w">
-        <div
-          className="collapse-title text-lg cursor-pointer"
-          onClick={() => setOpenMoreSettings(!openMoreSettings)}
-        >
-          More Settings
-        </div>
-        {openMoreSettings && (
-          <div>
-            <BackupAndRestore />
-            <ResetOptionSettings resetSettings={ResetSettings} />
-          </div>
-        )}
+      <div className="mt-6">
+        <BackupAndRestore />
+        <ResetOptionSettings resetSettings={ResetSettings} />
       </div>
       <div className="text-right text-xs text-slate-600 pt-2">
         App Version : 0.6
