@@ -19,7 +19,6 @@ export default function BackupAndRestore() {
             if (err) {
               console.error("Export failed: ", err);
             } else {
-              console.log("Exported as JSON: ", jsonString);
               // Download the JSON string as a file
               const blob = new Blob([jsonString], { type: "application/json" });
               const exportTime = new Date(Date.now());
