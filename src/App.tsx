@@ -122,7 +122,7 @@ export default function App() {
 
         localStorage.setItem("unsplashData", JSON.stringify(newImageData));
         // Optionally update the displayed image after fetching
-        // setUnslpahImage(newImageData);
+        setUnslpahImage(newImageData);
       } catch (error) {
         console.error("Error fetching Unsplash image:", error);
       }
@@ -226,14 +226,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
 
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (

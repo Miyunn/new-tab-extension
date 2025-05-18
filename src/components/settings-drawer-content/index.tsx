@@ -178,6 +178,13 @@ export default function ChangeSettings({
     setSettings([]);
     location.reload();
   }
+
+  function ForceRefreshUnsplashWallpaper() {
+    localStorage.removeItem("unsplashData");
+    setSettings([]);
+    location.reload();
+  }
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -191,6 +198,7 @@ export default function ChangeSettings({
           handleUnsplashFrequencyChange={handleUnsplashFrequencyChange}
           unsplashFrequencyHours={unsplashFrequencyHours}
           error={error}
+          forceResetUnsplashWallpaper={ForceRefreshUnsplashWallpaper}
         />
         <SearchbarSettings settings={settings} />
         <IconSettings settings={settings} />

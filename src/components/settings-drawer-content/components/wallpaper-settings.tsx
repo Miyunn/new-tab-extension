@@ -14,6 +14,7 @@ interface WallpaperSettingsProps {
   ) => void;
   unsplashFrequencyHours: number[];
   error: string;
+  forceResetUnsplashWallpaper: () => void;
 }
 
 export default function WallpaperSettings({
@@ -26,6 +27,7 @@ export default function WallpaperSettings({
   handleUnsplashFrequencyChange,
   unsplashFrequencyHours,
   error,
+  forceResetUnsplashWallpaper,
 }: WallpaperSettingsProps) {
   return (
     <>
@@ -278,6 +280,14 @@ export default function WallpaperSettings({
               </div>
             </div>
           </div>
+
+          <button
+            type="button"
+            className="btn btn-primary my-3 w-full"
+            onClick={forceResetUnsplashWallpaper}
+          >
+            Get Random Wallpaper
+          </button>
         </>
       )}
     </>
