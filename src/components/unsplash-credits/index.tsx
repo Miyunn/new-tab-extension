@@ -125,8 +125,9 @@ export default function UnsplashCredits({
           </a>
           <button
             onClick={handleDownload}
-            className="no-underline hover:underline inline flex items-center text-white"
+            className="no-underline hover:underline inline flex items-center text-white tooltip tooltip-right"
             disabled={downloading}
+            data-tip="Download Wallpaper"
           >
             {downloading ? (
               <svg

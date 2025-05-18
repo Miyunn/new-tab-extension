@@ -20,8 +20,14 @@ Transform your browsing experience with a fully customizable new tab and homepag
 - **Unsplash Integration**  
   Enjoy beautiful, high-quality wallpapers from Unsplash that update automatically at set intervals, keeping your browsing experience fresh and inspiring.
 
+- **Built-in Icon Library**  
+  Access a newly added, built-in library of beautiful, ready-to-use icons to quickly style your shortcuts.
+
 - **Shortcut Icons**  
   Add, organize, and customize shortcut icons for instant access to your favorite websites.
+
+- **Icon Library**  
+  A growing library of beautiful, ready-to-use icons
 
 - **Personalized Appearance**  
   Fine-tune the look of your icons and wallpapers to perfectly match your aesthetic.
@@ -44,8 +50,3 @@ Your feedback is greatly appreciated—thank you for your patience!
 - [**Firefox**](https://addons.mozilla.org/en-US/firefox/addon/new-tab-public-beta/)
 
 ---
-
-## 🌐 **Try It Without Installing**
-
-You can try it out directly from your browser:  
-[**Live Demo**](https://new-tab-demo.vercel.app/) 😉
