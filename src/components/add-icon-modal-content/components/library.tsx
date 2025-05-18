@@ -28,6 +28,11 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
     };
   }, []);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   const fetchIconsFromLibrary = async (searchTerm: string = "") => {
     try {
       const response = await fetch(
@@ -59,6 +64,7 @@ export default function IconLibrary({ handleLibraryAdd }: IconLibraryProp) {
     <div>
       <form className="mt-6 flex justify-center">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Search for an icon..."
           value={searchQuery}
