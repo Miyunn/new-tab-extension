@@ -12,10 +12,7 @@ import { chromeDefaultSettings } from "./database/chrome-defaultSettings";
 import { firefoxDefaultSettings } from "./database/firefox-defaultSettings";
 import { unsplashData } from "./database/unsplash-data";
 const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
-
-const ChangeSettings = lazy(
-  () => import("./components/settings-drawer-content"),
-);
+const SettingsMenu = lazy(() => import("./components/settings"));
 const AddIconForm = lazy(() => import("./components/add-icon-modal-content"));
 
 export default function App() {
@@ -275,6 +272,7 @@ export default function App() {
               />
             ) : null)}
         </div>
+
         <Drawer
           placement="right"
           onClose={onCloseSettings}
@@ -303,11 +301,7 @@ export default function App() {
               </div>
             }
           >
-            <ChangeSettings
-              setSettings={setSettings}
-              settings={settings}
-              closeDrawer={onCloseSettings}
-            />
+            <SettingsMenu settings={settings} setSettings={setSettings} />
           </Suspense>
         </Drawer>
 

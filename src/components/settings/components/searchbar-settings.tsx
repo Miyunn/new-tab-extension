@@ -2,9 +2,11 @@ const isFirefox = chrome.runtime?.getURL("").startsWith("moz-extension://");
 
 interface SearchbarSettingsProps {
   settings: any;
+  handleChange: any;
 }
 export default function SearchbarSettings({
   settings,
+  handleChange,
 }: SearchbarSettingsProps) {
   return (
     <>
@@ -16,7 +18,8 @@ export default function SearchbarSettings({
             type="checkbox"
             name="searchBar"
             className="toggle toggle-primary ml-2"
-            defaultChecked={settings.searchBar}
+            checked={settings.searchBar}
+            onChange={handleChange}
           />
         </label>
       </div>
@@ -27,7 +30,8 @@ export default function SearchbarSettings({
         <select
           name="searchEngine"
           className="select select-bordered w-full max-w"
-          defaultValue={settings.searchEngine}
+          value={settings.searchEngine}
+          onChange={handleChange}
         >
           {!isFirefox && <option value="chromeSearch">Browser Default</option>}
           <option value="google">Google</option>
@@ -46,7 +50,8 @@ export default function SearchbarSettings({
           className="range"
           step="10"
           name="searchBarWidth"
-          defaultValue={settings.searchBarWidth}
+          value={settings.searchBarWidth}
+          onChange={handleChange}
         />
         <div className="w-full flex justify-between text-xs px-2">
           <span>250px</span>

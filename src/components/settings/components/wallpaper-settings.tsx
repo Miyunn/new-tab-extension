@@ -1,34 +1,96 @@
 import React from "react";
 import { ColorPicker } from "antd";
 import { Tooltip } from "react-tooltip";
+import { useState } from "react";
+import db from "../../../database/indexDb";
 
 interface WallpaperSettingsProps {
   settings: any;
-  backgroundColor: string;
-  setBackgroundColor: React.Dispatch<React.SetStateAction<string>>;
-  backgroundType: string;
-  setBackgroundType: React.Dispatch<React.SetStateAction<string>>;
-  imageUploadValidation: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleUnsplashFrequencyChange: (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => void;
-  unsplashFrequencyHours: number[];
-  error: string;
-  forceResetUnsplashWallpaper: () => void;
+  handleChange: any;
 }
 
 export default function WallpaperSettings({
   settings,
-  backgroundColor,
-  setBackgroundColor,
-  backgroundType,
-  setBackgroundType,
-  imageUploadValidation,
-  handleUnsplashFrequencyChange,
-  unsplashFrequencyHours,
-  error,
-  forceResetUnsplashWallpaper,
+  handleChange,
 }: WallpaperSettingsProps) {
+  const [error, setError] = useState("");
+  const unsplashFrequencyHours = [1, 4, 8, 12, 24];
+
+  const handleUnsplashFrequencyChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const index = parseInt(e.target.value);
+    const frequency = unsplashFrequencyHours[index];
+    handleChange({
+      target: {
+        name: "unsplashFrequency",
+        value: frequency,
+      },
+    });
+  };
+
+  async function handleImageUpload(file: File): Promise<string> {
+    try {
+      const imageDataUrl = await uploadImage(file);
+      // @ts-ignore
+      await db.wallpaper.update(1, { data: imageDataUrl });
+      return "success";
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  function uploadImage(file: File): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      if (file.size > 8 * 1024 * 1024 || !file.type.startsWith("image/")) {
+        reject(new Error("File size is too large or not an image file"));
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const imageDataUrl = reader.result as string;
+        resolve(imageDataUrl);
+      };
+
+      reader.onerror = () => {
+        reader.abort();
+        reject(new Error("Error reading file"));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+  const imageUploadValidation = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        setError("Invalid file type");
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        setError("File size must be less than 8MB");
+        return;
+      }
+      setError("");
+      try {
+        const result = await handleImageUpload(file);
+        console.log(result);
+      } catch (err) {
+        setError("Failed to upload image");
+        console.error("Upload error:", err);
+      }
+    }
+  };
+
+  function ForceRefreshUnsplashWallpaper() {
+    localStorage.removeItem("unsplashData");
+    location.reload();
+  }
+
   return (
     <>
       <div className="divider text-sm">Wallpaper</div>
@@ -39,8 +101,8 @@ export default function WallpaperSettings({
         <select
           name="backgroundType"
           className="select select-bordered w-full max-w"
-          defaultValue={settings.backgroundType}
-          onChange={(e) => setBackgroundType(e.target.value)}
+          value={settings.backgroundType}
+          onChange={handleChange}
         >
           <option value="dark">Default</option>
           <option value="color">Solid Color</option>
@@ -50,20 +112,28 @@ export default function WallpaperSettings({
         </select>
       </div>
 
-      {backgroundType === "color" && (
+      {settings.backgroundType === "color" && (
         <div className="form-control w-full max-w">
           <label className="label">
             <span className="label-text">Background Color</span>
           </label>
           <ColorPicker
             showText
-            defaultValue={backgroundColor}
-            onChange={(color) => setBackgroundColor(`#${color.toHex()}`)}
+            value={settings.backgroundColor}
+            onChange={(color) => {
+              handleChange({
+                target: {
+                  name: "backgroundColor",
+                  type: "text",
+                  value: `#${color.toHex()}`,
+                },
+              });
+            }}
           />
         </div>
       )}
 
-      {backgroundType === "image" && (
+      {settings.backgroundType === "image" && (
         <div className="form-control w-full max-w">
           <label className="form-control w-full max-w">
             <div className="label">
@@ -80,7 +150,7 @@ export default function WallpaperSettings({
         </div>
       )}
 
-      {backgroundType === "url" && (
+      {settings.backgroundType === "url" && (
         <div className="form-control w-full max-w">
           <label className="form-control w-full max-w">
             <div className="label">
@@ -92,16 +162,17 @@ export default function WallpaperSettings({
               placeholder="Paste URL here"
               name="backgroundUrl"
               required
-              defaultValue={settings.backgroundUrl}
+              value={settings.backgroundUrl}
+              onChange={handleChange}
             />
           </label>
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
       )}
 
-      {(backgroundType === "image" ||
-        backgroundType === "url" ||
-        backgroundType === "unsplash") && (
+      {(settings.backgroundType === "image" ||
+        settings.backgroundType === "url" ||
+        settings.backgroundType === "unsplash") && (
         <>
           <div className="form-control w-full max-w py-2">
             <label className="label">
@@ -114,7 +185,8 @@ export default function WallpaperSettings({
               className="range"
               step="0.001"
               name="backgroundTintIntensity"
-              defaultValue={settings.backgroundTintIntensity}
+              value={settings.backgroundTintIntensity}
+              onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
               <span>No Tint</span>
@@ -140,7 +212,8 @@ export default function WallpaperSettings({
               className="range"
               step="0.01"
               name="blurValue"
-              defaultValue={settings.blurValue}
+              value={settings.blurValue}
+              onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
               <span>0%</span>
@@ -156,7 +229,7 @@ export default function WallpaperSettings({
           </div>
         </>
       )}
-      {backgroundType === "unsplash" && (
+      {settings.backgroundType === "unsplash" && (
         <>
           <div className="form-control w-full max-w py-2">
             <Tooltip id="unsplash-quality-tool-tip" className="z-50">
@@ -207,9 +280,18 @@ export default function WallpaperSettings({
               placeholder="Type a keyword"
               className="input w-full max-w"
               name="unsplashQuery"
-              defaultValue={settings.unsplashQuery}
+              value={settings.unsplashQuery}
+              onChange={handleChange}
             />
           </div>
+
+          <button
+            type="button"
+            className="btn btn-primary my-3 w-full"
+            onClick={() => ForceRefreshUnsplashWallpaper()}
+          >
+            Get Random Wallpaper
+          </button>
 
           <div className="form-control w-full max-w py-2">
             <label className="label">
@@ -234,7 +316,8 @@ export default function WallpaperSettings({
               className="range"
               step="1"
               name="unsplashQuality"
-              defaultValue={settings.unsplashQuality}
+              value={settings.unsplashQuality}
+              onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
               <span>Low</span>
@@ -265,11 +348,11 @@ export default function WallpaperSettings({
                 min="0"
                 max="4"
                 step="1"
-                defaultValue={unsplashFrequencyHours.indexOf(
+                className="range"
+                value={unsplashFrequencyHours.indexOf(
                   settings.unsplashFrequency,
                 )}
-                onChange={handleUnsplashFrequencyChange} // Fixed typo
-                className="range"
+                onChange={handleUnsplashFrequencyChange}
               />
               <div className="w-full flex justify-between text-xs px-2">
                 <span>1h</span>
@@ -280,14 +363,6 @@ export default function WallpaperSettings({
               </div>
             </div>
           </div>
-
-          <button
-            type="button"
-            className="btn btn-primary my-3 w-full"
-            onClick={forceResetUnsplashWallpaper}
-          >
-            Get Random Wallpaper
-          </button>
         </>
       )}
     </>

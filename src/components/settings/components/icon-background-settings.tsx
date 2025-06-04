@@ -1,15 +1,14 @@
-import React from "react";
 import { ColorPicker } from "antd";
 
-interface IconSettingsProps {
+interface IconBackgroundSettingsProps {
   settings: any;
-  setIconBackgroundColor: React.Dispatch<React.SetStateAction<string>>;
+  handleChange: any;
 }
 
-export default function IconBackground({
+export default function IconBackgroundSettings({
   settings,
-  setIconBackgroundColor,
-}: IconSettingsProps) {
+  handleChange,
+}: IconBackgroundSettingsProps) {
   return (
     <>
       <div className="divider text-sm pt-2">Icon Background</div>
@@ -20,7 +19,8 @@ export default function IconBackground({
             type="checkbox"
             name="iconBackground"
             className="toggle toggle-primary ml-2"
-            defaultChecked={settings.iconBackground}
+            checked={settings.iconBackground}
+            onChange={handleChange}
           />
         </label>
       </div>
@@ -30,12 +30,13 @@ export default function IconBackground({
         </label>
         <input
           type="range"
-          min="0.01"
+          min="0"
           max="1"
           className="range"
           step="0.01"
           name="iconBackgroundOpacity"
-          defaultValue={settings.iconBackgroundOpacity}
+          value={settings.iconBackgroundOpacity}
+          onChange={handleChange}
         />
         <div className="w-full flex justify-between text-xs px-2">
           <span>0</span>
@@ -58,7 +59,8 @@ export default function IconBackground({
           className="range"
           step="1"
           name="iconBackgroundRadius"
-          defaultValue={settings.iconBackgroundRadius}
+          value={settings.iconBackgroundRadius}
+          onChange={handleChange}
         />
         <div className="w-full flex justify-between text-xs px-2">
           <span>⬜</span>
@@ -72,8 +74,16 @@ export default function IconBackground({
         </label>
         <ColorPicker
           showText
-          defaultValue={settings.iconBackgroundColor}
-          onChange={(color) => setIconBackgroundColor(`#${color.toHex()}`)}
+          value={settings.iconBackgroundColor}
+          onChange={(color) => {
+            handleChange({
+              target: {
+                name: "iconBackgroundColor",
+                type: "text",
+                value: `#${color.toHex()}`,
+              },
+            });
+          }}
         />
       </div>
     </>

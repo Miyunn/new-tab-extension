@@ -1,8 +1,12 @@
 interface IconSettingsProps {
   settings: any;
+  handleChange: any;
 }
 
-export default function IconSettings({ settings }: IconSettingsProps) {
+export default function IconSettings({
+  settings,
+  handleChange,
+}: IconSettingsProps) {
   return (
     <>
       <div className="divider text-sm pt-2">Icon Layout</div>
@@ -13,18 +17,20 @@ export default function IconSettings({ settings }: IconSettingsProps) {
             type="checkbox"
             name="iconVisibility"
             className="toggle toggle-primary ml-2"
-            defaultChecked={settings.iconVisibility}
+            checked={settings.iconVisibility}
+            onChange={handleChange}
           />
         </label>
       </div>
-      <div className="form-control w-full max-w">
+      <div className="form-control w-full max-w hidden">
         <label className="label">
           <span className="label-text">Icon Layout</span>
         </label>
         <select
           name="layoutStyle"
-          className="select select-bordered w-full max-w"
-          defaultValue={settings.iconLayout}
+          className="select select-bordered w-full max-w disabled"
+          value={settings.iconLayout}
+          onChange={handleChange}
         >
           <option value="grid">Grid Style</option>
         </select>
@@ -36,7 +42,8 @@ export default function IconSettings({ settings }: IconSettingsProps) {
         <select
           name="iconOrder"
           className="select select-bordered w-full max-w"
-          defaultValue={settings.iconOrder}
+          value={settings.iconOrder}
+          onChange={handleChange}
         >
           <option value="name">Name</option>
           <option value="position">Custom</option>
@@ -49,7 +56,8 @@ export default function IconSettings({ settings }: IconSettingsProps) {
             type="checkbox"
             name="iconLabel"
             className="toggle toggle-primary ml-2"
-            defaultChecked={settings.iconLabel}
+            checked={settings.iconLabel}
+            onChange={handleChange}
           />
         </label>
       </div>
@@ -64,7 +72,8 @@ export default function IconSettings({ settings }: IconSettingsProps) {
           className="range"
           step="1"
           name="iconSize"
-          defaultValue={settings.iconSize}
+          value={settings.iconSize}
+          onChange={handleChange}
         />
         <div className="w-full flex justify-between text-xs px-2">
           <span>0</span>
@@ -87,7 +96,8 @@ export default function IconSettings({ settings }: IconSettingsProps) {
           className="range"
           step="1"
           name="iconGap"
-          defaultValue={settings.iconGap}
+          value={settings.iconGap}
+          onChange={handleChange}
         />
         <div className="w-full flex justify-between text-xs px-2">
           <span>0</span>
@@ -114,7 +124,8 @@ export default function IconSettings({ settings }: IconSettingsProps) {
           className="range"
           step="1"
           name="iconColumns"
-          defaultValue={settings.iconColumns}
+          value={settings.iconColumn}
+          onChange={handleChange}
         />
         <div className="w-full flex justify-between text-xs px-2">
           <span>1</span>

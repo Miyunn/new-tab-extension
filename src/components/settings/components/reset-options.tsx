@@ -1,12 +1,13 @@
 // NOTE: Might want to replace with a antd modal or a custom modal
 
-import IDBExportImport from "indexeddb-export-import";
-import db from "../../../database/indexDb";
+// import IDBExportImport from "indexeddb-export-import";
+// import db from "../../../database/indexDb";
 
 interface ResetOptionSettingsProps {
   resetSettings: () => void;
 }
 
+/*
 function nukeDatabase() {
   db.open()
     .then(async () => {
@@ -33,6 +34,8 @@ function nukeDatabase() {
       console.error("Database open failed: ", err);
     });
 }
+*/
+
 export default function ResetOptionSettings({
   resetSettings,
 }: ResetOptionSettingsProps) {
@@ -59,6 +62,7 @@ export default function ResetOptionSettings({
         </div>
       </dialog>
 
+      {/*
       <dialog id="removeData_confirm_modal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Delete Data</h3>
@@ -79,6 +83,8 @@ export default function ResetOptionSettings({
           </div>
         </div>
       </dialog>
+        */}
+
       <div className="divider text-sm">Reset</div>
       <div className="flex w-full max-w ">
         <button
@@ -93,6 +99,7 @@ export default function ResetOptionSettings({
         >
           Reset Settings
         </button>
+        {/*
         <button
           type="button"
           className="btn btn-outline btn-error w-1/2  ml-2"
@@ -105,6 +112,7 @@ export default function ResetOptionSettings({
         >
           Remove Data
         </button>
+        */}
       </div>
     </>
   );
