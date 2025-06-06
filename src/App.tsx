@@ -10,7 +10,6 @@ import NoIconOptions from "./components/no-icons-options";
 import { IconData } from "./types/iconData";
 import { chromeDefaultSettings } from "./database/chrome-defaultSettings";
 import { firefoxDefaultSettings } from "./database/firefox-defaultSettings";
-import { unsplashData } from "./database/unsplash-data";
 const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
 const SettingsMenu = lazy(() => import("./components/settings"));
 const AddIconForm = lazy(() => import("./components/add-icon-modal-content"));
@@ -30,7 +29,6 @@ export default function App() {
       : chromeDefaultSettings;
 
     localStorage.setItem("settings", JSON.stringify(defaultSettings));
-    localStorage.setItem("unsplashData", JSON.stringify(unsplashData));
     return defaultSettings;
   });
 
