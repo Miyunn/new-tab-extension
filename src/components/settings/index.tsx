@@ -8,9 +8,11 @@ import WallpaperSettings from "./components/wallpaper-settings";
 export default function SettingsMenu({
   setSettings,
   settings,
+  forceUnsplashFetch,
 }: {
   setSettings: [] | any;
   settings: [] | any;
+  forceUnsplashFetch: () => void;
 }) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -38,7 +40,11 @@ export default function SettingsMenu({
 
   return (
     <>
-      <WallpaperSettings settings={settings} handleChange={handleChange} />
+      <WallpaperSettings
+        settings={settings}
+        handleChange={handleChange}
+        forceUnsplashFetch={forceUnsplashFetch}
+      />
       <IconSettings settings={settings} handleChange={handleChange} />
       <IconBackgroundSettings settings={settings} handleChange={handleChange} />
       <SearchbarSettings settings={settings} handleChange={handleChange} />

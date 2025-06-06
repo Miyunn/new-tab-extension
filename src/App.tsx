@@ -73,7 +73,40 @@ export default function App() {
     e.preventDefault();
   };
 
-  const startBackgroundFetch = (query: string, cacheDuration: number) => {
+  const fetchUnsplashImage = async (): Promise<void> => {
+    const query = settings.unsplashQuery;
+    try {
+      const response = await fetch(
+        `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${query}`,
+      );
+
+      const currentTime = new Date().getTime();
+
+      const data = await response.json();
+      const newImageData = {
+        imageUrls: [
+          data.urls.small,
+          data.urls.regular,
+          data.urls.full,
+          data.urls.raw,
+        ],
+        blurhash: data.blur_hash,
+        timestamp: currentTime,
+        artist: data.user.name,
+        profilePic: data.user.profile_image.medium,
+        type: data.asset_type,
+        artistLink: data.user.links.html,
+        imageLink: data.links.html,
+        downloadLink: data.links.download,
+      };
+      localStorage.setItem("unsplashData", JSON.stringify(newImageData));
+      setUnslpahImage(newImageData);
+    } catch (error) {
+      console.error("Error fetching Unsplash image:", error);
+    }
+  };
+
+  const startBackgroundFetch = (cacheDuration: number) => {
     const fetchUnsplashImageBackground = async () => {
       const unsplashData = JSON.parse(
         localStorage.getItem("unsplashData") || "null",
@@ -92,49 +125,21 @@ export default function App() {
       ) {
         return;
       }
-
-      // Fetch a new wallpaper in the background
-      try {
-        const response = await fetch(
-          `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${query}`,
-        );
-        const data = await response.json();
-
-        const newImageData = {
-          imageUrls: [
-            data.urls.small,
-            data.urls.regular,
-            data.urls.full,
-            data.urls.raw,
-          ],
-          blurhash: data.blur_hash,
-          timestamp: currentTime,
-          artist: data.user.name,
-          profilePic: data.user.profile_image.medium,
-          type: data.asset_type,
-          artistLink: data.user.links.html,
-          imageLink: data.links.html,
-          downloadLink: data.links.download,
-        };
-
-        localStorage.setItem("unsplashData", JSON.stringify(newImageData));
-        // Optionally update the displayed image after fetching
-        setUnslpahImage(newImageData);
-      } catch (error) {
-        console.error("Error fetching Unsplash image:", error);
-      }
+      fetchUnsplashImage();
     };
-
-    fetchUnsplashImageBackground(); // Initial fetch
+    fetchUnsplashImageBackground();
   };
 
   useEffect(() => {
-    if (settings.backgroundType === "unsplash") {
+    if (
+      settings.backgroundType === "unsplash" &&
+      settings.unsplashAutoRefresh
+    ) {
       const refreshRate = Math.max(settings.unsplashFrequency, 1);
       const refresh_frequency = refreshRate * 60 * 60 * 1000;
-      startBackgroundFetch(settings.unsplashQuery, refresh_frequency);
+      startBackgroundFetch(refresh_frequency);
     }
-  }, [settings.backgroundType, settings.unsplashQuery]);
+  }, [settings.backgroundType, settings.unsplashAutoRefresh]);
 
   let bg = {};
 
@@ -211,14 +216,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
         <div className="absolute bottom-0 left-0 z-50 fade-in">
@@ -288,7 +293,11 @@ export default function App() {
               </div>
             }
           >
-            <SettingsMenu settings={settings} setSettings={setSettings} />
+            <SettingsMenu
+              settings={settings}
+              setSettings={setSettings}
+              forceUnsplashFetch={fetchUnsplashImage}
+            />
           </Suspense>
         </Drawer>
 

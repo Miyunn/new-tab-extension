@@ -7,11 +7,13 @@ import db from "../../../database/indexDb";
 interface WallpaperSettingsProps {
   settings: any;
   handleChange: any;
+  forceUnsplashFetch: () => void;
 }
 
 export default function WallpaperSettings({
   settings,
   handleChange,
+  forceUnsplashFetch,
 }: WallpaperSettingsProps) {
   const [error, setError] = useState("");
   const unsplashFrequencyHours = [1, 4, 8, 12, 24];
@@ -85,11 +87,6 @@ export default function WallpaperSettings({
       }
     }
   };
-
-  function ForceRefreshUnsplashWallpaper() {
-    localStorage.removeItem("unsplashData");
-    location.reload();
-  }
 
   return (
     <>
@@ -172,76 +169,69 @@ export default function WallpaperSettings({
       {(settings.backgroundType === "image" ||
         settings.backgroundType === "url" ||
         settings.backgroundType === "unsplash") && (
-          <>
-            <div className="form-control w-full max-w py-2">
-              <label className="label">
-                <span className="label-text">Wallpaper tint</span>
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                className="range"
-                step="0.001"
-                name="backgroundTintIntensity"
-                value={settings.backgroundTintIntensity}
-                onChange={handleChange}
-              />
-              <div className="w-full flex justify-between text-xs px-2">
-                <span>No Tint</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>50%</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>Black</span>
-              </div>
+        <>
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Wallpaper tint</span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              className="range"
+              step="0.001"
+              name="backgroundTintIntensity"
+              value={settings.backgroundTintIntensity}
+              onChange={handleChange}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>No Tint</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>50%</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>Black</span>
             </div>
+          </div>
 
-            <div className="form-control w-full max-w py-2">
-              <label className="label">
-                <span className="label-text">Wallpaper blur</span>
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="10"
-                className="range"
-                step="0.01"
-                name="blurValue"
-                value={settings.blurValue}
-                onChange={handleChange}
-              />
-              <div className="w-full flex justify-between text-xs px-2">
-                <span>0%</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>50%</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>100</span>
-              </div>
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Wallpaper blur</span>
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              className="range"
+              step="0.01"
+              name="blurValue"
+              value={settings.blurValue}
+              onChange={handleChange}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>0%</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>50%</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>100</span>
             </div>
-          </>
-        )}
+          </div>
+        </>
+      )}
       {settings.backgroundType === "unsplash" && (
         <>
           <div className="form-control w-full max-w py-2">
             <Tooltip id="unsplash-quality-tool-tip" className="z-50">
-              Adjust the resolution of the Unsplash wallpaper to suit your
-              needs:
-              <br />- <strong>Low</strong>: Optimized for faster loading; ideal
-              when using heavy blur effects.
-              <br />- <strong>Medium</strong>: A balanced choice for good image
-              quality and quick load times.
-              <br />- <strong>High</strong>: Perfect for high-resolution
-              screens; may slow down the new tab's opening speed.
-              <br />- <strong>Original</strong>: Maximum resolution for the best
-              quality but may significantly impact loading performance.
+              Lower resolutions load faster and are ideal when using a blur
+              effect. For better performance, consider choosing a lower quality
+              setting.
             </Tooltip>
             <Tooltip id="unsplash-query-tool-tip" className="z-50">
               Use this field to search Unsplash for wallpapers based on a
@@ -249,18 +239,10 @@ export default function WallpaperSettings({
               <br />
               For example, enter "nature" or "space" to find relevant images.
               <br />
-              Results will be randomly selected based on your query.
-            </Tooltip>
-            <Tooltip id="unsplash-frequency-tool-tip" className="z-50">
-              Use this slider to set how often the wallpaper updates
-              automatically. The selected interval determines how frequently a
-              new wallpaper is fetched from Unsplash.
-              <br />
-              Wallpapers are cached locally to optimize performance and reduce
-              API usage.
+              Results will be randomly selected based on your keyword.
             </Tooltip>
             <label className="label">
-              <span className="label-text">Wallpaper Query</span>
+              <span className="label-text">Search Wallpapers</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -287,14 +269,68 @@ export default function WallpaperSettings({
           <button
             type="button"
             className="btn btn-primary my-3 w-full"
-            onClick={() => ForceRefreshUnsplashWallpaper()}
+            onClick={forceUnsplashFetch}
           >
-            Get Random Wallpaper
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.6 9.6 0 0 0 7.556 8a9.6 9.6 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.6 10.6 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.6 9.6 0 0 0 6.444 8a9.6 9.6 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5"
+              />
+              <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192m0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192" />
+            </svg>
+            Shuffle Wallpaper
           </button>
+
+          <div className="form-control w-full max-w mt-4">
+            <label className="label cursor-pointer">
+              <span className="label-text">Auto-change Wallpaper</span>
+              <input
+                type="checkbox"
+                name="unsplashAutoRefresh"
+                className="toggle toggle-primary ml-2"
+                checked={settings.unsplashAutoRefresh}
+                onChange={handleChange}
+              />
+            </label>
+          </div>
+
+          {settings.unsplashAutoRefresh == true && (
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Change Wallpaper Every</span>
+              </label>
+              <div className="form-control w-full max-w py-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="4"
+                  step="1"
+                  className="range"
+                  value={unsplashFrequencyHours.indexOf(
+                    settings.unsplashFrequency,
+                  )}
+                  onChange={handleUnsplashFrequencyChange}
+                />
+                <div className="w-full flex justify-between text-xs px-2">
+                  <span>1h</span>
+                  <span>4h</span>
+                  <span>8h</span>
+                  <span>12h</span>
+                  <span>24h</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Wallpaper Quality</span>
+              <span className="label-text">Wallpaper Resolution</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -323,43 +359,6 @@ export default function WallpaperSettings({
               <span>Medium</span>
               <span>High</span>
               <span>Original</span>
-            </div>
-          </div>
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Refresh Wallpaper Every</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-question-circle"
-                viewBox="0 0 16 16"
-                data-tooltip-id="unsplash-frequency-tool-tip"
-              >
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94" />
-              </svg>
-            </label>
-            <div className="form-control w-full max-w py-2">
-              <input
-                type="range"
-                min="0"
-                max="4"
-                step="1"
-                className="range"
-                value={unsplashFrequencyHours.indexOf(
-                  settings.unsplashFrequency,
-                )}
-                onChange={handleUnsplashFrequencyChange}
-              />
-              <div className="w-full flex justify-between text-xs px-2">
-                <span>1h</span>
-                <span>4h</span>
-                <span>8h</span>
-                <span>12h</span>
-                <span>24h</span>
-              </div>
             </div>
           </div>
         </>
