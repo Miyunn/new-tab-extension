@@ -104,11 +104,10 @@ export default function WallpaperSettings({
           value={settings.backgroundType}
           onChange={handleChange}
         >
-          <option value="dark">Default</option>
+          <option value="unsplash">Image from Unsplash</option>
           <option value="color">Solid Color</option>
           <option value="image">Image</option>
           <option value="url">URL</option>
-          <option value="unsplash">Unslpash (Random)</option>
         </select>
       </div>
 
@@ -173,62 +172,62 @@ export default function WallpaperSettings({
       {(settings.backgroundType === "image" ||
         settings.backgroundType === "url" ||
         settings.backgroundType === "unsplash") && (
-        <>
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Wallpaper tint</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              className="range"
-              step="0.001"
-              name="backgroundTintIntensity"
-              value={settings.backgroundTintIntensity}
-              onChange={handleChange}
-            />
-            <div className="w-full flex justify-between text-xs px-2">
-              <span>No Tint</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>Black</span>
+          <>
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper tint</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                className="range"
+                step="0.001"
+                name="backgroundTintIntensity"
+                value={settings.backgroundTintIntensity}
+                onChange={handleChange}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>No Tint</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>Black</span>
+              </div>
             </div>
-          </div>
 
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Wallpaper blur</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="10"
-              className="range"
-              step="0.01"
-              name="blurValue"
-              value={settings.blurValue}
-              onChange={handleChange}
-            />
-            <div className="w-full flex justify-between text-xs px-2">
-              <span>0%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>100</span>
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper blur</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                className="range"
+                step="0.01"
+                name="blurValue"
+                value={settings.blurValue}
+                onChange={handleChange}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>0%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>100</span>
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
       {settings.backgroundType === "unsplash" && (
         <>
           <div className="form-control w-full max-w py-2">

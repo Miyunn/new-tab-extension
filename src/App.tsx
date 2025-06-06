@@ -172,18 +172,6 @@ export default function App() {
         transform: "scale(1.04)",
       };
     }
-  } else if (settings.backgroundType === "dark") {
-    bg = {
-      backgroundColor: "#120312",
-      backgroundImage:
-        "linear-gradient(296deg, #120312 1%, #020e18 50%, #0f0414 97%)",
-    };
-  } else if (settings.backgroundType === "light") {
-    bg = {
-      backgroundColor: "#f6def1",
-      backgroundImage:
-        "linear-gradient(308deg, #f6def1 0%, #cfb3e2 50%, #86cdff 100%)",
-    };
   } else {
     bg = {
       backgroundColor: settings.backgroundColor,
@@ -223,16 +211,15 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
-
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
         <div className="absolute bottom-0 left-0 z-50 fade-in">
           <UnsplashCredits
