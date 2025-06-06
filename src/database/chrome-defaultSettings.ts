@@ -1,5 +1,4 @@
 export const chromeDefaultSettings = {
-  version: "0.6",
   detectedBrowserType: "chromium",
   searchBar: true,
   searchEngine: "chromeSearch",
@@ -24,4 +23,5 @@ export const chromeDefaultSettings = {
   unsplashQuery: "",
   unsplashQuality: 1,
   unsplashFrequency: 4,
+  unsplashAutoRefresh: true,
 };

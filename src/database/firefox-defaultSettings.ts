@@ -1,5 +1,4 @@
 export const firefoxDefaultSettings = {
-  version: "0.6",
   detectedBrowserType: "firefox",
   searchBar: true,
   searchEngine: "google",
@@ -24,4 +23,5 @@ export const firefoxDefaultSettings = {
   unsplashQuery: "",
   unsplashQuality: 1,
   unsplashFrequency: 4,
+  unsplashAutoRefresh: true,
 };
