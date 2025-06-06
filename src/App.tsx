@@ -34,17 +34,12 @@ export default function App() {
 
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
-  const [unsplashImage, setUnslpahImage] = useState<{
-    imageUrls: String[];
-    timestamp: number;
-    artist: string;
-    blurhash: string;
-    profilePic: string;
-    artistLink: string;
-    imageLink: string;
-    type: string;
-    downloadLink: string;
-  } | null>(null);
+
+  const [unsplashImage, setUnsplashImage] = useState(() => {
+    const localUnsplashImage = localStorage.getItem("unsplashData");
+
+    if (localUnsplashImage !== null) return JSON.parse(localUnsplashImage);
+  });
 
   const iconTable = db.table("icons");
   const icons = useLiveQuery(async () => {
@@ -98,7 +93,7 @@ export default function App() {
         downloadLink: data.links.download,
       };
       localStorage.setItem("unsplashData", JSON.stringify(newImageData));
-      setUnslpahImage(newImageData);
+      setUnsplashImage(newImageData);
     } catch (error) {
       console.error("Error fetching Unsplash image:", error);
     }
@@ -106,14 +101,12 @@ export default function App() {
 
   const startBackgroundFetch = (cacheDuration: number) => {
     const fetchUnsplashImageBackground = async () => {
-      const unsplashData = JSON.parse(
-        localStorage.getItem("unsplashData") || "null",
-      );
+      const unsplashData = unsplashImage;
       const currentTime = new Date().getTime();
 
       // Immediately display the cached wallpaper
       if (unsplashData && unsplashData.imageUrls) {
-        setUnslpahImage(unsplashData); // Display the old image
+        setUnsplashImage(unsplashData); // Display the old image
       }
 
       if (
