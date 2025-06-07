@@ -13,7 +13,7 @@ export const firefoxDefaultSettings = {
   backgroundType: "unsplash",
   backgroundColor: "#000000",
   backgroundUrl: "",
-  backgroundTintIntensity: 0.4,
+  backgroundTintIntensity: 0.5,
   blurValue: 3.6,
   iconBackground: true,
   iconBackgroundColor: "#8b8b8b",
@@ -24,4 +24,5 @@ export const firefoxDefaultSettings = {
   unsplashQuality: 1,
   unsplashFrequency: 4,
   unsplashAutoRefresh: true,
+  customSearchEngineUrl: "",
 };

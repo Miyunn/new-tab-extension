@@ -3,10 +3,12 @@ import GoogleIcon from "../../assets/icons/search-engine/icons8-google.svg";
 import BingIcon from "../../assets/icons/search-engine/icons8-bing.svg";
 import DuckDuckGoIcon from "../../assets/icons/search-engine/icons8-duckduckgo.svg";
 import chromeSearch from "../../assets/icons/search-engine/chrome-svgrepo-com.svg";
+import customSearchIcon from "../../assets/icons/search-engine/icons8-web-96.png";
 
 interface Props {
   searchEngine: string;
   searchBarWidth: number;
+  customSearchEngineUrl: string;
 }
 
 const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
@@ -21,12 +23,18 @@ const EngineIcon: React.FC<{ searchEngine: string }> = ({ searchEngine }) => {
       );
     case "bing":
       return <img src={BingIcon} alt="Bing" height={20} width={20} />;
+    case "custom":
+      return <img src={customSearchIcon} alt="custom" height={22} width={22} />;
     default:
       return <img src={GoogleIcon} alt="Google" height={20} width={20} />;
   }
 };
 
-const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
+const SearchBar: React.FC<Props> = ({
+  searchEngine,
+  searchBarWidth,
+  customSearchEngineUrl,
+}) => {
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       search(searchEngine);
@@ -46,6 +54,7 @@ const SearchBar: React.FC<Props> = ({ searchEngine, searchBarWidth }) => {
     const searchUrls: Record<string, string> = {
       duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`,
       bing: `https://www.bing.com/search?q=${encodeURIComponent(searchText)}`,
+      custom: `${customSearchEngineUrl}${encodeURIComponent(searchText)}`,
     };
 
     if (searchEngine === "chromeSearch" && chrome?.search) {

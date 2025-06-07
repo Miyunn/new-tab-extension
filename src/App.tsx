@@ -234,6 +234,7 @@ export default function App() {
             <Searchbar
               searchEngine={settings.searchEngine}
               searchBarWidth={settings.searchBarWidth}
+              customSearchEngineUrl={settings.customSearchEngineUrl}
             />
           )}
           {settings.iconVisibility &&

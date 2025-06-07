@@ -37,8 +37,26 @@ export default function SearchbarSettings({
           <option value="google">Google</option>
           <option value="bing">Bing</option>
           <option value="duckduckgo">DuckDuckGo</option>
+          <option value="custom">Custom</option>
         </select>
       </div>
+
+      {settings.searchEngine === "custom" && (
+        <div className="form-control w-full max-w py-2">
+          <label className="label">
+            <span className="label-text">Search Engine URL</span>
+          </label>
+          <input
+            type="text"
+            placeholder="E.g. https://google.com/search?q="
+            className="input w-full max-w"
+            name="customSearchEngineUrl"
+            value={settings.customSearchEngineUrl}
+            onChange={handleChange}
+          />
+        </div>
+      )}
+
       <div className="form-control w-full max-w py-2">
         <label className="label">
           <span className="label-text">Search Bar Width</span>
