@@ -23,64 +23,72 @@ export default function SearchbarSettings({
           />
         </label>
       </div>
-      <div className="form-control w-full max-w">
-        <label className="label">
-          <span className="label-text">Search Engine</span>
-        </label>
-        <select
-          name="searchEngine"
-          className="select select-bordered w-full max-w"
-          value={settings.searchEngine}
-          onChange={handleChange}
-        >
-          {!isFirefox && <option value="chromeSearch">Browser Default</option>}
-          <option value="google">Google</option>
-          <option value="bing">Bing</option>
-          <option value="duckduckgo">DuckDuckGo</option>
-          <option value="custom">Custom</option>
-        </select>
-      </div>
+      {settings.searchBar && (
+        <>
+          <div className="form-control w-full max-w">
+            <label className="label">
+              <span className="label-text">Search Engine</span>
+            </label>
+            <select
+              name="searchEngine"
+              className="select select-bordered w-full max-w"
+              value={settings.searchEngine}
+              onChange={handleChange}
+            >
+              {!isFirefox && (
+                <option value="chromeSearch">
+                  Use Search Engine Set in Browser
+                </option>
+              )}
+              <option value="google">Google</option>
+              <option value="bing">Bing</option>
+              <option value="duckduckgo">DuckDuckGo</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
 
-      {settings.searchEngine === "custom" && (
-        <div className="form-control w-full max-w py-2">
-          <label className="label">
-            <span className="label-text">Search Engine URL</span>
-          </label>
-          <input
-            type="text"
-            placeholder="E.g. https://google.com/search?q="
-            className="input w-full max-w"
-            name="customSearchEngineUrl"
-            value={settings.customSearchEngineUrl}
-            onChange={handleChange}
-          />
-        </div>
+          {settings.searchEngine === "custom" && (
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Search Engine URL</span>
+              </label>
+              <input
+                type="text"
+                placeholder="E.g. https://google.com/search?q="
+                className="input w-full max-w"
+                name="customSearchEngineUrl"
+                value={settings.customSearchEngineUrl}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">Search Bar Width</span>
+            </label>
+            <input
+              type="range"
+              min="250"
+              max="550"
+              className="range"
+              step="10"
+              name="searchBarWidth"
+              value={settings.searchBarWidth}
+              onChange={handleChange}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>250px</span>
+              <span>|</span>
+              <span>|</span>
+              <span>400px</span>
+              <span>|</span>
+              <span>|</span>
+              <span>550px</span>
+            </div>
+          </div>
+        </>
       )}
-
-      <div className="form-control w-full max-w py-2">
-        <label className="label">
-          <span className="label-text">Search Bar Width</span>
-        </label>
-        <input
-          type="range"
-          min="250"
-          max="550"
-          className="range"
-          step="10"
-          name="searchBarWidth"
-          value={settings.searchBarWidth}
-          onChange={handleChange}
-        />
-        <div className="w-full flex justify-between text-xs px-2">
-          <span>250px</span>
-          <span>|</span>
-          <span>|</span>
-          <span>400px</span>
-          <span>|</span>
-          <span>|</span>
-          <span>550px</span>
-        </div>
-      </div>
     </>
   );
 }

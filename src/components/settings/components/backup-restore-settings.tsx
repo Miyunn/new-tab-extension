@@ -155,8 +155,9 @@ export default function BackupAndRestore() {
         <div className="modal-box">
           <h3 className="font-bold text-lg">Reset Settings</h3>
           <p className="py-4">
-            No icons will be removed, but all settings will be reset to default.
-            Continue?
+            Are you sure you want to reset all settings to default?
+            <br />
+            Your icons will stay as they are
           </p>
           <div className="modal-action">
             <form method="dialog">
@@ -172,7 +173,7 @@ export default function BackupAndRestore() {
         </div>
       </dialog>
 
-      {/* Controls */}
+      {/* Settings Menu Elements */}
       <div className="divider text-sm">Backup And Restore</div>
       <div className="flex w-full max-w">
         <button
@@ -180,14 +181,14 @@ export default function BackupAndRestore() {
           onClick={backupIcons}
           className="btn btn-outline flex-grow mr-2"
         >
-          Save Backup
+          Export Icons
         </button>
         <button
           type="button"
           className="btn btn-outline w-1/2 ml-2"
           onClick={() => openModal("import_icon_modal")}
         >
-          Restore
+          Restore Icons
         </button>
       </div>
 
@@ -197,7 +198,7 @@ export default function BackupAndRestore() {
           className="btn btn-outline btn-error flex-grow mr-2"
           onClick={() => openModal("reset_confirm_modal")}
         >
-          Reset Settings
+          Reset to Defaults
         </button>
       </div>
     </div>

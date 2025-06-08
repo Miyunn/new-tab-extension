@@ -172,7 +172,7 @@ export default function WallpaperSettings({
         <>
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Wallpaper tint</span>
+              <span className="label-text">Wallpaper Tint</span>
             </label>
             <input
               type="range"
@@ -199,7 +199,7 @@ export default function WallpaperSettings({
 
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Wallpaper blur</span>
+              <span className="label-text">Wallpaper Blur</span>
             </label>
             <input
               type="range"
