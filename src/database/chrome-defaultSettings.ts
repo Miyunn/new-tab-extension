@@ -25,4 +25,5 @@ export const chromeDefaultSettings = {
   unsplashFrequency: 4,
   unsplashAutoRefresh: true,
   customSearchEngineUrl: "",
+  showAddIcon: true,
 };

@@ -9,6 +9,7 @@ import { IconData } from "../../types/iconData";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
 import EditIconForm from "./components/editIconModal";
+import AddNewIcon from "./components/add-icon-icon";
 
 interface Props {
   heightWidth: number;
@@ -22,6 +23,8 @@ interface Props {
   iconBackgroundColor: string;
   iconBackgroundOpacity: number;
   iconBackgroundRadius: number;
+  showAddIconDrawer: () => void;
+  showAddIcon: boolean;
 }
 
 const updateAllIconPositions = async (icons: IconData[]) => {
@@ -128,6 +131,8 @@ const IconGrid = ({
   iconBackgroundColor,
   iconBackgroundOpacity,
   iconBackgroundRadius,
+  showAddIconDrawer,
+  showAddIcon,
 }: Props) => {
   const [draggingIcons, setDraggingIcons] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
@@ -197,6 +202,17 @@ const IconGrid = ({
                 iconBackgroundRadius={iconBackgroundRadius}
                 onEditIcon={handleEditIcon}
               />
+              {showAddIcon && (
+                <AddNewIcon
+                  heightWidth={heightWidth}
+                  showAddIconDrawer={showAddIconDrawer}
+                  iconBackground={iconBackground}
+                  iconBackgroundColor={iconBackgroundColor}
+                  iconBackgroundOpacity={iconBackgroundOpacity}
+                  iconBackgroundRadius={iconBackgroundRadius}
+                  labels={labels}
+                />
+              )}
             </SortableContext>
           </div>
         </DndContext>
@@ -220,6 +236,17 @@ const IconGrid = ({
               iconBackgroundRadius={iconBackgroundRadius}
               onEditIcon={handleEditIcon}
             />
+            {showAddIcon && (
+              <AddNewIcon
+                heightWidth={heightWidth}
+                showAddIconDrawer={showAddIconDrawer}
+                iconBackground={iconBackground}
+                iconBackgroundColor={iconBackgroundColor}
+                iconBackgroundOpacity={iconBackgroundOpacity}
+                iconBackgroundRadius={iconBackgroundRadius}
+                labels={labels}
+              />
+            )}
           </SortableContext>
         </div>
       )}

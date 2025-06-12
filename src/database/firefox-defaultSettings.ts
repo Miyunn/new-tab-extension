@@ -25,4 +25,5 @@ export const firefoxDefaultSettings = {
   unsplashFrequency: 4,
   unsplashAutoRefresh: true,
   customSearchEngineUrl: "",
+  showAddIcon: true,
 };

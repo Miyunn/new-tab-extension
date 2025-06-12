@@ -24,6 +24,18 @@ export default function IconSettings({
       </div>
       {settings.iconVisibility && (
         <>
+          <div className="form-control w-full max-w mt-4">
+            <label className="label cursor-pointer">
+              <span className="label-text">Add Icon Shortcut</span>
+              <input
+                type="checkbox"
+                name="showAddIcon"
+                className="toggle toggle-primary ml-2"
+                checked={settings.showAddIcon}
+                onChange={handleChange}
+              />
+            </label>
+          </div>
           <div className="form-control w-full max-w hidden">
             <label className="label">
               <span className="label-text">Icon Layout</span>
