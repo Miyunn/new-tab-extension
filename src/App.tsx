@@ -207,14 +207,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
         <div className="absolute bottom-0 left-0 z-50 fade-in">
@@ -254,7 +254,7 @@ export default function App() {
                 iconBackgroundOpacity={settings.iconBackgroundOpacity}
                 iconBackgroundRadius={settings.iconBackgroundRadius}
                 showAddIconDrawer={showAddIcons}
-                showAddIcon={settings.showAddIcon}
+                hideAddIconShortcut={settings.hideAddIconShortcut}
               />
             ) : null)}
         </div>

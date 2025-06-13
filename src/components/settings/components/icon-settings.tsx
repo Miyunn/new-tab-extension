@@ -26,12 +26,12 @@ export default function IconSettings({
         <>
           <div className="form-control w-full max-w mt-4">
             <label className="label cursor-pointer">
-              <span className="label-text">Add Icon Shortcut</span>
+              <span className="label-text">Hide Add Icon Shortcut</span>
               <input
                 type="checkbox"
-                name="showAddIcon"
+                name="hideAddIconShortcut"
                 className="toggle toggle-primary ml-2"
-                checked={settings.showAddIcon}
+                checked={settings.hideAddIconShortcut}
                 onChange={handleChange}
               />
             </label>

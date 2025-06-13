@@ -24,7 +24,7 @@ interface Props {
   iconBackgroundOpacity: number;
   iconBackgroundRadius: number;
   showAddIconDrawer: () => void;
-  showAddIcon: boolean;
+  hideAddIconShortcut: boolean;
 }
 
 const updateAllIconPositions = async (icons: IconData[]) => {
@@ -132,7 +132,7 @@ const IconGrid = ({
   iconBackgroundOpacity,
   iconBackgroundRadius,
   showAddIconDrawer,
-  showAddIcon,
+  hideAddIconShortcut,
 }: Props) => {
   const [draggingIcons, setDraggingIcons] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
@@ -202,7 +202,7 @@ const IconGrid = ({
                 iconBackgroundRadius={iconBackgroundRadius}
                 onEditIcon={handleEditIcon}
               />
-              {showAddIcon && (
+              {!hideAddIconShortcut && (
                 <AddNewIcon
                   heightWidth={heightWidth}
                   showAddIconDrawer={showAddIconDrawer}
@@ -236,7 +236,7 @@ const IconGrid = ({
               iconBackgroundRadius={iconBackgroundRadius}
               onEditIcon={handleEditIcon}
             />
-            {showAddIcon && (
+            {!hideAddIconShortcut && (
               <AddNewIcon
                 heightWidth={heightWidth}
                 showAddIconDrawer={showAddIconDrawer}
