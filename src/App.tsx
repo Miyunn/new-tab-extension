@@ -1,4 +1,11 @@
-import { useEffect, useState, lazy, Suspense, MouseEvent } from "react";
+import {
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+  MouseEvent,
+  useCallback,
+} from "react";
 import "./App.css";
 import Searchbar from "./components/searchbar";
 import ControlIcons from "./components/control-icons";
@@ -66,14 +73,14 @@ export default function App() {
     e.preventDefault();
   };
 
-  const fetchUnsplashImage = async (): Promise<void> => {
+  const fetchUnsplashImage = useCallback(async (): Promise<void> => {
     const query = settings.unsplashQuery;
     try {
       const response = await fetch(
         `https://newtab-backend-proxy.vercel.app/api/getUnsplashImage?query=${query}`,
       );
 
-      const currentTime = new Date().getTime();
+      const currentTime = Date.now();
 
       const data = await response.json();
       const newImageData = {
@@ -97,29 +104,24 @@ export default function App() {
     } catch (error) {
       console.error("Error fetching Unsplash image:", error);
     }
-  };
+  }, [settings.unsplashQuery]);
 
-  const startBackgroundFetch = (cacheDuration: number) => {
-    const fetchUnsplashImageBackground = async () => {
+  const refreshUnsplashIfStale = useCallback(
+    (cacheDuration: number) => {
       const unsplashData = unsplashImage;
-      const currentTime = new Date().getTime();
-
-      // Immediately display the cached wallpaper
-      if (unsplashData && unsplashData.imageUrls) {
-        setUnsplashImage(unsplashData); // Display the old image
-      }
+      const now = Date.now();
 
       if (
-        unsplashData &&
-        unsplashData.timestamp &&
-        currentTime - unsplashData.timestamp < cacheDuration
+        unsplashData?.timestamp &&
+        now - unsplashData.timestamp < cacheDuration
       ) {
         return;
       }
+
       fetchUnsplashImage();
-    };
-    fetchUnsplashImageBackground();
-  };
+    },
+    [unsplashImage, fetchUnsplashImage],
+  );
 
   useEffect(() => {
     if (
@@ -128,9 +130,14 @@ export default function App() {
     ) {
       const refreshRate = Math.max(settings.unsplashFrequency, 1);
       const refresh_frequency = refreshRate * 60 * 60 * 1000;
-      startBackgroundFetch(refresh_frequency);
+      refreshUnsplashIfStale(refresh_frequency);
     }
-  }, [settings.backgroundType, settings.unsplashAutoRefresh]);
+  }, [
+    settings.backgroundType,
+    settings.unsplashAutoRefresh,
+    settings.unsplashFrequency,
+    refreshUnsplashIfStale,
+  ]);
 
   let bg = {};
 
