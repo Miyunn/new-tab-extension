@@ -1,8 +1,11 @@
+import { HandleChange } from "..";
+import { Settings } from "../../../types/settings";
+
 const isFirefox = chrome.runtime?.getURL("").startsWith("moz-extension://");
 
 interface SearchbarSettingsProps {
-  settings: any;
-  handleChange: any;
+  settings: Settings;
+  handleChange: HandleChange;
 }
 export default function SearchbarSettings({
   settings,

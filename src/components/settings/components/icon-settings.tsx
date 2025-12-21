@@ -1,6 +1,9 @@
+import { HandleChange } from "..";
+import { Settings } from "../../../types/settings";
+
 interface IconSettingsProps {
-  settings: any;
-  handleChange: any;
+  settings: Settings;
+  handleChange: HandleChange;
 }
 
 export default function IconSettings({
@@ -35,19 +38,6 @@ export default function IconSettings({
                 onChange={handleChange}
               />
             </label>
-          </div>
-          <div className="form-control w-full max-w hidden">
-            <label className="label">
-              <span className="label-text">Icon Layout</span>
-            </label>
-            <select
-              name="layoutStyle"
-              className="select select-bordered w-full max-w disabled"
-              value={settings.iconLayout}
-              onChange={handleChange}
-            >
-              <option value="grid">Grid Style</option>
-            </select>
           </div>
           <div className="form-control w-full max-w">
             <label className="label">
@@ -138,7 +128,7 @@ export default function IconSettings({
               className="range"
               step="1"
               name="iconColumns"
-              value={settings.iconColumn}
+              value={settings.iconColumns}
               onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">

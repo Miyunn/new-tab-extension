@@ -20,13 +20,14 @@ import { firefoxDefaultSettings } from "./database/firefox-defaultSettings";
 const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
 const SettingsMenu = lazy(() => import("./components/settings"));
 const AddIconForm = lazy(() => import("./components/add-icon-modal-content"));
+import { Settings } from "./types/settings";
 
 export default function App() {
-  const [settings, setSettings] = useState(() => {
+  const [settings, setSettings] = useState<Settings>(() => {
     const localSettings = localStorage.getItem("settings");
 
     if (localSettings !== null) {
-      return JSON.parse(localSettings);
+      return JSON.parse(localSettings) as Settings;
     }
 
     const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
@@ -55,7 +56,7 @@ export default function App() {
       .toArray();
     setLoading(false);
     return result;
-  }, [settings]);
+  }, [settings.iconOrder]);
 
   useEffect(() => {
     if (icons !== undefined) {
@@ -201,6 +202,10 @@ export default function App() {
     setOpenAddIcon(false);
   };
 
+  useEffect(() => {
+    localStorage.setItem("settings", JSON.stringify(settings));
+  }, [settings]);
+
   if (loading) {
     return <> </>;
   }
@@ -214,14 +219,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
+            />
+          )}
       </div>
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
         <div className="absolute bottom-0 left-0 z-50 fade-in">
@@ -247,7 +252,7 @@ export default function App() {
           {settings.iconVisibility &&
             (iconData.length === 0 ? (
               <NoIconOptions showAddIconDrawer={showAddIcons} />
-            ) : settings.layoutStyle === "grid" ? (
+            ) : (
               <IconGrid
                 iconData={icons as IconData[]}
                 heightWidth={settings.iconSize}
@@ -263,7 +268,7 @@ export default function App() {
                 showAddIconDrawer={showAddIcons}
                 hideAddIconShortcut={settings.hideAddIconShortcut}
               />
-            ) : null)}
+            ))}
         </div>
 
         <Drawer

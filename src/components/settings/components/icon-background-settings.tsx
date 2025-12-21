@@ -1,8 +1,10 @@
 import { ColorPicker } from "antd";
+import { Settings } from "../../../types/settings";
+import { HandleChange } from "..";
 
 interface IconBackgroundSettingsProps {
-  settings: any;
-  handleChange: any;
+  settings: Settings;
+  handleChange: HandleChange;
 }
 
 export default function IconBackgroundSettings({

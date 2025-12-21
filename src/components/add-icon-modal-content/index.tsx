@@ -90,7 +90,7 @@ export default function AddIconForm({
     const newIcon = {
       name: formData.get("name") as string,
       destination: formData.get("destination") as string,
-      iconURL: formData.get("iconURL") as String,
+      iconURL: formData.get("iconURL") as string,
     };
 
     //@ts-ignore

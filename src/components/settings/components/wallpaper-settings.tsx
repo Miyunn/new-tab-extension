@@ -1,17 +1,22 @@
 import React from "react";
+import { startTransition } from "react";
 import { ColorPicker } from "antd";
 import { Tooltip } from "react-tooltip";
 import { useState } from "react";
 import db from "../../../database/indexDb";
+import { Settings } from "../../../types/settings";
+import { HandleChange } from "..";
 
 interface WallpaperSettingsProps {
-  settings: any;
-  handleChange: any;
+  settings: Settings;
+  setSettings: React.Dispatch<React.SetStateAction<Settings>>;
+  handleChange: HandleChange;
   forceUnsplashFetch: () => void;
 }
 
 export default function WallpaperSettings({
   settings,
+  setSettings,
   handleChange,
   forceUnsplashFetch,
 }: WallpaperSettingsProps) {
@@ -23,11 +28,19 @@ export default function WallpaperSettings({
   ) => {
     const index = parseInt(e.target.value);
     const frequency = unsplashFrequencyHours[index];
-    handleChange({
-      target: {
-        name: "unsplashFrequency",
-        value: frequency,
-      },
+
+    setSettings((prev) => ({
+      ...prev,
+      unsplashFrequency: frequency,
+    }));
+  };
+
+  const setBackgroundType = (newType: string) => {
+    startTransition(() => {
+      setSettings((prev) => ({
+        ...prev,
+        backgroundType: newType,
+      }));
     });
   };
 
@@ -99,7 +112,7 @@ export default function WallpaperSettings({
           name="backgroundType"
           className="select select-bordered w-full max-w"
           value={settings.backgroundType}
-          onChange={handleChange}
+          onChange={(e) => setBackgroundType(e.target.value)}
         >
           <option value="unsplash">Image from Unsplash</option>
           <option value="color">Solid Color</option>
@@ -117,13 +130,12 @@ export default function WallpaperSettings({
             showText
             value={settings.backgroundColor}
             onChange={(color) => {
-              handleChange({
-                target: {
-                  name: "backgroundColor",
-                  type: "text",
-                  value: `#${color.toHex()}`,
-                },
-              });
+              const hex = `#${color.toHex()}`;
+
+              setSettings((prev) => ({
+                ...prev,
+                backgroundColor: hex,
+              }));
             }}
           />
         </div>
@@ -169,62 +181,62 @@ export default function WallpaperSettings({
       {(settings.backgroundType === "image" ||
         settings.backgroundType === "url" ||
         settings.backgroundType === "unsplash") && (
-        <>
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Wallpaper Tint</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              className="range"
-              step="0.001"
-              name="backgroundTintIntensity"
-              value={settings.backgroundTintIntensity}
-              onChange={handleChange}
-            />
-            <div className="w-full flex justify-between text-xs px-2">
-              <span>No Tint</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>Black</span>
+          <>
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper Tint</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                className="range"
+                step="0.001"
+                name="backgroundTintIntensity"
+                value={settings.backgroundTintIntensity}
+                onChange={handleChange}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>No Tint</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>Black</span>
+              </div>
             </div>
-          </div>
 
-          <div className="form-control w-full max-w py-2">
-            <label className="label">
-              <span className="label-text">Wallpaper Blur</span>
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="10"
-              className="range"
-              step="0.01"
-              name="blurValue"
-              value={settings.blurValue}
-              onChange={handleChange}
-            />
-            <div className="w-full flex justify-between text-xs px-2">
-              <span>0%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>50%</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>100</span>
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">Wallpaper Blur</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                className="range"
+                step="0.01"
+                name="blurValue"
+                value={settings.blurValue}
+                onChange={handleChange}
+              />
+              <div className="w-full flex justify-between text-xs px-2">
+                <span>0%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>50%</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>100</span>
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
       {settings.backgroundType === "unsplash" && (
         <>
           <div className="form-control w-full max-w py-2">
@@ -268,7 +280,7 @@ export default function WallpaperSettings({
 
           <button
             type="button"
-            className="btn btn-primary my-3 w-full"
+            className="btn btn-outline btn-primary my-3 w-full"
             onClick={forceUnsplashFetch}
           >
             <svg
