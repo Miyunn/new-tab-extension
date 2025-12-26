@@ -7,9 +7,16 @@ import SearchbarSettings from "./components/searchbar-settings";
 import WallpaperSettings from "./components/wallpaper-settings";
 import type { Dispatch, SetStateAction, ChangeEvent } from "react";
 
-export type HandleChange = (
-  e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-) => void;
+export type ChangeLike =
+  | ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  | {
+    target: {
+      name: keyof Settings;
+      value: string | number | boolean;
+    };
+  };
+
+export type HandleChange = (e: ChangeLike) => void;
 
 interface SettingsMenuProps {
   settings: Settings;
@@ -22,20 +29,21 @@ export default function SettingsMenu({
   settings,
   forceUnsplashFetch,
 }: SettingsMenuProps) {
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const target = e.target;
-    const { name, type, value } = target;
+  const handleChange: HandleChange = (e) => {
+    const { name, value } =
+      "target" in e
+        ? e.target // either ChangeEvent or custom object
+        : { name: "", value: "" }; // fallback (TypeScript happy)
 
-    let newValue: string | boolean | number;
+    let newValue = value;
 
-    if (type === "checkbox" && target instanceof HTMLInputElement) {
-      newValue = target.checked;
-    } else if (type === "range") {
-      newValue = parseFloat(value);
-    } else {
-      newValue = value;
+    if ("type" in e.target) {
+      const type = e.target.type;
+      if (type === "checkbox" && e.target instanceof HTMLInputElement) {
+        newValue = e.target.checked;
+      } else if (type === "range") {
+        newValue = parseFloat(value as string);
+      }
     }
 
     setSettings((prev) => {
