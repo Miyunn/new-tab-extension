@@ -32,11 +32,14 @@ export default function App() {
 
     const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
 
-    const defaultSettings = isFirefox
-      ? firefoxDefaultSettings
-      : chromeDefaultSettings;
+    const defaultSettings = (
+      isFirefox ? firefoxDefaultSettings : chromeDefaultSettings
+    ) as Settings;
 
-    localStorage.setItem("settings", JSON.stringify(defaultSettings));
+    localStorage.setItem(
+      "settings",
+      JSON.stringify(defaultSettings as Settings),
+    );
     return defaultSettings;
   });
 

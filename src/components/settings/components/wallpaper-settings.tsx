@@ -4,7 +4,7 @@ import { ColorPicker } from "antd";
 import { Tooltip } from "react-tooltip";
 import { useState } from "react";
 import db from "../../../database/indexDb";
-import { Settings } from "../../../types/settings";
+import { BackgroundType, Settings } from "../../../types/settings";
 import { HandleChange } from "..";
 
 interface WallpaperSettingsProps {
@@ -35,7 +35,14 @@ export default function WallpaperSettings({
     }));
   };
 
-  const setBackgroundType = (newType: string) => {
+  const backgroundOptions: BackgroundType[] = [
+    "unsplash",
+    "color",
+    "image",
+    "url",
+  ];
+
+  const setBackgroundType = (newType: BackgroundType) => {
     startTransition(() => {
       setSettings((prev) => ({
         ...prev,
@@ -112,7 +119,12 @@ export default function WallpaperSettings({
           name="backgroundType"
           className="select select-bordered w-full max-w"
           value={settings.backgroundType}
-          onChange={(e) => setBackgroundType(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (backgroundOptions.includes(value as BackgroundType)) {
+              setBackgroundType(value as BackgroundType);
+            }
+          }}
         >
           <option value="unsplash">Image from Unsplash</option>
           <option value="color">Solid Color</option>
