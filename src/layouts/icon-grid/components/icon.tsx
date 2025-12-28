@@ -29,43 +29,48 @@ const Icon = ({
   iconBackgroundOpacity,
   iconBackgroundRadius,
 }: Props) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id, disabled: !draggable }); // <-- use disabled prop
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id, disabled: !draggable });
 
   const handleIconClick = (event: React.MouseEvent) => {
-    if (!draggable) {
-      if (event.button === 1) {
-        // handle middle click to open in a new tab
-        window.open(url, "_blank");
-      } else if (event.button === 0) {
-        window.location.href = url;
-      }
+    if (isDragging) return;
+
+    if (event.button === 1) {
+      window.open(url, "_blank");
+    } else if (event.button === 0) {
+      window.location.href = url;
     }
   };
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor: draggable ? "grab" : "default",
+    cursor: isDragging ? "grabbing" : "pointer",
   };
 
   const backgroundStyle = iconBackground
     ? {
-        backgroundColor: `rgba(${parseInt(iconBackgroundColor.slice(1, 3), 16)}, ${parseInt(
-          iconBackgroundColor.slice(3, 5),
-          16,
-        )}, ${parseInt(iconBackgroundColor.slice(5, 7), 16)}, ${iconBackgroundOpacity})`,
-        borderRadius: `${iconBackgroundRadius}%`,
-      }
+      backgroundColor: `rgba(${parseInt(iconBackgroundColor.slice(1, 3), 16)}, ${parseInt(
+        iconBackgroundColor.slice(3, 5),
+        16,
+      )}, ${parseInt(iconBackgroundColor.slice(5, 7), 16)}, ${iconBackgroundOpacity})`,
+      borderRadius: `${iconBackgroundRadius}%`,
+    }
     : {};
 
   return (
     <div
       className="icon flex flex-col items-center"
-      onMouseUpCapture={handleIconClick}
       ref={setNodeRef}
       {...attributes}
-      {...listeners}
+      {...(draggable ? listeners : {})}
+      onClick={handleIconClick} // no conditional needed now
       style={style}
       draggable
     >

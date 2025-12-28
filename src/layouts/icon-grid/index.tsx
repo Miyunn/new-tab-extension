@@ -4,7 +4,13 @@ import "./styles.css";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/lib/icons/EditOutlined";
 import db from "../../database/indexDb";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensors,
+  useSensor,
+} from "@dnd-kit/core";
 import { IconData } from "../../types/iconData";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
@@ -135,6 +141,14 @@ const IconGrid = ({
 }: Props) => {
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5, // User must move 5px before it counts as a drag
+      },
+    }),
+  );
+
   const startDrag = () => {
     setIsDragging(true);
   };
@@ -175,7 +189,11 @@ const IconGrid = ({
   return (
     <>
       {sortType === "position" ? (
-        <DndContext onDragStart={startDrag} onDragEnd={handleDragEnd}>
+        <DndContext
+          onDragStart={startDrag}
+          onDragEnd={handleDragEnd}
+          sensors={sensors}
+        >
           <div
             className="grid my-10"
             style={{
