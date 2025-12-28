@@ -78,7 +78,6 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
     }
 
     try {
-      // @ts-ignore
       await db.icons.update(selectedIcon.id, {
         name: updatedIcon.name,
         src: updatedIcon.iconURL,

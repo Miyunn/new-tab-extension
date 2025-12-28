@@ -30,7 +30,7 @@ const Icon = ({
   iconBackgroundRadius,
 }: Props) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
+    useSortable({ id, disabled: !draggable }); // <-- use disabled prop
 
   const handleIconClick = (event: React.MouseEvent) => {
     if (!draggable) {
@@ -46,16 +46,17 @@ const Icon = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    cursor: draggable ? "grab" : "default",
   };
 
   const backgroundStyle = iconBackground
     ? {
-      backgroundColor: `rgba(${parseInt(iconBackgroundColor.slice(1, 3), 16)}, ${parseInt(
-        iconBackgroundColor.slice(3, 5),
-        16,
-      )}, ${parseInt(iconBackgroundColor.slice(5, 7), 16)}, ${iconBackgroundOpacity})`,
-      borderRadius: `${iconBackgroundRadius}%`,
-    }
+        backgroundColor: `rgba(${parseInt(iconBackgroundColor.slice(1, 3), 16)}, ${parseInt(
+          iconBackgroundColor.slice(3, 5),
+          16,
+        )}, ${parseInt(iconBackgroundColor.slice(5, 7), 16)}, ${iconBackgroundOpacity})`,
+        borderRadius: `${iconBackgroundRadius}%`,
+      }
     : {};
 
   return (

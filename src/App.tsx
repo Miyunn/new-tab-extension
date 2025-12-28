@@ -46,6 +46,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [iconData, setIconData] = useState<IconData[]>([]);
 
+  // `localIconData` is used solely for rendering, to prevent UI changes from reflecting database updates
+  // until the icon reordering logic is fully applied and stable.
+  const [localIconData, setLocalIconData] = useState<IconData[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+
   const [unsplashImage, setUnsplashImage] = useState(() => {
     const localUnsplashImage = localStorage.getItem("unsplashData");
 
@@ -66,6 +71,12 @@ export default function App() {
       setIconData(icons);
     }
   }, [icons]);
+
+  useEffect(() => {
+    if (!isDragging && iconData) {
+      setLocalIconData(iconData);
+    }
+  }, [iconData, isDragging]);
 
   const wallpaperTable = db.table("wallpaper");
   const wallpaperData = useLiveQuery(async () => {
@@ -222,14 +233,14 @@ export default function App() {
         {(settings.backgroundType === "image" ||
           settings.backgroundType === "url" ||
           settings.backgroundType === "unsplash") && (
-            <div
-              style={{
-                backgroundColor: "black",
-                opacity: `${settings.backgroundTintIntensity}`,
-              }}
-              className="absolute inset-0"
-            />
-          )}
+          <div
+            style={{
+              backgroundColor: "black",
+              opacity: `${settings.backgroundTintIntensity}`,
+            }}
+            className="absolute inset-0"
+          />
+        )}
       </div>
       {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
         <div className="absolute bottom-0 left-0 z-50 fade-in">
@@ -257,12 +268,12 @@ export default function App() {
               <NoIconOptions showAddIconDrawer={showAddIcons} />
             ) : (
               <IconGrid
-                iconData={icons as IconData[]}
+                iconData={localIconData}
                 heightWidth={settings.iconSize}
                 labels={settings.iconLabel}
                 columns={settings.iconColumns}
                 gap={settings.iconGap}
-                setIconData={setIconData}
+                setIconData={setLocalIconData}
                 sortType={settings.iconOrder}
                 iconBackground={settings.iconBackground}
                 iconBackgroundColor={settings.iconBackgroundColor}
@@ -270,6 +281,7 @@ export default function App() {
                 iconBackgroundRadius={settings.iconBackgroundRadius}
                 showAddIconDrawer={showAddIcons}
                 hideAddIconShortcut={settings.hideAddIconShortcut}
+                setIsDragging={setIsDragging}
               />
             ))}
         </div>

@@ -4,7 +4,7 @@ import "./styles.css";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/lib/icons/EditOutlined";
 import db from "../../database/indexDb";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { IconData } from "../../types/iconData";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
@@ -25,20 +25,18 @@ interface Props {
   iconBackgroundRadius: number;
   showAddIconDrawer: () => void;
   hideAddIconShortcut: boolean;
+  setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const updateAllIconPositions = async (icons: IconData[]) => {
-  // @ts-ignore
   await db.transaction("rw", db.icons, async () => {
     for (const icon of icons) {
-      // @ts-ignore
       await db.icons.update(icon.id, { position: icon.position });
     }
   });
 };
 
 const deleteIcon = async (id: string) => {
-  // @ts-ignore
   await db.icons.delete(id);
 };
 
@@ -133,17 +131,16 @@ const IconGrid = ({
   iconBackgroundRadius,
   showAddIconDrawer,
   hideAddIconShortcut,
+  setIsDragging,
 }: Props) => {
-  const [draggingIcons, setDraggingIcons] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
 
   const startDrag = () => {
-    setDraggingIcons(true);
+    setIsDragging(true);
   };
 
-  const handleDragEnd = async (event: any) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id) {
       const oldIndex = iconData.findIndex((icon) => icon.id === active.id);
       const newIndex = iconData.findIndex((icon) => icon.id === over.id);
@@ -155,16 +152,12 @@ const IconGrid = ({
         }),
       );
 
-      setIconData(newIconData);
+      setIconData(newIconData); // immediate UI update
 
-      try {
-        await updateAllIconPositions(newIconData);
-      } catch (error) {
-        console.error("Failed to update icon positions:", error);
-        setIconData(iconData);
-      }
+      updateAllIconPositions(newIconData).catch(console.error);
+    } else {
+      setIsDragging(true);
     }
-    setDraggingIcons(false);
   };
 
   const handleEditIcon = (icon: IconData): void => {
@@ -190,18 +183,22 @@ const IconGrid = ({
               gridTemplateColumns: `repeat(${columns}, 1fr)`,
             }}
           >
-            <SortableContext items={iconData}>
-              <IconComponent
-                heightWidth={heightWidth}
-                labels={labels}
-                iconData={iconData}
-                draggable={draggingIcons}
-                iconBackground={iconBackground}
-                iconBackgroundColor={iconBackgroundColor}
-                iconBackgroundOpacity={iconBackgroundOpacity}
-                iconBackgroundRadius={iconBackgroundRadius}
-                onEditIcon={handleEditIcon}
-              />
+            <SortableContext items={iconData.map((i) => i.id)}>
+              {iconData.map((icon) => (
+                <IconComponent
+                  key={icon.id}
+                  heightWidth={heightWidth}
+                  labels={labels}
+                  iconData={[icon]}
+                  draggable={sortType === "position"}
+                  iconBackground={iconBackground}
+                  iconBackgroundColor={iconBackgroundColor}
+                  iconBackgroundOpacity={iconBackgroundOpacity}
+                  iconBackgroundRadius={iconBackgroundRadius}
+                  onEditIcon={handleEditIcon}
+                />
+              ))}
+
               {!hideAddIconShortcut && (
                 <AddNewIcon
                   heightWidth={heightWidth}
@@ -224,18 +221,22 @@ const IconGrid = ({
             gridTemplateColumns: `repeat(${columns}, 1fr)`,
           }}
         >
-          <SortableContext items={iconData}>
-            <IconComponent
-              heightWidth={heightWidth}
-              labels={labels}
-              iconData={iconData}
-              draggable={draggingIcons}
-              iconBackground={iconBackground}
-              iconBackgroundColor={iconBackgroundColor}
-              iconBackgroundOpacity={iconBackgroundOpacity}
-              iconBackgroundRadius={iconBackgroundRadius}
-              onEditIcon={handleEditIcon}
-            />
+          <SortableContext items={iconData.map((i) => i.id)}>
+            {iconData.map((icon) => (
+              <IconComponent
+                key={icon.id}
+                heightWidth={heightWidth}
+                labels={labels}
+                iconData={[icon]}
+                draggable={sortType === "position"}
+                iconBackground={iconBackground}
+                iconBackgroundColor={iconBackgroundColor}
+                iconBackgroundOpacity={iconBackgroundOpacity}
+                iconBackgroundRadius={iconBackgroundRadius}
+                onEditIcon={handleEditIcon}
+              />
+            ))}
+
             {!hideAddIconShortcut && (
               <AddNewIcon
                 heightWidth={heightWidth}
@@ -247,7 +248,7 @@ const IconGrid = ({
                 labels={labels}
               />
             )}
-          </SortableContext>
+          </SortableContext>{" "}
         </div>
       )}
 

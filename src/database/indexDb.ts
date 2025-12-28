@@ -27,7 +27,7 @@ class NewTabDB extends Dexie {
 
     this.version(2)
       .stores({
-        icons: "id, name, &position",
+        icons: "id, name, position",
         wallpaper: "id",
       })
       .upgrade(async (tx) => {
