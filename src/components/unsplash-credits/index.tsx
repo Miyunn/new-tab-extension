@@ -67,7 +67,7 @@ export default function UnsplashCredits({
 
       document.body.removeChild(a);
       URL.revokeObjectURL(imageUrl);
-    } catch (error: any) {
+    } catch (error) {
       alert("There was an error downloading the image. Please try again.");
     } finally {
       setDownloading(false);
