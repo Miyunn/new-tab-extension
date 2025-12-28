@@ -52,14 +52,9 @@ export default function WallpaperSettings({
   };
 
   async function handleImageUpload(file: File): Promise<string> {
-    try {
-      const imageDataUrl = await uploadImage(file);
-      // @ts-ignore
-      await db.wallpaper.update(1, { data: imageDataUrl });
-      return "success";
-    } catch (error) {
-      throw error;
-    }
+    const imageDataUrl = await uploadImage(file);
+    await db.wallpaper.update(1, { data: imageDataUrl });
+    return "success";
   }
 
   function uploadImage(file: File): Promise<string> {

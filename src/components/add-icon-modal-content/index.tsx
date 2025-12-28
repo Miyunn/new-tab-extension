@@ -31,13 +31,11 @@ export default function AddIconForm({
     url: string;
   }) => {
     try {
-      //@ts-ignore
       const highestPositionIcon = await db.icons.orderBy("position").last();
       const newPosition = highestPositionIcon
         ? highestPositionIcon.position + 1
         : 0;
 
-      //@ts-ignore
       await db.icons.add({
         id: crypto.randomUUID(),
         name: icon.name,
@@ -93,7 +91,6 @@ export default function AddIconForm({
       iconURL: formData.get("iconURL") as string,
     };
 
-    //@ts-ignore
     const highestPositionIcon = await db.icons.orderBy("position").last();
     const newPosition = highestPositionIcon
       ? highestPositionIcon.position + 1
@@ -130,7 +127,6 @@ export default function AddIconForm({
     }
 
     try {
-      //@ts-ignore
       await db.icons.add({
         id: crypto.randomUUID(),
         name: newIcon.name,
