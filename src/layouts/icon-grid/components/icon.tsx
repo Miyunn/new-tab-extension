@@ -43,7 +43,8 @@ const Icon = ({
 
     if (event.button === 1) {
       window.open(url, "_blank");
-    } else if (event.button === 0) {
+    }
+    if (event.button === 0) {
       window.location.href = url;
     }
   };
@@ -56,12 +57,12 @@ const Icon = ({
 
   const backgroundStyle = iconBackground
     ? {
-      backgroundColor: `rgba(${parseInt(iconBackgroundColor.slice(1, 3), 16)}, ${parseInt(
-        iconBackgroundColor.slice(3, 5),
-        16,
-      )}, ${parseInt(iconBackgroundColor.slice(5, 7), 16)}, ${iconBackgroundOpacity})`,
-      borderRadius: `${iconBackgroundRadius}%`,
-    }
+        backgroundColor: `rgba(${parseInt(iconBackgroundColor.slice(1, 3), 16)}, ${parseInt(
+          iconBackgroundColor.slice(3, 5),
+          16,
+        )}, ${parseInt(iconBackgroundColor.slice(5, 7), 16)}, ${iconBackgroundOpacity})`,
+        borderRadius: `${iconBackgroundRadius}%`,
+      }
     : {};
 
   return (
@@ -70,7 +71,8 @@ const Icon = ({
       ref={setNodeRef}
       {...attributes}
       {...(draggable ? listeners : {})}
-      onClick={handleIconClick} // no conditional needed now
+      onClick={handleIconClick}
+      onAuxClick={handleIconClick}
       style={style}
       draggable
     >
