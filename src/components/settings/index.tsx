@@ -10,11 +10,11 @@ import type { Dispatch, SetStateAction, ChangeEvent } from "react";
 export type ChangeLike =
   | ChangeEvent<HTMLInputElement | HTMLSelectElement>
   | {
-    target: {
-      name: keyof Settings;
-      value: string | number | boolean;
+      target: {
+        name: keyof Settings;
+        value: string | number | boolean;
+      };
     };
-  };
 
 export type HandleChange = (e: ChangeLike) => void;
 
@@ -30,10 +30,7 @@ export default function SettingsMenu({
   forceUnsplashFetch,
 }: SettingsMenuProps) {
   const handleChange: HandleChange = (e) => {
-    const { name, value } =
-      "target" in e
-        ? e.target // either ChangeEvent or custom object
-        : { name: "", value: "" }; // fallback (TypeScript happy)
+    const { name, value } = "target" in e ? e.target : { name: "", value: "" };
 
     let newValue = value;
 
@@ -67,7 +64,7 @@ export default function SettingsMenu({
       <IconSettings settings={settings} handleChange={handleChange} />
       <IconBackgroundSettings settings={settings} handleChange={handleChange} />
       <SearchbarSettings settings={settings} handleChange={handleChange} />
-      <BackupAndRestore />
+      <BackupAndRestore settings={settings} />
       <AppVersion />
     </>
   );

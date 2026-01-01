@@ -1,8 +1,13 @@
 import IDBExportImport from "indexeddb-export-import";
 import db from "../../../database/indexDb";
 import { useState } from "react";
+import { Settings } from "../../../types/settings";
 
-export default function BackupAndRestore() {
+interface BackupAndRestoreProps {
+  settings: Settings;
+}
+
+export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,20 +26,34 @@ export default function BackupAndRestore() {
       await db.open();
       const idbDatabase = db.backendDB();
 
+      const unsplashData = JSON.parse(
+        localStorage.getItem("unsplashData") || "null",
+      );
+
       IDBExportImport.exportToJsonString(
         idbDatabase,
-        (err: Error, jsonString: any) => {
+        (err: Error, jsonString: string) => {
           if (err) {
             console.error("Export failed: ", err);
             return;
           }
 
-          const blob = new Blob([jsonString], { type: "application/json" });
-          const exportTime = new Date().toISOString();
+          const backupPayload = {
+            appVersion: "0.7.5",
+            exportedAt: new Date().toISOString(),
+            settings,
+            indexedDB: JSON.parse(jsonString),
+            unsplashData,
+          };
+
+          const blob = new Blob([JSON.stringify(backupPayload, null, 2)], {
+            type: "application/json",
+          });
+
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = `new-tab-backup-${exportTime}.json`;
+          a.download = `new-tab-backup-${backupPayload.exportedAt}.json`;
           a.click();
           URL.revokeObjectURL(url);
         },
@@ -61,9 +80,23 @@ export default function BackupAndRestore() {
 
       reader.onload = () => {
         try {
-          const jsonString = reader.result as string;
+          const backup = JSON.parse(reader.result as string);
 
-          IDBExportImport.clearDatabase(idbDatabase, (clearErr: any) => {
+          if (!backup.indexedDB || !backup.settings) {
+            throw new Error("Invalid backup format");
+          }
+
+          // Restore settings
+          localStorage.setItem("settings", JSON.stringify(backup.settings));
+
+          // Restore Unsplash wallpaper
+          localStorage.setItem(
+            "unsplashData",
+            JSON.stringify(backup.unsplashData),
+          );
+
+          // Restore IndexedDB
+          IDBExportImport.clearDatabase(idbDatabase, (clearErr: Error) => {
             if (clearErr) {
               setError("Clear database failed: " + clearErr.message);
               setBusy(false);
@@ -72,19 +105,19 @@ export default function BackupAndRestore() {
 
             IDBExportImport.importFromJsonString(
               idbDatabase,
-              jsonString,
+              JSON.stringify(backup.indexedDB),
               (importErr: Error) => {
                 if (importErr) {
                   setError("Import failed: " + importErr.message);
                   setBusy(false);
                 } else {
-                  setTimeout(() => window.location.reload(), 2000);
+                  setTimeout(() => window.location.reload(), 1000);
                 }
               },
             );
           });
-        } catch (parseErr) {
-          setError("Error processing file: " + (parseErr as Error).message);
+        } catch (err) {
+          setError("Error processing file: " + (err as Error).message);
           setBusy(false);
         }
       };
@@ -181,14 +214,14 @@ export default function BackupAndRestore() {
           onClick={backupIcons}
           className="btn btn-outline flex-grow mr-2"
         >
-          Export Icons
+          Save Backup
         </button>
         <button
           type="button"
           className="btn btn-outline w-1/2 ml-2"
           onClick={() => openModal("import_icon_modal")}
         >
-          Restore Icons
+          Restore Backup
         </button>
       </div>
 
