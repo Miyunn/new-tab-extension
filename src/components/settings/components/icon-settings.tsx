@@ -1,6 +1,6 @@
 import { HandleChange } from "..";
 import { Settings } from "../../../types/settings";
-import { IconSettingsUI } from "../../schemas/icon.schema";
+import { IconSettingsUI } from "../../../schemas/icon.schema";
 
 interface IconSettingsProps {
   settings: Settings;

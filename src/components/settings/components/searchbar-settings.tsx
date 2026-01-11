@@ -1,6 +1,6 @@
 import { HandleChange } from "..";
 import { Settings } from "../../../types/settings";
-import { SearchSettingsUI } from "../../schemas/search.schema";
+import { SearchSettingsUI } from "../../../schemas/search.schema";
 
 const isFirefox = chrome.runtime?.getURL("").startsWith("moz-extension://");
 

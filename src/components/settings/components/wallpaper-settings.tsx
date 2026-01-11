@@ -6,7 +6,7 @@ import { useState } from "react";
 import db from "../../../database/indexDb";
 import { Settings } from "../../../types/settings";
 import { HandleChange } from "..";
-import { WallpaperUI } from "../../schemas/wallpaper.schema";
+import { WallpaperUI } from "../../../schemas/wallpaper.schema";
 
 interface WallpaperSettingsProps {
   settings: Settings;
