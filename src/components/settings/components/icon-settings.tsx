@@ -1,5 +1,6 @@
 import { HandleChange } from "..";
 import { Settings } from "../../../types/settings";
+import { IconSettingsUI } from "../../schemas/icon.schema";
 
 interface IconSettingsProps {
   settings: Settings;
@@ -10,14 +11,22 @@ export default function IconSettings({
   settings,
   handleChange,
 }: IconSettingsProps) {
+  const showIconMeta = IconSettingsUI.iconVisibility;
+  const hideAddIconMeta = IconSettingsUI.hideAddIconShortcut;
+  const iconOrderMeta = IconSettingsUI.iconOrder;
+  const showIconLabelMeta = IconSettingsUI.iconLabels;
+  const iconSizeMeta = IconSettingsUI.iconSize;
+  const iconspacingMeta = IconSettingsUI.iconGap;
+  const iconGridColumnsMeta = IconSettingsUI.iconColumns;
+
   return (
     <>
       <div className="divider text-sm pt-2">Icons</div>
       <div className="form-control w-full max-w mt-4">
         <label className="label cursor-pointer">
-          <span className="label-text">Show Icons</span>
+          <span className="label-text">{showIconMeta.label} </span>
           <input
-            type="checkbox"
+            type={showIconMeta.control}
             name="iconVisibility"
             className="toggle toggle-primary ml-2"
             checked={settings.iconVisibility}
@@ -29,9 +38,9 @@ export default function IconSettings({
         <>
           <div className="form-control w-full max-w mt-4">
             <label className="label cursor-pointer">
-              <span className="label-text">Hide Add Icon Shortcut</span>
+              <span className="label-text">{hideAddIconMeta.label}</span>
               <input
-                type="checkbox"
+                type={hideAddIconMeta.control}
                 name="hideAddIconShortcut"
                 className="toggle toggle-primary ml-2"
                 checked={settings.hideAddIconShortcut}
@@ -41,7 +50,7 @@ export default function IconSettings({
           </div>
           <div className="form-control w-full max-w">
             <label className="label">
-              <span className="label-text">Icon Order</span>
+              <span className="label-text">{iconOrderMeta.label}</span>
             </label>
             <select
               name="iconOrder"
@@ -49,15 +58,16 @@ export default function IconSettings({
               value={settings.iconOrder}
               onChange={handleChange}
             >
-              <option value="name">Name</option>
-              <option value="position">Custom</option>
+              {iconOrderMeta.options.map((option) => (
+                <option value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
           <div className="form-control w-full max-w mt-4">
             <label className="label cursor-pointer">
-              <span className="label-text">Icons Labels</span>
+              <span className="label-text">{showIconLabelMeta.label}</span>
               <input
-                type="checkbox"
+                type={showIconLabelMeta.control}
                 name="iconLabel"
                 className="toggle toggle-primary ml-2"
                 checked={settings.iconLabel}
@@ -67,80 +77,70 @@ export default function IconSettings({
           </div>
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Icon Size</span>
+              <span className="label-text">{iconSizeMeta.label}</span>
             </label>
             <input
-              type="range"
-              min="1"
-              max="100"
-              className="range"
-              step="1"
               name="iconSize"
+              type={iconSizeMeta.control}
+              className={iconSizeMeta.control}
+              min={iconSizeMeta.min}
+              max={iconSizeMeta.max}
+              step={iconSizeMeta.step}
               value={settings.iconSize}
               onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
-              <span>0</span>
+              <span>{iconSizeMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>
-              <span>50</span>
               <span>|</span>
               <span>|</span>
-              <span>100</span>
+              <span>|</span>
+              <span>{iconSizeMeta.labels[1]}</span>
             </div>
           </div>
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Icon Spacing</span>
+              <span className="label-text">{iconspacingMeta.label}</span>
             </label>
             <input
-              type="range"
-              min="1"
-              max="50"
-              className="range"
-              step="1"
               name="iconGap"
+              type={iconspacingMeta.control}
+              className={iconspacingMeta.control}
+              min={iconspacingMeta.min}
+              max={iconspacingMeta.max}
+              step={iconspacingMeta.step}
               value={settings.iconGap}
               onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
-              <span>0</span>
+              <span>{iconspacingMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>
               <span>|</span>
               <span>|</span>
-              <span>50</span>
               <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>|</span>
-              <span>100</span>
+              <span>{iconspacingMeta.labels[1]}</span>
             </div>
           </div>
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Grid Columns</span>
+              <span className="label-text">{iconGridColumnsMeta.label}</span>
             </label>
             <input
-              type="range"
-              min="1"
-              max="9"
-              className="range"
-              step="1"
               name="iconColumns"
+              type={iconGridColumnsMeta.control}
+              className={iconGridColumnsMeta.control}
+              min={iconGridColumnsMeta.min}
+              max={iconGridColumnsMeta.max}
+              step={iconGridColumnsMeta.step}
               value={settings.iconColumns}
               onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
-              <span>1</span>
-              <span>2</span>
-              <span>3</span>
-              <span>4</span>
-              <span>5</span>
-              <span>6</span>
-              <span>7</span>
-              <span>8</span>
-              <span>9</span>
+              {iconGridColumnsMeta.labels.map((label) => (
+                <span>{label}</span>
+              ))}
             </div>
           </div>
         </>

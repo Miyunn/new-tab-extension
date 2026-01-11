@@ -4,8 +4,9 @@ import { ColorPicker } from "antd";
 import { Tooltip } from "react-tooltip";
 import { useState } from "react";
 import db from "../../../database/indexDb";
-import { BackgroundType, Settings } from "../../../types/settings";
+import { Settings } from "../../../types/settings";
 import { HandleChange } from "..";
+import { WallpaperUI } from "../../schemas/wallpaper.schema";
 
 interface WallpaperSettingsProps {
   settings: Settings;
@@ -21,13 +22,20 @@ export default function WallpaperSettings({
   forceUnsplashFetch,
 }: WallpaperSettingsProps) {
   const [error, setError] = useState("");
-  const unsplashFrequencyHours = [1, 4, 8, 12, 24];
+
+  const wallpaperTypeMeta = WallpaperUI.backgroundType;
+  const wallpaperTintMeta = WallpaperUI.backgroundTintIntensity;
+  const wallpaperBlurMeta = WallpaperUI.blurValue;
+  const unsplashFrequency = WallpaperUI.unsplashFrequency;
+  const wallpaperRes = WallpaperUI.unsplashQuality;
+
+  type BackgroundType = Settings["backgroundType"];
 
   const handleUnsplashFrequencyChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const index = parseInt(e.target.value);
-    const frequency = unsplashFrequencyHours[index];
+    const frequency = unsplashFrequency.values[index];
 
     setSettings((prev) => ({
       ...prev,
@@ -108,7 +116,7 @@ export default function WallpaperSettings({
       <div className="divider text-sm">Wallpaper</div>
       <div className="form-control w-full max-w">
         <label className="label">
-          <span className="label-text">Wallpaper Source</span>
+          <span className="label-text">{wallpaperTypeMeta.label}</span>
         </label>
         <select
           name="backgroundType"
@@ -121,10 +129,11 @@ export default function WallpaperSettings({
             }
           }}
         >
-          <option value="unsplash">Image from Unsplash</option>
-          <option value="color">Solid Color</option>
-          <option value="image">Image</option>
-          <option value="url">URL</option>
+          {wallpaperTypeMeta.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -188,62 +197,62 @@ export default function WallpaperSettings({
       {(settings.backgroundType === "image" ||
         settings.backgroundType === "url" ||
         settings.backgroundType === "unsplash") && (
-          <>
-            <div className="form-control w-full max-w py-2">
-              <label className="label">
-                <span className="label-text">Wallpaper Tint</span>
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                className="range"
-                step="0.001"
-                name="backgroundTintIntensity"
-                value={settings.backgroundTintIntensity}
-                onChange={handleChange}
-              />
-              <div className="w-full flex justify-between text-xs px-2">
-                <span>No Tint</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>50%</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>Black</span>
-              </div>
+        <>
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">{wallpaperTypeMeta.label}</span>
+            </label>
+            <input
+              type={wallpaperTintMeta.control}
+              min={wallpaperTintMeta.min}
+              max={wallpaperTintMeta.max}
+              className="range"
+              step={wallpaperTintMeta.step}
+              name="backgroundTintIntensity"
+              value={settings.backgroundTintIntensity}
+              onChange={handleChange}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>{wallpaperTintMeta.labels[0]}</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>50%</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>{wallpaperTintMeta.labels[1]}</span>
             </div>
+          </div>
 
-            <div className="form-control w-full max-w py-2">
-              <label className="label">
-                <span className="label-text">Wallpaper Blur</span>
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="10"
-                className="range"
-                step="0.01"
-                name="blurValue"
-                value={settings.blurValue}
-                onChange={handleChange}
-              />
-              <div className="w-full flex justify-between text-xs px-2">
-                <span>0%</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>50%</span>
-                <span>|</span>
-                <span>|</span>
-                <span>|</span>
-                <span>100</span>
-              </div>
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">{wallpaperBlurMeta.label}</span>
+            </label>
+            <input
+              type={wallpaperBlurMeta.control}
+              min={wallpaperBlurMeta.min}
+              max={wallpaperBlurMeta.max}
+              className="range"
+              step={wallpaperBlurMeta.step}
+              name="blurValue"
+              value={settings.blurValue}
+              onChange={handleChange}
+            />
+            <div className="w-full flex justify-between text-xs px-2">
+              <span>0%</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>50%</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>100</span>
             </div>
-          </>
-        )}
+          </div>
+        </>
+      )}
       {settings.backgroundType === "unsplash" && (
         <>
           <div className="form-control w-full max-w py-2">
@@ -322,26 +331,24 @@ export default function WallpaperSettings({
           {settings.unsplashAutoRefresh == true && (
             <div className="form-control w-full max-w py-2">
               <label className="label">
-                <span className="label-text">Change Wallpaper Every</span>
+                <span className="label-text">{unsplashFrequency.label}</span>
               </label>
               <div className="form-control w-full max-w py-2">
                 <input
-                  type="range"
+                  type={unsplashFrequency.control}
                   min="0"
-                  max="4"
+                  max={unsplashFrequency.labels.length - 1}
                   step="1"
                   className="range"
-                  value={unsplashFrequencyHours.indexOf(
+                  value={unsplashFrequency.values.indexOf(
                     settings.unsplashFrequency,
                   )}
                   onChange={handleUnsplashFrequencyChange}
                 />
                 <div className="w-full flex justify-between text-xs px-2">
-                  <span>1h</span>
-                  <span>4h</span>
-                  <span>8h</span>
-                  <span>12h</span>
-                  <span>24h</span>
+                  {unsplashFrequency.labels.map((label) => (
+                    <span key={label}> {label} </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -349,7 +356,7 @@ export default function WallpaperSettings({
 
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Wallpaper Resolution</span>
+              <span className="label-text">{wallpaperRes.label}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -364,20 +371,19 @@ export default function WallpaperSettings({
               </svg>
             </label>
             <input
-              type="range"
-              min="0"
-              max="3"
+              type={wallpaperRes.control}
+              min={wallpaperRes.min}
+              max={wallpaperRes.max}
               className="range"
-              step="1"
+              step={wallpaperRes.step}
               name="unsplashQuality"
               value={settings.unsplashQuality}
               onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
-              <span>Low</span>
-              <span>Medium</span>
-              <span>High</span>
-              <span>Original</span>
+              {wallpaperRes.labels.map((label) => (
+                <span>{label}</span>
+              ))}
             </div>
           </div>
         </>

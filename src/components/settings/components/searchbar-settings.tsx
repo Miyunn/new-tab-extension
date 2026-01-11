@@ -1,5 +1,6 @@
 import { HandleChange } from "..";
 import { Settings } from "../../../types/settings";
+import { SearchSettingsUI } from "../../schemas/search.schema";
 
 const isFirefox = chrome.runtime?.getURL("").startsWith("moz-extension://");
 
@@ -11,14 +12,18 @@ export default function SearchbarSettings({
   settings,
   handleChange,
 }: SearchbarSettingsProps) {
+  const searchbarToggleMeta = SearchSettingsUI.searchBar;
+  const searchEngineMeta = SearchSettingsUI.searchEngine;
+  const searchBarWidthMeta = SearchSettingsUI.searchBarWidth;
+
   return (
     <>
       <div className="divider text-sm">Search Bar</div>
       <div className="form-control w-full max-w mt-4">
         <label className="label cursor-pointer">
-          <span className="label-text">Show Search Bar</span>
+          <span className="label-text">{searchbarToggleMeta.label}</span>
           <input
-            type="checkbox"
+            type={searchbarToggleMeta.control}
             name="searchBar"
             className="toggle toggle-primary ml-2"
             checked={settings.searchBar}
@@ -30,7 +35,7 @@ export default function SearchbarSettings({
         <>
           <div className="form-control w-full max-w">
             <label className="label">
-              <span className="label-text">Search Engine</span>
+              <span className="label-text">{searchEngineMeta.label}</span>
             </label>
             <select
               name="searchEngine"
@@ -39,14 +44,13 @@ export default function SearchbarSettings({
               onChange={handleChange}
             >
               {!isFirefox && (
-                <option value="chromeSearch">
-                  Use Search Engine Set in Browser
-                </option>
+                <option value="chromeSearch">Use Browser Default</option>
               )}
-              <option value="google">Google</option>
-              <option value="bing">Bing</option>
-              <option value="duckduckgo">DuckDuckGo</option>
-              <option value="custom">Custom</option>
+              {searchEngineMeta.options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -68,26 +72,26 @@ export default function SearchbarSettings({
 
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">Search Bar Width</span>
+              <span className="label-text">{searchbarToggleMeta.label}</span>
             </label>
             <input
-              type="range"
-              min="250"
-              max="550"
-              className="range"
-              step="10"
+              type={searchBarWidthMeta.control}
+              min={searchBarWidthMeta.min}
+              max={searchBarWidthMeta.max}
+              className={searchBarWidthMeta.control}
+              step={searchBarWidthMeta.step}
               name="searchBarWidth"
               value={settings.searchBarWidth}
               onChange={handleChange}
             />
             <div className="w-full flex justify-between text-xs px-2">
-              <span>250px</span>
+              <span>{searchBarWidthMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>
-              <span>400px</span>
+              <span>{searchBarWidthMeta.labels[1]}</span>
               <span>|</span>
               <span>|</span>
-              <span>550px</span>
+              <span>{searchBarWidthMeta.labels[2]}</span>
             </div>
           </div>
         </>
