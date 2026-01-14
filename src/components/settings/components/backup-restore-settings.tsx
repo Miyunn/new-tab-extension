@@ -154,10 +154,8 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
       {/* Import Modal */}
       <Modal
         title="Restore Backup"
-        style={{ top: 20 }}
         open={RestoreModalOpen}
         centered
-        onOk={() => setRestoreModalOpen(false)}
         onCancel={() => setRestoreModalOpen(false)}
         footer={(_, { CancelBtn }) => (
           <>
@@ -171,9 +169,30 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
             </Button>
           </>
         )}
+        styles={{
+          content: {
+            backgroundColor: "rgba(0, 0, 0, 0.65)",
+            backdropFilter: "blur(8px)",
+            boxShadow: "none",
+          },
+          header: {
+            backgroundColor: "transparent",
+            borderBottom: "none",
+          },
+          body: {
+            backgroundColor: "transparent",
+          },
+          footer: {
+            backgroundColor: "transparent",
+            borderTop: "none",
+          },
+          mask: {
+            backdropFilter: "blur(4px)",
+          },
+        }}
       >
         {busy ? (
-          <div className="flex items-center justify-center h-full my-8">
+          <div className="flex items-center justify-center h-full my-8 color-white">
             <span className="loading loading-spinner loading-lg"></span>
           </div>
         ) : (
