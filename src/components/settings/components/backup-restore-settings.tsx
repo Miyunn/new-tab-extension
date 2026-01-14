@@ -2,6 +2,7 @@ import IDBExportImport from "indexeddb-export-import";
 import db from "../../../database/indexDb";
 import { useState } from "react";
 import { Settings } from "../../../types/settings";
+import { Modal, Button } from "antd";
 
 interface BackupAndRestoreProps {
   settings: Settings;
@@ -11,14 +12,21 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [selectedBackupFile, setSelectedBackupFile] = useState<File | null>(
+    null,
+  );
+
   const openModal = (id: string) => {
     const modal = document.getElementById(id) as HTMLDialogElement;
     modal?.showModal();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) importIcons(file);
+  const handleRestoreSettings = () => {
+    if (!selectedBackupFile) {
+      setError("Please select a backup file first.");
+      return;
+    }
+    if (selectedBackupFile) restoreSettings(selectedBackupFile);
   };
 
   const backupIcons = async () => {
@@ -63,7 +71,7 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
     }
   };
 
-  const importIcons = async (file: File) => {
+  const restoreSettings = async (file: File) => {
     setBusy(true);
     setError(null);
 
@@ -139,49 +147,58 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
     window.location.reload();
   };
 
+  const [RestoreModalOpen, setRestoreModalOpen] = useState(false);
+
   return (
     <div className="mt-6">
       {/* Import Modal */}
-      <dialog id="import_icon_modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Restore Data</h3>
-          {busy ? (
-            <div className="flex items-center justify-center h-full my-8">
-              <span className="loading loading-spinner loading-lg"></span>
-            </div>
-          ) : (
-            <>
-              <p className="py-4">
-                Importing will override all existing data. Are you sure you want
-                to continue?
-              </p>
-              {error && <p className="text-red-500 py-2">{error}</p>}
-            </>
-          )}
-          <div className="modal-action">
-            <form method="dialog">
-              <input
-                type="file"
-                id="fileInput"
-                style={{ display: "none" }}
-                accept="application/json"
-                onChange={handleFileChange}
-              />
-              <button
-                type="button"
-                className="btn btn-primary flex-grow mr-2"
-                onClick={() => document.getElementById("fileInput")?.click()}
-                disabled={busy}
-              >
-                Select File
-              </button>
-              <button className="btn" disabled={busy}>
-                Cancel
-              </button>
-            </form>
+      <Modal
+        title="Restore Backup"
+        style={{ top: 20 }}
+        open={RestoreModalOpen}
+        centered
+        onOk={() => setRestoreModalOpen(false)}
+        onCancel={() => setRestoreModalOpen(false)}
+        footer={(_, { CancelBtn }) => (
+          <>
+            <CancelBtn />
+            <Button
+              type="primary"
+              disabled={!selectedBackupFile}
+              onClick={handleRestoreSettings}
+            >
+              Restore
+            </Button>
+          </>
+        )}
+      >
+        {busy ? (
+          <div className="flex items-center justify-center h-full my-8">
+            <span className="loading loading-spinner loading-lg"></span>
           </div>
+        ) : (
+          <>
+            <p className="py-4">
+              Importing will override all existing data. Are you sure you want
+              to continue?
+            </p>
+            {error && <p className="text-red-500 py-2">{error}</p>}
+          </>
+        )}
+        <div>
+          <form method="dialog">
+            <input
+              type="file"
+              id="fileInput"
+              accept="application/json"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setSelectedBackupFile(file);
+              }}
+            />
+          </form>
         </div>
-      </dialog>
+      </Modal>
 
       {/* Reset Modal */}
       <dialog id="reset_confirm_modal" className="modal">
@@ -219,7 +236,7 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
         <button
           type="button"
           className="btn btn-outline w-1/2 ml-2"
-          onClick={() => openModal("import_icon_modal")}
+          onClick={() => setRestoreModalOpen(true)}
         >
           Restore Backup
         </button>
