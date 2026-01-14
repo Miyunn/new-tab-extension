@@ -21,6 +21,7 @@ const UnsplashCredits = lazy(() => import("./components/unsplash-credits"));
 const SettingsMenu = lazy(() => import("./components/settings"));
 const AddIconForm = lazy(() => import("./components/add-icon-modal-content"));
 import { Settings } from "./types/settings";
+import { ConfigProvider, theme } from "antd";
 
 export default function App() {
   const [settings, setSettings] = useState<Settings>(() => {
@@ -225,140 +226,153 @@ export default function App() {
   }
 
   return (
-    <div
-      className="antialiased overflow-hidden relative"
-      onContextMenu={disableRightClick}
+    <ConfigProvider
+      theme={{
+        algorithm: theme.darkAlgorithm,
+      }}
     >
-      <div style={bg} className="absolute inset-1 fade-in">
-        {(settings.backgroundType === "image" ||
-          settings.backgroundType === "url" ||
-          settings.backgroundType === "unsplash") && (
-          <div
-            style={{
-              backgroundColor: "black",
-              opacity: `${settings.backgroundTintIntensity}`,
-            }}
-            className="absolute inset-0"
-          />
-        )}
-      </div>
-      {settings.backgroundType === "unsplash" && unsplashImage?.artistLink && (
-        <div className="absolute bottom-0 left-0 z-50 fade-in">
-          <UnsplashCredits
-            type={unsplashImage?.type || ""}
-            artist={unsplashImage?.artist || ""}
-            profilePic={unsplashImage?.profilePic || ""}
-            artistLink={unsplashImage.artistLink}
-            imageLink={unsplashImage?.imageLink || ""}
-            downloadLink={unsplashImage?.downloadLink || ""}
-          />
-        </div>
-      )}
-      <div className="relative z-10 fade-in">
-        <div className="flex flex-col justify-center items-center h-screen">
-          {settings.searchBar && (
-            <Searchbar
-              searchEngine={settings.searchEngine}
-              searchBarWidth={settings.searchBarWidth}
-              customSearchEngineUrl={settings.customSearchEngineUrl}
+      <div
+        className="antialiased overflow-hidden relative"
+        onContextMenu={disableRightClick}
+      >
+        <div style={bg} className="absolute inset-1 fade-in">
+          {(settings.backgroundType === "image" ||
+            settings.backgroundType === "url" ||
+            settings.backgroundType === "unsplash") && (
+            <div
+              style={{
+                backgroundColor: "black",
+                opacity: `${settings.backgroundTintIntensity}`,
+              }}
+              className="absolute inset-0"
             />
           )}
-          {settings.iconVisibility &&
-            (iconData.length === 0 ? (
-              <NoIconOptions showAddIconDrawer={showAddIcons} />
-            ) : (
-              <IconGrid
-                iconData={localIconData}
-                heightWidth={settings.iconSize}
-                labels={settings.iconLabel}
-                columns={settings.iconColumns}
-                gap={settings.iconGap}
-                setIconData={setLocalIconData}
-                sortType={settings.iconOrder}
-                iconBackground={settings.iconBackground}
-                iconBackgroundColor={settings.iconBackgroundColor}
-                iconBackgroundOpacity={settings.iconBackgroundOpacity}
-                iconBackgroundRadius={settings.iconBackgroundRadius}
-                showAddIconDrawer={showAddIcons}
-                hideAddIconShortcut={settings.hideAddIconShortcut}
-                setIsDragging={setIsDragging}
-              />
-            ))}
         </div>
+        {settings.backgroundType === "unsplash" &&
+          unsplashImage?.artistLink && (
+            <div className="absolute bottom-0 left-0 z-50 fade-in">
+              <UnsplashCredits
+                type={unsplashImage?.type || ""}
+                artist={unsplashImage?.artist || ""}
+                profilePic={unsplashImage?.profilePic || ""}
+                artistLink={unsplashImage.artistLink}
+                imageLink={unsplashImage?.imageLink || ""}
+                downloadLink={unsplashImage?.downloadLink || ""}
+              />
+            </div>
+          )}
+        <div className="relative z-10 fade-in">
+          <div className="flex flex-col justify-center items-center h-screen">
+            {settings.searchBar && (
+              <Searchbar
+                searchEngine={settings.searchEngine}
+                searchBarWidth={settings.searchBarWidth}
+                customSearchEngineUrl={settings.customSearchEngineUrl}
+              />
+            )}
+            {settings.iconVisibility &&
+              (iconData.length === 0 ? (
+                <NoIconOptions showAddIconDrawer={showAddIcons} />
+              ) : (
+                <IconGrid
+                  iconData={localIconData}
+                  heightWidth={settings.iconSize}
+                  labels={settings.iconLabel}
+                  columns={settings.iconColumns}
+                  gap={settings.iconGap}
+                  setIconData={setLocalIconData}
+                  sortType={settings.iconOrder}
+                  iconBackground={settings.iconBackground}
+                  iconBackgroundColor={settings.iconBackgroundColor}
+                  iconBackgroundOpacity={settings.iconBackgroundOpacity}
+                  iconBackgroundRadius={settings.iconBackgroundRadius}
+                  showAddIconDrawer={showAddIcons}
+                  hideAddIconShortcut={settings.hideAddIconShortcut}
+                  setIsDragging={setIsDragging}
+                />
+              ))}
+          </div>
 
-        <Drawer
-          placement="right"
-          onClose={onCloseSettings}
-          open={openSettings}
-          closable={false}
-          width={400}
-          styles={{
-            content: {
-              backgroundColor: "rgba(0, 0, 0, 0.65)",
-              backdropFilter: "blur(8px)",
-              boxShadow: "none",
-            },
-            header: {
-              backgroundColor: "transparent",
-              borderBottom: "none",
-            },
-            body: {
-              backgroundColor: "transparent",
-            },
-          }}
-        >
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center h-full">
-                <span className="loading loading-spinner loading-lg"></span>
-              </div>
-            }
+          <Drawer
+            placement="right"
+            onClose={onCloseSettings}
+            open={openSettings}
+            closable={false}
+            width={400}
+            styles={{
+              content: {
+                backgroundColor: "rgba(0, 0, 0, 0.75)",
+                backdropFilter: "blur(8px)",
+                boxShadow: "none",
+              },
+              header: {
+                backgroundColor: "transparent",
+                borderBottom: "none",
+              },
+              body: {
+                backgroundColor: "transparent",
+              },
+              mask: {
+                backgroundColor: "transparent",
+              },
+            }}
           >
-            <SettingsMenu
-              settings={settings}
-              setSettings={setSettings}
-              forceUnsplashFetch={fetchUnsplashImage}
-            />
-          </Suspense>
-        </Drawer>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  <span className="loading loading-spinner loading-lg"></span>
+                </div>
+              }
+            >
+              <SettingsMenu
+                settings={settings}
+                setSettings={setSettings}
+                forceUnsplashFetch={fetchUnsplashImage}
+              />
+            </Suspense>
+          </Drawer>
 
-        <Drawer
-          placement="right"
-          onClose={onCloseShowIcons}
-          open={openAddIcon}
-          closable={false}
-          height={590}
-          styles={{
-            content: {
-              backgroundColor: "rgba(0, 0, 0, 0.65)",
-              backdropFilter: "blur(8px)",
-              boxShadow: "none",
-            },
-            header: {
-              backgroundColor: "transparent",
-              borderBottom: "none",
-            },
-            body: {
-              backgroundColor: "transparent",
-            },
-          }}
-        >
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center h-full">
-                <span className="loading loading-spinner loading-lg"></span>
-              </div>
-            }
+          <Drawer
+            placement="right"
+            onClose={onCloseShowIcons}
+            open={openAddIcon}
+            closable={false}
+            height={590}
+            styles={{
+              content: {
+                backgroundColor: "rgba(0, 0, 0, 0.75)",
+                backdropFilter: "blur(8px)",
+                boxShadow: "none",
+              },
+              header: {
+                backgroundColor: "transparent",
+                borderBottom: "none",
+              },
+              body: {
+                backgroundColor: "transparent",
+              },
+              mask: {
+                backgroundColor: "transparent",
+              },
+            }}
           >
-            <AddIconForm closeDrawer={onCloseShowIcons} />
-          </Suspense>
-        </Drawer>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  <span className="loading loading-spinner loading-lg"></span>
+                </div>
+              }
+            >
+              <AddIconForm closeDrawer={onCloseShowIcons} />
+            </Suspense>
+          </Drawer>
 
-        <ControlIcons
-          showDrawer={showSettings}
-          showAddIconDrawer={showAddIcons}
-        />
+          <ControlIcons
+            showDrawer={showSettings}
+            showAddIconDrawer={showAddIcons}
+          />
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 }
