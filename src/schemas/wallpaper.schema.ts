@@ -10,15 +10,15 @@ export const WallpaperSchema = z.object({
     .regex(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)
     .default("#000000"),
 
-  backgroundTintIntensity: z.number().min(0).max(1).default(0),
+  backgroundTintIntensity: z.number().min(0).max(1).default(0.5),
 
-  blurValue: z.number().min(0).max(10).default(0),
+  blurValue: z.number().min(0).max(10).default(3.6),
 
   unsplashQuery: z.string().max(100).default(""),
 
   backgroundUrl: z.string().trim().max(2048).default(""),
 
-  unsplashAutoRefresh: z.boolean().default(false),
+  unsplashAutoRefresh: z.boolean().default(true),
 
   unsplashFrequency: z
     .union([
@@ -50,7 +50,7 @@ export const WallpaperUI = {
     control: "range",
     min: 0,
     max: 1,
-    step: 0.001,
+    step: 0.01,
     labels: ["No Tint", "Black"],
   },
 

@@ -1,6 +1,7 @@
 import { ColorPicker } from "antd";
 import { Settings } from "../../../types/settings";
 import { HandleChange } from "..";
+import { IconSettingsUI } from "../../../schemas/icon.schema";
 
 interface IconBackgroundSettingsProps {
   settings: Settings;
@@ -11,14 +12,19 @@ export default function IconBackgroundSettings({
   settings,
   handleChange,
 }: IconBackgroundSettingsProps) {
+  const enableIconBackgroundMeta = IconSettingsUI.iconBackground;
+  const iconBackgroundOpacityMeta = IconSettingsUI.iconBackgroundOpacity;
+  const iconShapeMeta = IconSettingsUI.iconBackgroundRadius;
+  const iconBackgroundColorMeta = IconSettingsUI.iconBackgroundColor;
+
   return (
     settings.iconVisibility && (
       <>
         <div className="form-control w-full max-w mt-4">
           <label className="label cursor-pointer">
-            <span className="label-text">Show Icon Background</span>
+            <span className="label-text">{enableIconBackgroundMeta.label}</span>
             <input
-              type="checkbox"
+              type={enableIconBackgroundMeta.control}
               name="iconBackground"
               className="toggle toggle-primary ml-2"
               checked={settings.iconBackground}
@@ -30,51 +36,59 @@ export default function IconBackgroundSettings({
           <>
             <div className="form-control w-full max-w py-2">
               <label className="label">
-                <span className="label-text">Icon Background Transparency</span>
+                <span className="label-text">
+                  {iconBackgroundOpacityMeta.label}
+                </span>
               </label>
               <input
-                type="range"
+                type={iconBackgroundOpacityMeta.control}
                 min="0"
                 max="1"
-                className="range"
-                step="0.01"
+                className={iconBackgroundOpacityMeta.control}
+                step={iconBackgroundOpacityMeta.step}
                 name="iconBackgroundOpacity"
                 value={settings.iconBackgroundOpacity}
                 onChange={handleChange}
               />
               <div className="w-full flex justify-between text-xs px-2">
-                <span>100</span>
+                <span>{iconBackgroundOpacityMeta.labels[0]}</span>
                 <span>|</span>
                 <span>|</span>
-                <span>50</span>
                 <span>|</span>
                 <span>|</span>
-                <span>0</span>
+                <span>|</span>
+                <span>{iconBackgroundOpacityMeta.labels[1]}</span>
               </div>
             </div>
             <div className="form-control w-full max-w py-2">
               <label className="label">
-                <span className="label-text">Icon Background Shape</span>
+                <span className="label-text">{iconShapeMeta.label}</span>
               </label>
               <input
-                type="range"
-                min="1"
-                max="50"
-                className="range"
-                step="1"
+                type={iconShapeMeta.control}
+                min={iconShapeMeta.min}
+                max={iconShapeMeta.max}
+                className={iconShapeMeta.control}
+                step={iconShapeMeta.step}
                 name="iconBackgroundRadius"
                 value={settings.iconBackgroundRadius}
                 onChange={handleChange}
               />
               <div className="w-full flex justify-between text-xs px-2">
-                <span>⬜</span>
+                <span>{iconShapeMeta.labels[0]}</span>
                 <span>|</span>
-                <span>⚪</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>|</span>
+                <span>{iconShapeMeta.labels[1]}</span>
               </div>
             </div>
             <div className="form-control w-full max-w">
               <label className="label">
-                <span className="label-text">Background Color</span>
+                <span className="label-text">
+                  {iconBackgroundColorMeta.lable}
+                </span>
               </label>
               <ColorPicker
                 showText
