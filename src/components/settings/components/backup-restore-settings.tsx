@@ -2,8 +2,15 @@ import IDBExportImport from "indexeddb-export-import";
 import db from "../../../database/indexDb";
 import { useState } from "react";
 import { Settings } from "../../../types/settings";
-import { Modal, Button } from "antd";
-
+import { Modal, Button, Popconfirm } from "antd";
+import type { UploadProps } from "antd";
+import { Upload } from "antd";
+import {
+  DownloadOutlined,
+  FileOutlined,
+  RedoOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
 interface BackupAndRestoreProps {
   settings: Settings;
 }
@@ -15,11 +22,6 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
   const [selectedBackupFile, setSelectedBackupFile] = useState<File | null>(
     null,
   );
-
-  const openModal = (id: string) => {
-    const modal = document.getElementById(id) as HTMLDialogElement;
-    modal?.showModal();
-  };
 
   const handleRestoreSettings = () => {
     if (!selectedBackupFile) {
@@ -147,6 +149,24 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
     window.location.reload();
   };
 
+  const { Dragger } = Upload;
+
+  const props: UploadProps = {
+    name: "file",
+    multiple: false,
+    accept: ".json",
+    maxCount: 1,
+    beforeUpload(file) {
+      setSelectedBackupFile(file);
+      setRestoreModalOpen(true);
+      return false;
+    },
+
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
+
   const [RestoreModalOpen, setRestoreModalOpen] = useState(false);
 
   return (
@@ -156,7 +176,11 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
         title="Restore Backup"
         open={RestoreModalOpen}
         centered
-        onCancel={() => setRestoreModalOpen(false)}
+        onCancel={() => {
+          setRestoreModalOpen(false);
+          setSelectedBackupFile(null);
+          setError(null);
+        }}
         footer={(_, { CancelBtn }) => (
           <>
             <CancelBtn />
@@ -171,7 +195,7 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
         )}
         styles={{
           content: {
-            backgroundColor: "rgba(0, 0, 0, 0.65)",
+            backgroundColor: "rgba(0, 0, 0, 0.80)",
             backdropFilter: "blur(8px)",
             boxShadow: "none",
           },
@@ -196,79 +220,58 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
             <span className="loading loading-spinner loading-lg"></span>
           </div>
         ) : (
-          <>
-            <p className="py-4">
-              Importing will override all existing data. Are you sure you want
-              to continue?
-            </p>
-            {error && <p className="text-red-500 py-2">{error}</p>}
-          </>
-        )}
-        <div>
-          <form method="dialog">
-            <input
-              type="file"
-              id="fileInput"
-              accept="application/json"
-              onChange={(e) => {
-                const file = e.target.files?.[0] ?? null;
-                setSelectedBackupFile(file);
-              }}
-            />
-          </form>
-        </div>
-      </Modal>
-
-      {/* Reset Modal */}
-      <dialog id="reset_confirm_modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Reset Settings</h3>
-          <p className="py-4">
-            Are you sure you want to reset all settings to default?
-            <br />
-            Your icons will stay as they are
-          </p>
-          <div className="modal-action">
-            <form method="dialog">
-              <button
-                className="btn btn-error flex-grow mr-2"
-                onClick={resetSettings}
-              >
-                Reset
-              </button>
-              <button className="btn">Cancel</button>
-            </form>
+          <div>
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <FileOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Select or drag a backup file here to begin restoring your
+                settings
+              </p>
+              <p className="ant-upload-hint">
+                Upload a valid backup file in JSON (.json) format
+              </p>
+            </Dragger>
           </div>
-        </div>
-      </dialog>
-
+        )}
+        <>{error && <p className="text-red-500 py-2">{error}</p>}</>
+      </Modal>
       {/* Settings Menu Elements */}
       <div className="divider text-sm">Backup And Restore</div>
-      <div className="flex w-full max-w">
+      <div className="flex flex-col w-full gap-5">
         <button
           type="button"
           onClick={backupIcons}
-          className="btn btn-outline flex-grow mr-2"
+          className="btn btn-outline w-full"
         >
+          <SaveOutlined />
           Save Backup
         </button>
+
         <button
           type="button"
-          className="btn btn-outline w-1/2 ml-2"
+          className="btn btn-outline w-full"
           onClick={() => setRestoreModalOpen(true)}
         >
-          Restore Backup
+          <DownloadOutlined />
+          Import Backup
         </button>
-      </div>
 
-      <div className="flex w-full max-w mt-4">
-        <button
-          type="button"
-          className="btn btn-outline btn-error flex-grow mr-2"
-          onClick={() => openModal("reset_confirm_modal")}
+        <Popconfirm
+          title="Reset Settings"
+          description="Are you sure you want to reset all settings to default?"
+          okText="Reset"
+          cancelText="Cancel"
+          onConfirm={resetSettings}
+          overlayClassName="glass-popconfirm"
+          icon={null}
         >
-          Reset to Defaults
-        </button>
+          <button type="button" className="btn btn-outline btn-error w-full">
+            <RedoOutlined />
+            Reset Settings
+          </button>
+        </Popconfirm>
       </div>
     </div>
   );
