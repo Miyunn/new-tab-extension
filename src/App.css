@@ -22,3 +22,46 @@
 .fade-in {
   animation: fadeIn 0.8s ease-in-out;
 }
+
+.glass-popconfirm .ant-popover-inner {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: none;
+  border: none;
+}
+
+.glass-popconfirm .ant-popover-arrow::before {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.glass-popconfirm .ant-popover-title,
+.glass-popconfirm .ant-popover-inner-content {
+  color: #fff;
+}
+
+.glass-popconfirm .ant-btn {
+  background: transparent;
+}
+
+.glass-popconfirm .ant-btn-primary {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+}
+
+.glass-popconfirm .ant-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.transparent-color-picker .ant-color-picker-trigger {
+  background: transparent !important;
+  border: none;
+}
+
+.transparent-color-picker .ant-color-picker-trigger:hover {
+  background: transparent !important;
+}
+
+.ant-color-picker-panel {
+  background: transparent !important;
+  backdrop-filter: blur(8px);
+}

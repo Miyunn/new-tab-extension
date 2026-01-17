@@ -79,6 +79,6 @@ export const IconSettingsUI = {
     labels: ["⬜", "⚪"],
   },
   iconBackgroundColor: {
-    lable: "Icon Color",
+    lable: "Icon Background Color",
   },
 };

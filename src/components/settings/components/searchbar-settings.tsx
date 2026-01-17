@@ -84,7 +84,7 @@ export default function SearchbarSettings({
               value={settings.searchBarWidth}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               <span>{searchBarWidthMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>

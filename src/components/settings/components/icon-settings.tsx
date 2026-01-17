@@ -89,7 +89,7 @@ export default function IconSettings({
               value={settings.iconSize}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               <span>{iconSizeMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>
@@ -113,7 +113,7 @@ export default function IconSettings({
               value={settings.iconGap}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               <span>{iconspacingMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>
@@ -137,7 +137,7 @@ export default function IconSettings({
               value={settings.iconColumns}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               {iconGridColumnsMeta.labels.map((label) => (
                 <span>{label}</span>
               ))}

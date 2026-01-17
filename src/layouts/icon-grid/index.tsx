@@ -96,6 +96,7 @@ const IconComponent = ({
         trigger={["contextMenu"]}
         key={icon.id}
         placement="bottomLeft"
+        overlayClassName="glass-context-menu"
       >
         <div>
           <Icon

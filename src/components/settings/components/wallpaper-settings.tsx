@@ -138,22 +138,27 @@ export default function WallpaperSettings({
       </div>
 
       {settings.backgroundType === "color" && (
-        <div className="form-control w-full max-w">
-          <label className="label">
-            <span className="label-text">Background Color</span>
-          </label>
-          <ColorPicker
-            showText
-            value={settings.backgroundColor}
-            onChange={(color) => {
-              const hex = `#${color.toHex()}`;
+        <div className="form-control w-full max-w transparent-color-picker px-2 pt-3">
+          <div className="flex items-center justify-between gap-4">
+            <span className="label-text whitespace-nowrap">
+              Background Color
+            </span>
 
-              setSettings((prev) => ({
-                ...prev,
-                backgroundColor: hex,
-              }));
-            }}
-          />
+            <ColorPicker
+              showText
+              value={settings.backgroundColor}
+              disabledAlpha={true}
+              size="small"
+              onChange={(color) => {
+                const hex = `#${color.toHex()}`;
+
+                setSettings((prev) => ({
+                  ...prev,
+                  backgroundColor: hex,
+                }));
+              }}
+            />
+          </div>
         </div>
       )}
 
@@ -200,7 +205,7 @@ export default function WallpaperSettings({
         <>
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">{wallpaperTypeMeta.label}</span>
+              <span className="label-text">{wallpaperTintMeta.label}</span>
             </label>
             <input
               type={wallpaperTintMeta.control}
@@ -212,7 +217,7 @@ export default function WallpaperSettings({
               value={settings.backgroundTintIntensity}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               <span>{wallpaperTintMeta.labels[0]}</span>
               <span>|</span>
               <span>|</span>
@@ -239,7 +244,7 @@ export default function WallpaperSettings({
               value={settings.blurValue}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               <span>0%</span>
               <span>|</span>
               <span>|</span>
@@ -345,7 +350,7 @@ export default function WallpaperSettings({
                   )}
                   onChange={handleUnsplashFrequencyChange}
                 />
-                <div className="w-full flex justify-between text-xs px-2">
+                <div className="w-full flex justify-between text-xs px-2 pt-1">
                   {unsplashFrequency.labels.map((label) => (
                     <span key={label}> {label} </span>
                   ))}
@@ -380,7 +385,7 @@ export default function WallpaperSettings({
               value={settings.unsplashQuality}
               onChange={handleChange}
             />
-            <div className="w-full flex justify-between text-xs px-2">
+            <div className="w-full flex justify-between text-xs px-2 pt-1">
               {wallpaperRes.labels.map((label) => (
                 <span>{label}</span>
               ))}

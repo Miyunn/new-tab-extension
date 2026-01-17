@@ -9,3 +9,18 @@
 .edit-icon-form-input {
   min-width: 350px;
 }
+
+.glass-context-menu .ant-dropdown-menu {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  box-shadow: none;
+  border: none;
+}
+
+.glass-context-menu .ant-dropdown-menu-item {
+  color: #fff;
+}
+
+.glass-context-menu .ant-dropdown-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
