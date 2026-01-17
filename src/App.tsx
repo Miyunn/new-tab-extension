@@ -229,6 +229,9 @@ export default function App() {
     <ConfigProvider
       theme={{
         algorithm: theme.darkAlgorithm,
+        token: {
+          colorPrimary: "#747ffa",
+        },
       }}
     >
       <div
