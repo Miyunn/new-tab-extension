@@ -25,6 +25,7 @@ export default function WallpaperSettings({
 
   const wallpaperTypeMeta = WallpaperUI.backgroundType;
   const wallpaperTintMeta = WallpaperUI.backgroundTintIntensity;
+  const wallpaperAutoChange = WallpaperUI.unsplashAutoRefresh;
   const wallpaperBlurMeta = WallpaperUI.blurValue;
   const unsplashFrequency = WallpaperUI.unsplashFrequency;
   const wallpaperRes = WallpaperUI.unsplashQuality;
@@ -322,9 +323,9 @@ export default function WallpaperSettings({
 
           <div className="form-control w-full max-w mt-4">
             <label className="label cursor-pointer">
-              <span className="label-text">Auto-change Wallpaper</span>
+              <span className="label-text">{wallpaperAutoChange.label}</span>
               <input
-                type="checkbox"
+                type={wallpaperAutoChange.control}
                 name="unsplashAutoRefresh"
                 className="toggle toggle-primary ml-2"
                 checked={settings.unsplashAutoRefresh}

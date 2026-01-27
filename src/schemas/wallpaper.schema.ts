@@ -62,6 +62,11 @@ export const WallpaperUI = {
     step: 0.01,
   },
 
+  unsplashAutoRefresh: {
+    label: "Auto Change Wallpaper",
+    control: "checkbox",
+  },
+
   unsplashFrequency: {
     label: "Change Wallpaper Every",
     control: "range",
