@@ -4,10 +4,9 @@ import { IconData } from "../../../types/iconData";
 
 interface Props {
   selectedIcon: IconData;
-  closeModal: () => void;
 }
 
-export default function EditIconForm({ selectedIcon, closeModal }: Props) {
+export default function EditIconForm({ selectedIcon }: Props) {
   const [useUrlForIconToggle, setUseUrlForIconToggle] = useState(
     !!selectedIcon.src,
   );
@@ -85,7 +84,6 @@ export default function EditIconForm({ selectedIcon, closeModal }: Props) {
       });
       setPending(false);
       clearForm();
-      closeModal();
     } catch (error) {
       setError("Error updating icon");
       setPending(false);

@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps } from "antd";
+import { Dropdown, MenuProps, Modal } from "antd";
 import Icon from "./components/icon";
 import "./styles.css";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
@@ -70,12 +70,6 @@ const IconComponent = ({
   iconData.map((icon: IconData) => {
     const menuItems: MenuProps["items"] = [
       {
-        label: icon.name,
-        key: "logo",
-        style: { fontWeight: "bold", pointerEvents: "none" },
-        icon: <img width={16} height={16} src={icon.src} />,
-      },
-      {
         label: "Edit",
         key: "edit",
         icon: <EditOutlined />,
@@ -141,6 +135,7 @@ const IconGrid = ({
   setIsDragging,
 }: Props) => {
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
+  const [editIconModalOpen, setEditIconModalOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -177,14 +172,7 @@ const IconGrid = ({
 
   const handleEditIcon = (icon: IconData): void => {
     setSelectedIcon(icon);
-    (
-      document.getElementById("edit-icon-modal") as HTMLDialogElement
-    )?.showModal();
-  };
-
-  const closeModal = (): void => {
-    (document.getElementById("edit-icon-modal") as HTMLDialogElement)?.close();
-    setSelectedIcon(null);
+    setEditIconModalOpen(true);
   };
 
   return (
@@ -271,27 +259,37 @@ const IconGrid = ({
         </div>
       )}
 
-      <dialog id="edit-icon-modal" className="modal">
-        <div className="modal-box">
-          <form method="dialog">
-            <button
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              onClick={closeModal}
-            >
-              ✕
-            </button>
-          </form>
-          <h3 className="font-bold text-lg">Edit {selectedIcon?.name} Icon</h3>
-          {selectedIcon && (
-            <div>
-              <EditIconForm
-                selectedIcon={selectedIcon}
-                closeModal={closeModal}
-              />
-            </div>
-          )}
-        </div>
-      </dialog>
+      <Modal
+        title={`Edit ${selectedIcon?.name} Icon`}
+        open={editIconModalOpen}
+        centered
+        onCancel={() => {
+          setEditIconModalOpen(false);
+        }}
+        styles={{
+          content: {
+            backgroundColor: "rgba(0, 0, 0, 0.80)",
+            backdropFilter: "blur(8px)",
+            boxShadow: "none",
+          },
+          header: {
+            backgroundColor: "transparent",
+            borderBottom: "none",
+          },
+          body: {
+            backgroundColor: "transparent",
+          },
+          footer: {
+            backgroundColor: "transparent",
+            borderTop: "none",
+          },
+          mask: {
+            backdropFilter: "blur(4px)",
+          },
+        }}
+      >
+        {selectedIcon && <EditIconForm selectedIcon={selectedIcon} />}
+      </Modal>
     </>
   );
 };
