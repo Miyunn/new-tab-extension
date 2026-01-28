@@ -4,13 +4,16 @@ import { IconData } from "../../../types/iconData";
 
 interface Props {
   selectedIcon: IconData;
+  setEditIconModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EditIconForm({ selectedIcon }: Props) {
+export default function EditIconForm({
+  selectedIcon,
+  setEditIconModalOpen,
+}: Props) {
   const [useUrlForIconToggle, setUseUrlForIconToggle] = useState(
     !!selectedIcon.src,
   );
-  const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -47,7 +50,6 @@ export default function EditIconForm({ selectedIcon }: Props) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setPending(true);
 
     const formData = new FormData(event.currentTarget);
     const updatedIcon = {
@@ -68,7 +70,6 @@ export default function EditIconForm({ selectedIcon }: Props) {
           });
         } catch {
           setError("Error reading file");
-          setPending(false);
           return;
         }
       }
@@ -82,17 +83,17 @@ export default function EditIconForm({ selectedIcon }: Props) {
         src: updatedIcon.iconURL,
         url: updatedIcon.destination,
       });
-      setPending(false);
       clearForm();
+      setEditIconModalOpen(false);
     } catch (error) {
       setError("Error updating icon");
-      setPending(false);
     }
   };
 
   return (
     <div className="flex justify-center items-center">
       <form
+        id="edit-icon-form"
         className="max-w-md w-full"
         onSubmit={handleSubmit}
         name="editIconForm"
@@ -169,14 +170,6 @@ export default function EditIconForm({ selectedIcon }: Props) {
         )}
 
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-
-        <button
-          type="submit"
-          className="btn btn-primary mt-5 mb-3 w-full"
-          disabled={pending || error !== ""}
-        >
-          {pending ? "Saving Icon..." : "Save Icon"}
-        </button>
       </form>
     </div>
   );

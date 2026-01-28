@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps, Modal } from "antd";
+import { Button, Dropdown, MenuProps, Modal } from "antd";
 import Icon from "./components/icon";
 import "./styles.css";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
@@ -265,7 +265,16 @@ const IconGrid = ({
         centered
         onCancel={() => {
           setEditIconModalOpen(false);
+          setSelectedIcon(null);
         }}
+        footer={(_, { CancelBtn }) => (
+          <>
+            <CancelBtn />
+            <Button type="primary" htmlType="submit" form="edit-icon-form">
+              Save
+            </Button>
+          </>
+        )}
         styles={{
           content: {
             backgroundColor: "rgba(0, 0, 0, 0.80)",
@@ -288,7 +297,13 @@ const IconGrid = ({
           },
         }}
       >
-        {selectedIcon && <EditIconForm selectedIcon={selectedIcon} />}
+        {selectedIcon && (
+          <EditIconForm
+            key={selectedIcon.id}
+            selectedIcon={selectedIcon}
+            setEditIconModalOpen={setEditIconModalOpen}
+          />
+        )}
       </Modal>
     </>
   );
