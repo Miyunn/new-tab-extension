@@ -1,11 +1,35 @@
 import { useState, useEffect } from "react";
 import db from "../../../database/indexDb";
 import { IconData } from "../../../types/iconData";
+import { UploadProps, message } from "antd";
+import Dragger from "antd/es/upload/Dragger";
+import { InboxOutlined } from "@ant-design/icons";
+import { FiPlusSquare } from "react-icons/fi";
 
 interface Props {
   selectedIcon: IconData;
   setEditIconModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+const props: UploadProps = {
+  name: "image",
+  multiple: false,
+  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+  onChange(info) {
+    const { status } = info.file;
+    if (status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (status === "done") {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+  onDrop(e) {
+    console.log("Dropped files", e.dataTransfer.files);
+  },
+};
 
 export default function EditIconForm({
   selectedIcon,
@@ -14,12 +38,17 @@ export default function EditIconForm({
   const [useUrlForIconToggle, setUseUrlForIconToggle] = useState(
     !!selectedIcon.src,
   );
+
+  const [tempIconName, setTempIconName] = useState<string | null>(null);
+  const [tempIconSrc, setTempIconSrc] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (selectedIcon.src && selectedIcon.src.startsWith("data:")) {
       setUseUrlForIconToggle(false);
     }
+    setTempIconName(selectedIcon.name);
+    setTempIconSrc(selectedIcon.src);
   }, [selectedIcon]);
 
   const handleUseIconURLToggle = () => {
@@ -91,86 +120,87 @@ export default function EditIconForm({
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <form
-        id="edit-icon-form"
-        className="max-w-md w-full"
-        onSubmit={handleSubmit}
-        name="editIconForm"
-      >
-        <div className="form-control mt-3">
-          <label className="label">
-            <span className="label-text">Name</span>
-          </label>
+    <form
+      id="edit-icon-form"
+      className="max-w-md w-full"
+      onSubmit={handleSubmit}
+      name="editIconForm"
+    >
+      <div className="flex flex-grow flex-col items-center justify-center gap-2">
+        {tempIconSrc ? (
+          <img src={tempIconSrc} className="w-[60px]" alt="" />
+        ) : (
+          <FiPlusSquare className="text-6xl text-gray-400" />
+        )}
+        <span className="text-center text-sm">
+          {tempIconName || "Icon Name"}
+        </span>
+      </div>
+
+      <div className="divider" />
+      <div className="form-control space-y-3">
+        <div className="flex items-center">
+          <span className="label-text w-24">Name</span>
           <input
             type="text"
             name="name"
             placeholder="Icon label"
             defaultValue={selectedIcon.name}
-            className="input input-bordered"
+            className="input flex-1"
+            onChange={(e) => setTempIconName(e.target.value)}
             required
           />
         </div>
 
-        <div className="form-control mt-3">
-          <label className="label">
-            <span className="label-text">Destination</span>
-          </label>
+        <div className="flex items-center">
+          <span className="label-text w-24">Destination</span>
           <input
             type="text"
             name="destination"
-            placeholder="Destination URL"
+            placeholder="Enter a valid URL"
             defaultValue={selectedIcon.url}
-            className="input input-bordered"
+            className="input flex-1"
             required
           />
         </div>
+      </div>
 
-        <div className="form-control w-full mt-3">
-          <label className="label cursor-pointer">
-            <span className="label-text">Use Image URL for Icon</span>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary ml-2"
-              checked={useUrlForIconToggle}
-              onChange={handleUseIconURLToggle}
-            />
-          </label>
-        </div>
+      <div className="mt-5">
+        <Dragger {...props}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Click or drag an image here to upload your icon
+          </p>
+          <p className="ant-upload-hint">Maximum file size: 2MB</p>
+        </Dragger>
+      </div>
 
-        {useUrlForIconToggle ? (
-          <div className="form-control w-full mt-2">
-            <label className="label">
-              <span className="label-text">Icon URL</span>
-            </label>
-            <input
-              type="text"
-              name="iconURL"
-              placeholder="Image URL here"
-              defaultValue={
-                selectedIcon.src.startsWith("data:") ? "" : selectedIcon.src
-              }
-              className="input input-bordered"
-              required
-            />
-          </div>
-        ) : (
-          <div className="form-control w-full mt-2">
-            <label className="label">
-              <span className="label-text">Upload new Icon</span>
-            </label>
-            <input
-              type="file"
-              className="file-input file-input-bordered w-full"
-              name="iconUpload"
-              onChange={imageUploadValidation}
-              required={selectedIcon.src === ""}
-            />
-          </div>
-        )}
-
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      </form>
-    </div>
+      <div className="divider"> Use image URL instead </div>
+      <div className="form-control w-full">
+        <input
+          type="text"
+          name="iconURL"
+          placeholder="Image URL here"
+          defaultValue={
+            selectedIcon.src.startsWith("data:") ? "" : selectedIcon.src
+          }
+          onChange={(e) => setTempIconSrc(e.target.value)}
+          className="input"
+          required
+        />
+      </div>
+      {/*
+      <input
+        type="file"
+        name="iconUpload"
+        onChange={imageUploadValidation}
+        required={selectedIcon.src === ""}
+      />
+      <div>
+      </div>
+      */}
+    </form>
   );
 }
