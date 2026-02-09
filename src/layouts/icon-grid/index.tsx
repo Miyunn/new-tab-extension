@@ -13,9 +13,8 @@ import {
 } from "@dnd-kit/core";
 import { IconData } from "../../types/iconData";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { useState } from "react";
-import EditIconForm from "./components/editIconModal";
 import AddNewIcon from "./components/add-icon-icon";
+import { useState, lazy, Suspense } from "react";
 
 interface Props {
   heightWidth: number;
@@ -45,6 +44,8 @@ const updateAllIconPositions = async (icons: IconData[]) => {
 const deleteIcon = async (id: string) => {
   await db.icons.delete(id);
 };
+
+const EditIconForm = lazy(() => import("./components/editIconModal"));
 
 const IconComponent = ({
   heightWidth,
@@ -298,11 +299,19 @@ const IconGrid = ({
         }}
       >
         {selectedIcon && (
-          <EditIconForm
-            key={selectedIcon.id}
-            selectedIcon={selectedIcon}
-            setEditIconModalOpen={setEditIconModalOpen}
-          />
+          <Suspense
+            fallback={
+              <div className="h-40 flex items-center justify-center">
+                Loading...
+              </div>
+            }
+          >
+            <EditIconForm
+              key={selectedIcon.id}
+              selectedIcon={selectedIcon}
+              setEditIconModalOpen={setEditIconModalOpen}
+            />
+          </Suspense>
         )}
       </Modal>
     </>
