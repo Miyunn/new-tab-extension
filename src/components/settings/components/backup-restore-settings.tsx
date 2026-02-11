@@ -49,7 +49,7 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
           }
 
           const backupPayload = {
-            appVersion: "0.7.5",
+            appVersion: "0.8.1",
             exportedAt: new Date().toISOString(),
             settings,
             indexedDB: JSON.parse(jsonString),
@@ -88,48 +88,57 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
       const idbDatabase = db.backendDB();
       const reader = new FileReader();
 
-      reader.onload = () => {
+      reader.onload = async () => {
         try {
           const backup = JSON.parse(reader.result as string);
 
-          if (!backup.indexedDB || !backup.settings) {
-            throw new Error("Invalid backup format");
+          const isFullBackup = backup.indexedDB && backup.settings;
+          const isLegacyIconBackup =
+            backup.icons && Array.isArray(backup.icons);
+
+          if (!isFullBackup && !isLegacyIconBackup) {
+            throw new Error("Unrecognized backup format.");
           }
 
-          // Restore settings
-          localStorage.setItem("settings", JSON.stringify(backup.settings));
-
-          // Restore Unsplash wallpaper
-          localStorage.setItem(
-            "unsplashData",
-            JSON.stringify(backup.unsplashData),
-          );
-
-          // Restore IndexedDB
-          IDBExportImport.clearDatabase(idbDatabase, (clearErr: Error) => {
-            if (clearErr) {
-              setError("Clear database failed: " + clearErr.message);
-              setBusy(false);
-              return;
+          if (isFullBackup) {
+            localStorage.setItem("settings", JSON.stringify(backup.settings));
+            if (backup.unsplashData) {
+              localStorage.setItem(
+                "unsplashData",
+                JSON.stringify(backup.unsplashData),
+              );
             }
 
-            IDBExportImport.importFromJsonString(
-              idbDatabase,
-              JSON.stringify(backup.indexedDB),
-              (importErr: Error) => {
-                if (importErr) {
-                  setError("Import failed: " + importErr.message);
-                  setBusy(false);
-                } else {
-                  setTimeout(() => window.location.reload(), 1000);
-                }
-              },
-            );
-          });
+            IDBExportImport.clearDatabase(idbDatabase, (clearErr: Error) => {
+              if (clearErr) throw clearErr;
+              IDBExportImport.importFromJsonString(
+                idbDatabase,
+                JSON.stringify(backup.indexedDB),
+                (importErr: Error) => {
+                  if (importErr) throw importErr;
+                  finalizeRestore();
+                },
+              );
+            });
+          } else if (isLegacyIconBackup) {
+            await db.table("icons").clear();
+            await db.table("icons").bulkAdd(backup.icons);
+
+            if (backup.wallpaper && backup.wallpaper.length > 0) {
+              await db.table("wallpaper").clear();
+              await db.table("wallpaper").bulkAdd(backup.wallpaper);
+            }
+
+            finalizeRestore();
+          }
         } catch (err) {
           setError("Error processing file: " + (err as Error).message);
           setBusy(false);
         }
+      };
+
+      const finalizeRestore = () => {
+        setTimeout(() => window.location.reload(), 1000);
       };
 
       reader.onerror = () => {
