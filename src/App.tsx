@@ -9,7 +9,7 @@ import {
 import "./App.css";
 import Searchbar from "./components/searchbar";
 import ControlIcons from "./components/control-icons";
-import IconGrid from "./layouts/icon-grid";
+import IconGrid from "./components/icon-grid";
 import { Drawer } from "antd";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "./database/indexDb";

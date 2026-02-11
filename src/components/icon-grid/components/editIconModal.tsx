@@ -1,7 +1,7 @@
 //TODO:Save images as blobs instead of base64
 
 import { useState, useEffect } from "react";
-import db from "../../../database/indexDb";
+import db from "./../../../database/indexDb";
 import { IconData } from "../../../types/iconData";
 import { Upload, UploadProps, message } from "antd";
 import Dragger from "antd/es/upload/Dragger";
