@@ -1,123 +1,172 @@
+//TODO:Save images as blobs instead of base64
+
 import { useState, useEffect } from "react";
 import db from "../../../database/indexDb";
 import { IconData } from "../../../types/iconData";
-import { UploadProps, message } from "antd";
+import { Upload, UploadProps, message } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import { FiPlusSquare } from "react-icons/fi";
+import { RcFile } from "antd/es/upload";
+import { checkImageURL } from "../../../utils/imageValidation";
 
 interface Props {
   selectedIcon: IconData;
   setEditIconModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isBlockingSave: boolean;
+  setIsBlockingSave: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-const props: UploadProps = {
-  name: "image",
-  multiple: false,
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
 
 export default function EditIconForm({
   selectedIcon,
   setEditIconModalOpen,
+  isBlockingSave,
+  setIsBlockingSave,
 }: Props) {
-  const [useUrlForIconToggle, setUseUrlForIconToggle] = useState(
-    !!selectedIcon.src,
-  );
-
   const [tempIconName, setTempIconName] = useState<string | null>(null);
   const [tempIconSrc, setTempIconSrc] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const [iconUrl, setIconUrl] = useState<string>("");
+  const [fileList, setFileList] = useState<RcFile[]>([]);
+  const [iconUrlError, setIconUrlError] = useState(false);
 
   useEffect(() => {
-    if (selectedIcon.src && selectedIcon.src.startsWith("data:")) {
-      setUseUrlForIconToggle(false);
-    }
     setTempIconName(selectedIcon.name);
     setTempIconSrc(selectedIcon.src);
   }, [selectedIcon]);
 
-  const handleUseIconURLToggle = () => {
-    setUseUrlForIconToggle((prev) => !prev);
-    setError("");
-  };
-
-  const clearForm = () => {
-    setError("");
-  };
-
-  const imageUploadValidation = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        setError("Invalid file type");
-        return;
-      }
-      if (file.size > 2 * 1024 * 1024) {
-        setError("File size must be less than 2MB");
-        return;
-      }
-      setError("");
+  const beforeUpload: UploadProps["beforeUpload"] = (file) => {
+    if (!file.type.startsWith("image/")) {
+      message.error("Invalid file type");
+      return Upload.LIST_IGNORE;
     }
+
+    if (file.size > 2 * 1024 * 1024) {
+      message.error("File size must be less than 2MB");
+      return Upload.LIST_IGNORE;
+    }
+
+    return true;
+  };
+
+  const props: UploadProps = {
+    name: "image",
+    multiple: false,
+    showUploadList: true,
+    fileList,
+    onRemove: () => {
+      setTempIconSrc(selectedIcon.src);
+      setFileList([]);
+      setIconUrlError(false);
+    },
+    beforeUpload,
+    customRequest: ({ file }) => {
+      const f = file as File;
+
+      const blobUrl = URL.createObjectURL(f);
+      setIconUrl("");
+      setIconUrlError(false);
+      setTempIconSrc(blobUrl);
+      setFileList([f as RcFile]);
+    },
+    onChange(info) {
+      console.log(info.file, info.fileList);
+    },
+  };
+
+  const handleUrlIconValidation = async (url: string) => {
+    const isValid = await checkImageURL(url);
+    if (!isValid) {
+      setTempIconSrc(selectedIcon.src);
+      setFileList([]);
+      setIconUrlError(true);
+      return;
+    }
+    setFileList([]);
+    setTempIconSrc(url);
+    setIconUrlError(false);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (isBlockingSave) return;
+    setIsBlockingSave(true);
+
+    if (!tempIconSrc) {
+      message.error("You must upload an image or provide a URL.");
+      setIsBlockingSave(false);
+      return;
+    }
+
     const formData = new FormData(event.currentTarget);
     const updatedIcon = {
-      name: formData.get("name") as string,
-      destination: formData.get("destination") as string,
-      iconURL: selectedIcon.src,
+      name: (formData.get("name") as string).trim(),
+      destination: (formData.get("destination") as string).trim(),
+      iconSrc: tempIconSrc,
     };
 
-    if (!useUrlForIconToggle) {
-      const iconImage = formData.get("iconUpload") as File;
-      if (iconImage && iconImage.size > 0) {
-        try {
-          updatedIcon.iconURL = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = () => reject(new Error("Error reading file"));
-            reader.readAsDataURL(iconImage);
-          });
-        } catch {
-          setError("Error reading file");
-          return;
-        }
+    let finalIconSrc = updatedIcon.iconSrc;
+
+    if (finalIconSrc.startsWith("blob:")) {
+      try {
+        const response = await fetch(finalIconSrc);
+        const blob = await response.blob();
+
+        finalIconSrc = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch (err: any) {
+        message.error(err.message || "Error updating icon");
+        setIsBlockingSave(false);
+        return;
       }
-    } else {
-      updatedIcon.iconURL = formData.get("iconURL") as string;
     }
 
     try {
       await db.icons.update(selectedIcon.id, {
         name: updatedIcon.name,
-        src: updatedIcon.iconURL,
+        src: finalIconSrc,
         url: updatedIcon.destination,
       });
-      clearForm();
+
       setEditIconModalOpen(false);
     } catch (error) {
-      setError("Error updating icon");
+      message.error("Error updating icon");
+    } finally {
+      setIsBlockingSave(false);
     }
   };
+
+  useEffect(() => {
+    if (!iconUrl) {
+      setIconUrlError(false);
+      return;
+    }
+
+    setIsBlockingSave(true);
+
+    const timer = setTimeout(async () => {
+      await handleUrlIconValidation(iconUrl);
+
+      setIsBlockingSave(false);
+    }, 600);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [iconUrl]);
+
+  // cleanup function for object URLs
+  useEffect(() => {
+    return () => {
+      if (tempIconSrc?.startsWith("blob:")) {
+        URL.revokeObjectURL(tempIconSrc);
+      }
+    };
+  }, [tempIconSrc]);
 
   return (
     <form
@@ -183,24 +232,21 @@ export default function EditIconForm({
           type="text"
           name="iconURL"
           placeholder="Image URL here"
-          defaultValue={
-            selectedIcon.src.startsWith("data:") ? "" : selectedIcon.src
-          }
-          onChange={(e) => setTempIconSrc(e.target.value)}
-          className="input"
-          required
+          value={iconUrl}
+          onChange={(e) => setIconUrl(e.target.value)}
+          className={`input ${
+            iconUrlError
+              ? "border-red-500 focus:border-red-500 shadow-[0_0_0_1px_rgba(239,68,68,0.5)]"
+              : ""
+          }`}
         />
+        {iconUrlError && (
+          <span className="text-xs text-red-500 mt-2">
+            That link doesn't look like an image. We'll stick with your original
+            icon for now.
+          </span>
+        )}
       </div>
-      {/*
-      <input
-        type="file"
-        name="iconUpload"
-        onChange={imageUploadValidation}
-        required={selectedIcon.src === ""}
-      />
-      <div>
-      </div>
-      */}
     </form>
   );
 }

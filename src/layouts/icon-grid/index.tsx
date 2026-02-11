@@ -137,6 +137,7 @@ const IconGrid = ({
 }: Props) => {
   const [selectedIcon, setSelectedIcon] = useState<IconData | null>(null);
   const [editIconModalOpen, setEditIconModalOpen] = useState(false);
+  const [isBlockingSave, setIsBlockingSave] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -263,6 +264,7 @@ const IconGrid = ({
       <Modal
         title={`Edit ${selectedIcon?.name} Icon`}
         open={editIconModalOpen}
+        destroyOnClose
         centered
         onCancel={() => {
           setEditIconModalOpen(false);
@@ -271,7 +273,12 @@ const IconGrid = ({
         footer={(_, { CancelBtn }) => (
           <>
             <CancelBtn />
-            <Button type="primary" htmlType="submit" form="edit-icon-form">
+            <Button
+              type="primary"
+              htmlType="submit"
+              form="edit-icon-form"
+              loading={isBlockingSave}
+            >
               Save
             </Button>
           </>
@@ -310,6 +317,8 @@ const IconGrid = ({
               key={selectedIcon.id}
               selectedIcon={selectedIcon}
               setEditIconModalOpen={setEditIconModalOpen}
+              isBlockingSave={isBlockingSave}
+              setIsBlockingSave={setIsBlockingSave}
             />
           </Suspense>
         )}
