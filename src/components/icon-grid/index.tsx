@@ -167,14 +167,19 @@ const IconGrid = ({
       setIconData(newIconData); // immediate UI update
 
       updateAllIconPositions(newIconData).catch(console.error);
-    } else {
-      setIsDragging(true);
     }
+    setTimeout(() => {
+      setIsDragging(false);
+    }, 500);
   };
 
   const handleEditIcon = (icon: IconData): void => {
     setSelectedIcon(icon);
     setEditIconModalOpen(true);
+  };
+
+  const handleDragCancel = () => {
+    setIsDragging(false);
   };
 
   return (
@@ -183,6 +188,7 @@ const IconGrid = ({
         <DndContext
           onDragStart={startDrag}
           onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
           sensors={sensors}
         >
           <div
