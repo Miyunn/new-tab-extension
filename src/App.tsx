@@ -74,7 +74,7 @@ export default function App() {
   }, [icons]);
 
   useEffect(() => {
-    if (!isDragging && iconData) {
+    if (!isDragging || iconData.length !== localIconData.length) {
       setLocalIconData(iconData);
     }
   }, [iconData, isDragging]);

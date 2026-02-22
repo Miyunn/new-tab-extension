@@ -49,7 +49,7 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
           }
 
           const backupPayload = {
-            appVersion: "0.8.1",
+            appVersion: "0.8.2",
             exportedAt: new Date().toISOString(),
             settings,
             indexedDB: JSON.parse(jsonString),
