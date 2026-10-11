@@ -48,9 +48,13 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
             return;
           }
 
+          const exportDate = new Date();
+          const isoDate = exportDate.toISOString();
+          const fileTimestamp = isoDate.replace(/:/g, "-").replace(/\..+/, "");
+
           const backupPayload = {
-            appVersion: "0.8.2",
-            exportedAt: new Date().toISOString(),
+            appVersion: chrome?.runtime?.getManifest?.()?.version || "0.8.2",
+            exportedAt: isoDate,
             settings,
             indexedDB: JSON.parse(jsonString),
             unsplashData,
@@ -63,9 +67,9 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = `new-tab-backup-${backupPayload.exportedAt}.json`;
+          a.download = `new-tab-backup-${fileTimestamp}.json`;
           a.click();
-          URL.revokeObjectURL(url);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
         },
       );
     } catch (e) {
