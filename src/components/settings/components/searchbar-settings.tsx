@@ -15,6 +15,8 @@ export default function SearchbarSettings({
   const searchbarToggleMeta = SearchSettingsUI.searchBar;
   const searchEngineMeta = SearchSettingsUI.searchEngine;
   const searchBarWidthMeta = SearchSettingsUI.searchBarWidth;
+  const searchBarPlacementMeta = SearchSettingsUI.searchBarPlacement;
+  const searchBarOffsetMeta = SearchSettingsUI.searchBarOffset;
 
   return (
     <>
@@ -72,7 +74,53 @@ export default function SearchbarSettings({
 
           <div className="form-control w-full max-w py-2">
             <label className="label">
-              <span className="label-text">{searchbarToggleMeta.label}</span>
+              <span className="label-text">{searchBarPlacementMeta.label}</span>
+            </label>
+            <select
+              name="searchBarPlacement"
+              className="select select-bordered w-full max-w"
+              value={settings.searchBarPlacement || "middle"}
+              onChange={handleChange}
+            >
+              {searchBarPlacementMeta.options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {(settings.searchBarPlacement === "top" ||
+            settings.searchBarPlacement === "bottom") && (
+            <div className="form-control w-full max-w py-2">
+              <label className="label">
+                <span className="label-text">{searchBarOffsetMeta.label}</span>
+              </label>
+              <input
+                type={searchBarOffsetMeta.control}
+                min={searchBarOffsetMeta.min}
+                max={searchBarOffsetMeta.max}
+                className={searchBarOffsetMeta.control}
+                step={searchBarOffsetMeta.step}
+                name="searchBarOffset"
+                value={settings.searchBarOffset ?? 40}
+                onChange={handleChange}
+              />
+              <div className="w-full flex justify-between text-xs px-2 pt-1">
+                <span>{searchBarOffsetMeta.labels[0]}</span>
+                <span>|</span>
+                <span>|</span>
+                <span>{searchBarOffsetMeta.labels[1]}</span>
+                <span>|</span>
+                <span>|</span>
+                <span>{searchBarOffsetMeta.labels[2]}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="form-control w-full max-w py-2">
+            <label className="label">
+              <span className="label-text">{searchBarWidthMeta.label}</span>
             </label>
             <input
               type={searchBarWidthMeta.control}

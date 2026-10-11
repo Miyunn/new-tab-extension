@@ -3,6 +3,8 @@ export const chromeDefaultSettings = {
   searchBar: true,
   searchEngine: "chromeSearch",
   searchBarWidth: 300,
+  searchBarPlacement: "middle",
+  searchBarOffset: 40,
   iconVisibility: true,
   layoutStyle: "grid",
   iconLabel: true,

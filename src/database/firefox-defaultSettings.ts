@@ -3,6 +3,8 @@ export const firefoxDefaultSettings = {
   searchBar: true,
   searchEngine: "google",
   searchBarWidth: 300,
+  searchBarPlacement: "middle",
+  searchBarOffset: 40,
   iconVisibility: true,
   layoutStyle: "grid",
   iconLabel: true,

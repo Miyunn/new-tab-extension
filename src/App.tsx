@@ -265,14 +265,35 @@ export default function App() {
             </div>
           )}
         <div className="relative z-10 fade-in">
-          <div className="flex flex-col justify-center items-center h-screen">
-            {settings.searchBar && (
-              <Searchbar
-                searchEngine={settings.searchEngine}
-                searchBarWidth={settings.searchBarWidth}
-                customSearchEngineUrl={settings.customSearchEngineUrl}
-              />
+          {settings.searchBar &&
+            (settings.searchBarPlacement === "top" ||
+              settings.searchBarPlacement === "bottom") && (
+              <div
+                className="fixed left-1/2 -translate-x-1/2 z-20"
+                style={
+                  settings.searchBarPlacement === "top"
+                    ? { top: `${settings.searchBarOffset ?? 40}px` }
+                    : { bottom: `${settings.searchBarOffset ?? 40}px` }
+                }
+              >
+                <Searchbar
+                  searchEngine={settings.searchEngine}
+                  searchBarWidth={settings.searchBarWidth}
+                  customSearchEngineUrl={settings.customSearchEngineUrl}
+                />
+              </div>
             )}
+
+          <div className="flex flex-col justify-center items-center h-screen">
+            {settings.searchBar &&
+              (!settings.searchBarPlacement ||
+                settings.searchBarPlacement === "middle") && (
+                <Searchbar
+                  searchEngine={settings.searchEngine}
+                  searchBarWidth={settings.searchBarWidth}
+                  customSearchEngineUrl={settings.customSearchEngineUrl}
+                />
+              )}
             {settings.iconVisibility &&
               (iconData.length === 0 ? (
                 <NoIconOptions showAddIconDrawer={showAddIcons} />
