@@ -9,6 +9,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { FiPlusSquare } from "react-icons/fi";
 import { RcFile } from "antd/es/upload";
 import { checkImageURL } from "../../../utils/imageValidation";
+import { blobToBase64, urlToBase64 } from "../../../utils/imageConversion";
 
 interface Props {
   selectedIcon: IconData;
@@ -111,17 +112,17 @@ export default function EditIconForm({
       try {
         const response = await fetch(finalIconSrc);
         const blob = await response.blob();
-
-        finalIconSrc = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
+        finalIconSrc = await blobToBase64(blob);
       } catch (err: any) {
         message.error(err.message || "Error updating icon");
         setIsBlockingSave(false);
         return;
+      }
+    } else if (finalIconSrc.startsWith("http://") || finalIconSrc.startsWith("https://")) {
+      try {
+        finalIconSrc = await urlToBase64(finalIconSrc);
+      } catch {
+        // Fallback to original URL if conversion fails
       }
     }
 
@@ -133,7 +134,7 @@ export default function EditIconForm({
       });
 
       setEditIconModalOpen(false);
-    } catch (error) {
+    } catch {
       message.error("Error updating icon");
     } finally {
       setIsBlockingSave(false);

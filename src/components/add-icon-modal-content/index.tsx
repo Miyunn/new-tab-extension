@@ -3,6 +3,7 @@ import "./styles.css";
 import db from "../../database/indexDb";
 import ManualIconTab from "./components/manual-form";
 import IconLibrary from "./components/library";
+import { blobToBase64, urlToBase64 } from "../../utils/imageConversion";
 
 export default function AddIconForm({
   closeDrawer,
@@ -31,19 +32,24 @@ export default function AddIconForm({
     url: string;
   }) => {
     try {
+      setPending(true);
       const highestPositionIcon = await db.icons.orderBy("position").last();
       const newPosition = highestPositionIcon
         ? highestPositionIcon.position + 1
         : 0;
 
+      // Convert online library icon URL to Base64
+      const base64Src = await urlToBase64(icon.icon);
+
       await db.icons.add({
         id: crypto.randomUUID(),
         name: icon.name,
-        src: icon.icon,
+        src: base64Src,
         url: icon.url,
         position: newPosition,
       });
-    } catch (error) {
+      setPending(false);
+    } catch {
       setError("Error adding icon from library");
       setPending(false);
     }
@@ -86,9 +92,9 @@ export default function AddIconForm({
     const formData = new FormData(event.currentTarget);
 
     const newIcon = {
-      name: formData.get("name") as string,
-      destination: formData.get("destination") as string,
-      iconURL: formData.get("iconURL") as string,
+      name: (formData.get("name") as string).trim(),
+      destination: (formData.get("destination") as string).trim(),
+      iconURL: (formData.get("iconURL") as string)?.trim() || "",
     };
 
     const highestPositionIcon = await db.icons.orderBy("position").last();
@@ -96,33 +102,34 @@ export default function AddIconForm({
       ? highestPositionIcon.position + 1
       : 0;
 
+    let finalSrc = "";
+
     if (!useIconURLToggle) {
       const iconImage = formData.get("iconUpload") as File;
       if (iconImage && iconImage.size > 0) {
         try {
-          newIcon.iconURL = await new Promise<string>((resolve, reject) => {
-            if (
-              iconImage.type.startsWith("image/") &&
-              iconImage.size < 3 * 1024 * 1024
-            ) {
-              const reader = new FileReader();
-              reader.onload = () => {
-                resolve(reader.result as string);
-              };
-
-              reader.onerror = () => {
-                reject(new Error("Error reading file"));
-              };
-              reader.readAsDataURL(iconImage);
-            } else {
-              reject(new Error("Invalid file type or size"));
-            }
-          });
+          if (
+            iconImage.type.startsWith("image/") &&
+            iconImage.size < 3 * 1024 * 1024
+          ) {
+            finalSrc = await blobToBase64(iconImage);
+          } else {
+            throw new Error("Invalid file type or size");
+          }
         } catch {
           setError("Error reading file");
           setPending(false);
           return;
         }
+      }
+    } else {
+      // User entered an image URL: convert it to Base64
+      try {
+        finalSrc = await urlToBase64(newIcon.iconURL);
+      } catch {
+        setError("Error processing image URL");
+        setPending(false);
+        return;
       }
     }
 
@@ -130,14 +137,14 @@ export default function AddIconForm({
       await db.icons.add({
         id: crypto.randomUUID(),
         name: newIcon.name,
-        src: newIcon.iconURL,
+        src: finalSrc,
         url: newIcon.destination,
         position: newPosition,
       });
       setPending(false);
       closeDrawer();
       clearForm();
-    } catch (error) {
+    } catch {
       setError("Error adding icon");
       setPending(false);
     }
