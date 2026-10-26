@@ -12,6 +12,11 @@
   "version": "0.8.3",
   "description": "Customize your new tab and home page with custom shortcuts, wallpapers and more",
 
+  "permissions": [
+    "https://t2.gstatic.com/*",
+    "https://icon.horse/*"
+  ],
+
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png"

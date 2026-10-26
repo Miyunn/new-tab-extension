@@ -5,6 +5,10 @@
   "description": "Customize your new tab with custom shortcuts, wallpapers and more",
   "background": {},
   "permissions": ["search"],
+  "host_permissions": [
+    "https://t2.gstatic.com/*",
+    "https://icon.horse/*"
+  ],
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png",

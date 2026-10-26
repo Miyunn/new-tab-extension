@@ -3,6 +3,7 @@ import "./styles.css";
 import db from "../../database/indexDb";
 import ManualIconTab from "./components/manual-form";
 import IconLibrary from "./components/library";
+import QuickAdd from "./components/quick-add";
 import { blobToBase64, urlToBase64 } from "../../utils/imageConversion";
 
 export default function AddIconForm({
@@ -11,7 +12,7 @@ export default function AddIconForm({
   closeDrawer: () => void;
 }) {
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("Library");
+  const [activeTab, setActiveTab] = useState("Quick Add");
 
   const [pending, setPending] = useState(false);
 
@@ -154,22 +155,32 @@ export default function AddIconForm({
     <div className="flex justify-center items-center">
       <div>
         <div className="divider text-sm">Add Icon</div>
-        <div role="tablist" className="tabs tabs-lifted">
+        <div role="tablist" className="tabs tabs-lifted mb-2">
           <a
             role="tab"
-            className={`tab w-full ${activeTab === "Library" ? "tab-active" : ""}`}
+            className={`tab ${activeTab === "Quick Add" ? "tab-active" : ""}`}
+            onClick={() => handleTabSwitch("Quick Add")}
+          >
+            Quick Add
+          </a>
+          <a
+            role="tab"
+            className={`tab ${activeTab === "Library" ? "tab-active" : ""}`}
             onClick={() => handleTabSwitch("Library")}
           >
             Library
           </a>
           <a
             role="tab"
-            className={`tab w-full ${activeTab === "Manual" ? "tab-active" : ""}`}
+            className={`tab ${activeTab === "Manual" ? "tab-active" : ""}`}
             onClick={() => handleTabSwitch("Manual")}
           >
             Manual
           </a>
         </div>
+        {activeTab === "Quick Add" && (
+          <QuickAdd closeDrawer={closeDrawer} />
+        )}
         {activeTab === "Manual" && (
           <ManualIconTab
             handleSubmit={handleSubmit}
