@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FiImage } from "react-icons/fi";
 import { generateLetterAvatar } from "../../../utils/faviconResolver";
+import { formatDestinationUrl } from "../../../utils/url";
 
 export default function ManualIconTab({
   handleSubmit,
@@ -19,6 +20,7 @@ export default function ManualIconTab({
   pending: boolean;
 }) {
   const [nameInput, setNameInput] = useState("");
+  const [destinationInput, setDestinationInput] = useState("");
   const [iconUrlInput, setIconUrlInput] = useState("");
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
@@ -49,6 +51,7 @@ export default function ManualIconTab({
 
   const handleReset = () => {
     setNameInput("");
+    setDestinationInput("");
     setIconUrlInput("");
     if (filePreviewUrl) {
       URL.revokeObjectURL(filePreviewUrl);
@@ -115,7 +118,14 @@ export default function ManualIconTab({
         <input
           type="text"
           name="destination"
-          placeholder="Destination URL"
+          placeholder="Destination URL (e.g. www.google.com)"
+          value={destinationInput}
+          onChange={(e) => setDestinationInput(e.target.value)}
+          onBlur={() => {
+            if (destinationInput.trim()) {
+              setDestinationInput(formatDestinationUrl(destinationInput));
+            }
+          }}
           className="input input-bordered add-icon-form-input"
           required
         />

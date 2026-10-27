@@ -1,6 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ReactNode } from "react";
+import { formatDestinationUrl } from "../../../utils/url";
 
 interface Props {
   id: string;
@@ -41,11 +42,12 @@ const Icon = ({
   const handleIconClick = (event: React.MouseEvent) => {
     if (isDragging) return;
 
-    if (event.button === 1) {
-      window.open(url, "_blank");
-    }
-    if (event.button === 0) {
-      window.location.href = url;
+    const targetUrl = formatDestinationUrl(url);
+
+    if (event.button === 1 || event.ctrlKey || event.metaKey) {
+      window.open(targetUrl, "_blank");
+    } else if (event.button === 0) {
+      window.location.href = targetUrl;
     }
   };
 

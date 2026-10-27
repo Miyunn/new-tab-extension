@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import db from "../../../database/indexDb";
 import { resolveFavicon, ResolvedFavicon } from "../../../utils/faviconResolver";
 import { urlToBase64 } from "../../../utils/imageConversion";
+import { formatDestinationUrl } from "../../../utils/url";
 
 interface QuickAddProps {
   closeDrawer: () => void;
@@ -73,7 +74,8 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
       return;
     }
 
-    if (!destination.trim()) {
+    const formattedDestination = formatDestinationUrl(destination);
+    if (!formattedDestination) {
       setError("Please provide a destination URL");
       return;
     }
@@ -97,7 +99,7 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
         id: crypto.randomUUID(),
         name: name.trim(),
         src: base64Src,
-        url: destination.trim(),
+        url: formattedDestination,
         position: newPosition,
       });
 
@@ -185,7 +187,12 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
               type="text"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
-              placeholder="Destination URL"
+              onBlur={() => {
+                if (destination.trim()) {
+                  setDestination(formatDestinationUrl(destination));
+                }
+              }}
+              placeholder="Destination URL (e.g. www.google.com)"
               className="input input-bordered add-icon-form-input w-full"
               required
             />
@@ -196,7 +203,7 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
             className="btn btn-primary mt-6 w-full"
             disabled={pending || !name.trim() || !destination.trim()}
           >
-            {pending ? "Adding to Favorites..." : "Add to Favorites"}
+            {pending ? "Saving Icons..." : "Save Icon"}
           </button>
         </form>
       )}

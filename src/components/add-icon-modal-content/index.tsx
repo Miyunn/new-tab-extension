@@ -5,6 +5,7 @@ import ManualIconTab from "./components/manual-form";
 import IconLibrary from "./components/library";
 import QuickAdd from "./components/quick-add";
 import { blobToBase64, urlToBase64 } from "../../utils/imageConversion";
+import { formatDestinationUrl } from "../../utils/url";
 
 export default function AddIconForm({
   closeDrawer,
@@ -46,7 +47,7 @@ export default function AddIconForm({
         id: crypto.randomUUID(),
         name: icon.name,
         src: base64Src,
-        url: icon.url,
+        url: formatDestinationUrl(icon.url),
         position: newPosition,
       });
       setPending(false);
@@ -92,9 +93,18 @@ export default function AddIconForm({
 
     const formData = new FormData(event.currentTarget);
 
+    const rawDestination = (formData.get("destination") as string) || "";
+    const destination = formatDestinationUrl(rawDestination);
+
+    if (!destination) {
+      setError("Please provide a destination URL");
+      setPending(false);
+      return;
+    }
+
     const newIcon = {
       name: (formData.get("name") as string).trim(),
-      destination: (formData.get("destination") as string).trim(),
+      destination,
       iconURL: (formData.get("iconURL") as string)?.trim() || "",
     };
 

@@ -10,6 +10,7 @@ import { FiPlusSquare } from "react-icons/fi";
 import { RcFile } from "antd/es/upload";
 import { checkImageURL } from "../../../utils/imageValidation";
 import { blobToBase64, urlToBase64 } from "../../../utils/imageConversion";
+import { formatDestinationUrl } from "../../../utils/url";
 
 interface Props {
   selectedIcon: IconData;
@@ -100,9 +101,18 @@ export default function EditIconForm({
     }
 
     const formData = new FormData(event.currentTarget);
+    const rawDestination = (formData.get("destination") as string) || "";
+    const destination = formatDestinationUrl(rawDestination);
+
+    if (!destination) {
+      message.error("Please provide a destination URL.");
+      setIsBlockingSave(false);
+      return;
+    }
+
     const updatedIcon = {
       name: (formData.get("name") as string).trim(),
-      destination: (formData.get("destination") as string).trim(),
+      destination,
       iconSrc: tempIconSrc,
     };
 
@@ -113,8 +123,8 @@ export default function EditIconForm({
         const response = await fetch(finalIconSrc);
         const blob = await response.blob();
         finalIconSrc = await blobToBase64(blob);
-      } catch (err: any) {
-        message.error(err.message || "Error updating icon");
+      } catch (err: unknown) {
+        message.error(err instanceof Error ? err.message : "Error updating icon");
         setIsBlockingSave(false);
         return;
       }
@@ -207,8 +217,14 @@ export default function EditIconForm({
           <input
             type="text"
             name="destination"
-            placeholder="Enter a valid URL"
+            placeholder="Destination URL (e.g. www.google.com)"
             defaultValue={selectedIcon.url}
+            onBlur={(e) => {
+              const val = e.target.value.trim();
+              if (val) {
+                e.target.value = formatDestinationUrl(val);
+              }
+            }}
             className="input flex-1"
             required
           />
