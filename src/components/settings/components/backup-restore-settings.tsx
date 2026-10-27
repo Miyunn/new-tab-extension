@@ -53,7 +53,7 @@ export default function BackupAndRestore({ settings }: BackupAndRestoreProps) {
           const fileTimestamp = isoDate.replace(/:/g, "-").replace(/\..+/, "");
 
           const backupPayload = {
-            appVersion: chrome?.runtime?.getManifest?.()?.version || "0.8.3",
+            appVersion: chrome?.runtime?.getManifest?.()?.version || "0.8.4",
             exportedAt: isoDate,
             settings,
             indexedDB: JSON.parse(jsonString),
