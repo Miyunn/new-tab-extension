@@ -30,6 +30,7 @@ export default function EditIconForm({
     <IconForm
       mode="edit"
       formId="edit-icon-form"
+      className="w-full"
       initialData={{
         name: selectedIcon.name,
         destination: selectedIcon.url,

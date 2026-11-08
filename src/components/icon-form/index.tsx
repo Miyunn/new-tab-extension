@@ -260,7 +260,7 @@ export default function IconForm({
   return (
     <form
       id={formId}
-      className={`w-full max-w-md ${className}`}
+      className={`w-full ${isEdit ? "" : "max-w-md"} ${className}`}
       onSubmit={handleSubmit}
       name={isEdit ? "editIconForm" : "addIconForm"}
     >
@@ -279,7 +279,7 @@ export default function IconForm({
             )}
           </div>
           <div className="min-w-0">
-            <span className="text-sm font-medium text-gray-200 block truncate max-w-[170px]">
+            <span className="text-sm font-medium text-gray-200 block truncate max-w-[240px]">
               {nameInput.trim() || "Shortcut Preview"}
             </span>
             <span className="text-xs text-gray-400 block mt-0.5">
