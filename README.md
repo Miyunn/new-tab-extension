@@ -4,7 +4,7 @@ A clean, modern, and privacy-focused start page and homepage extension designed 
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-4285F4?style=flat&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/new-tab/efkjicbjocdcgnbppfgfmppfjpfcfhaj)
 [![Firefox Add-ons](https://img.shields.io/badge/Firefox_Add--ons-Beta-FF7139?style=flat&logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/new-tab-public-beta/)
-[![Version](https://img.shields.io/badge/version-0.8.2-blue.svg?style=flat)](package.json)
+[![Version](https://img.shields.io/badge/version-0.8.5-blue.svg?style=flat)](package.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat)](LICENSE)
 
 ---
