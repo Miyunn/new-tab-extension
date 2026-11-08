@@ -1,10 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import db from "../../../database/indexDb";
-import { resolveFavicon, ResolvedFavicon } from "../../../utils/faviconResolver";
+import {
+  resolveFavicon,
+  ResolvedFavicon,
+  generateLetterAvatar,
+  isLetterAvatar,
+  extractAvatarBg,
+} from "../../../utils/faviconResolver";
 import { urlToBase64, blobToBase64 } from "../../../utils/imageConversion";
 import { formatDestinationUrl } from "../../../utils/url";
-import { generateLetterAvatar } from "../../../utils/faviconResolver";
-import { Upload, UploadProps, message } from "antd";
+import { Upload, UploadProps, message, ColorPicker } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
@@ -14,15 +19,33 @@ interface QuickAddProps {
   closeDrawer: () => void;
 }
 
+const PRESET_COLORS = [
+  "#747ffa", // Brand Primary
+  "#3b82f6", // Blue
+  "#06b6d4", // Cyan
+  "#10b981", // Emerald
+  "#84cc16", // Lime
+  "#eab308", // Yellow
+  "#f97316", // Orange
+  "#ef4444", // Red
+  "#ec4899", // Pink
+  "#8b5cf6", // Violet
+  "#6b7280", // Gray
+  "#1f2937", // Slate
+];
+
 export default function QuickAdd({ closeDrawer }: QuickAddProps) {
   const [inputUrl, setInputUrl] = useState("");
   const [resolving, setResolving] = useState(false);
   const [resolvedData, setResolvedData] = useState<ResolvedFavicon | null>(null);
   const [name, setName] = useState("");
   const [destination, setDestination] = useState("");
-  const [previewFavicon, setPreviewFavicon] = useState("");
+  const [previewFavicon, setPreviewFavicon] = useState<string | null>("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+
+  // Custom letter avatar background color
+  const [avatarColor, setAvatarColor] = useState<string>("#747ffa");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -54,7 +77,15 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
         setResolvedData(result);
         setName(result.name);
         setDestination(result.siteUrl);
-        setPreviewFavicon(result.faviconUrl);
+
+        if (isLetterAvatar(result.faviconUrl)) {
+          const bg = extractAvatarBg(result.faviconUrl);
+          if (bg) setAvatarColor(bg);
+          setPreviewFavicon(null); // Treat as letter avatar
+        } else {
+          setPreviewFavicon(result.faviconUrl);
+        }
+
         setError("");
       } catch (err: unknown) {
         setResolvedData(null);
@@ -152,8 +183,15 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
     },
   };
 
-  // ── Effective preview: file > URL override > auto-resolved favicon ─────────
-  const effectivePreviewSrc = blobSrc || validatedIconUrl || previewFavicon;
+  // ── Effective preview: file > URL override > favicon image (or letter avatar) ─
+  const activeImageSrc = blobSrc || validatedIconUrl || previewFavicon;
+  const isUsingLetterAvatar = !activeImageSrc;
+
+  const effectivePreviewSrc =
+    activeImageSrc ||
+    (name.trim()
+      ? generateLetterAvatar(name.trim(), avatarColor)
+      : generateLetterAvatar("?", avatarColor));
 
   // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -170,11 +208,6 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
       return;
     }
 
-    if (!effectivePreviewSrc) {
-      setError("No icon image available to save");
-      return;
-    }
-
     try {
       setPending(true);
       setError("");
@@ -182,9 +215,12 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
       const highestPositionIcon = await db.icons.orderBy("position").last();
       const newPosition = highestPositionIcon ? highestPositionIcon.position + 1 : 0;
 
-      let finalSrc = effectivePreviewSrc;
+      let finalSrc = activeImageSrc;
 
-      if (finalSrc.startsWith("blob:")) {
+      // If no image file or URL, generate the letter avatar with chosen color
+      if (!finalSrc) {
+        finalSrc = generateLetterAvatar(name.trim(), avatarColor);
+      } else if (finalSrc.startsWith("blob:")) {
         const response = await fetch(finalSrc);
         const blob = await response.blob();
         finalSrc = await blobToBase64(blob);
@@ -218,6 +254,7 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
     setIconUrlInput("");
     setIconUrlError(false);
     setValidatedIconUrl("");
+    setAvatarColor("#747ffa");
     if (blobSrc) URL.revokeObjectURL(blobSrc);
     setBlobSrc(null);
     setFileList([]);
@@ -258,32 +295,64 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
           onReset={handleReset}
           className="mt-4 border-t border-gray-700/60 pt-4"
         >
-          {/* ── Icon preview ─────────────────────────────────────────────── */}
-          <div className="flex flex-col items-center justify-center p-3 bg-gray-800/40 rounded-xl mb-4 border border-gray-700/50">
-            <div className="w-14 h-14 rounded-2xl bg-gray-700/60 flex items-center justify-center p-2 shadow-inner">
-              {effectivePreviewSrc ? (
-                <img
-                  src={effectivePreviewSrc}
-                  alt={name || "Icon preview"}
-                  className="w-10 h-10 object-contain rounded-md"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      generateLetterAvatar(name.trim() || "?");
-                  }}
-                />
-              ) : name.trim() ? (
-                <img
-                  src={generateLetterAvatar(name.trim())}
-                  alt={name}
-                  className="w-10 h-10 object-contain rounded-md"
-                />
-              ) : (
-                <InboxOutlined className="text-2xl text-gray-400" />
-              )}
+          {/* ── Icon preview & Custom Color ─────────────────────────────── */}
+          <div className="flex items-center justify-between p-3.5 bg-gray-800/40 rounded-xl mb-4 border border-gray-700/50">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-14 h-14 rounded-2xl bg-gray-700/60 flex items-center justify-center p-2 shadow-inner flex-shrink-0">
+                {effectivePreviewSrc ? (
+                  <img
+                    src={effectivePreviewSrc}
+                    alt={name || "Icon preview"}
+                    className="w-10 h-10 object-contain rounded-md"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        generateLetterAvatar(name.trim() || "?", avatarColor);
+                    }}
+                  />
+                ) : (
+                  <InboxOutlined className="text-2xl text-gray-400" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-medium text-gray-200 block truncate max-w-[170px]">
+                  {name.trim() || "Shortcut Preview"}
+                </span>
+                <span className="text-xs text-gray-400 block mt-0.5">
+                  {isUsingLetterAvatar ? "Letter Avatar" : "Custom / Favicon"}
+                </span>
+              </div>
             </div>
-            <span className="mt-2 text-sm font-medium text-gray-200 truncate max-w-[220px]">
-              {name.trim() || "Shortcut Preview"}
-            </span>
+
+            {/* Color picker for letter avatar, or reset button if custom image/favicon is active */}
+            {isUsingLetterAvatar ? (
+              <div className="flex flex-col items-end gap-1 flex-shrink-0 transparent-color-picker">
+                <span className="text-xs text-gray-400">Color</span>
+                <ColorPicker
+                  showText
+                  value={avatarColor}
+                  disabledAlpha
+                  size="small"
+                  presets={[{ label: "Recommended", colors: PRESET_COLORS }]}
+                  onChange={(color) => setAvatarColor(`#${color.toHex()}`)}
+                />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-xs btn-ghost text-xs text-gray-400 hover:text-white"
+                onClick={() => {
+                  if (blobSrc) URL.revokeObjectURL(blobSrc);
+                  setBlobSrc(null);
+                  setFileList([]);
+                  setIconUrlInput("");
+                  setIconUrlError(false);
+                  setValidatedIconUrl("");
+                  setPreviewFavicon(null); // Switch to letter avatar
+                }}
+              >
+               Remove Icon
+              </button>
+            )}
           </div>
 
           {/* ── Name ─────────────────────────────────────────────────────── */}
@@ -329,7 +398,7 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
               <p className="ant-upload-text">
                 Click or drag an image here to upload your icon
               </p>
-              <p className="ant-upload-hint">Maximum file size: 2MB</p>
+              <p className="ant-upload-hint">Optional • Maximum file size: 2MB</p>
             </Dragger>
           </div>
 
@@ -338,7 +407,7 @@ export default function QuickAdd({ closeDrawer }: QuickAddProps) {
           <div className="form-control w-full">
             <input
               type="text"
-              placeholder="Image URL here"
+              placeholder="Image URL here (optional)"
               value={iconUrlInput}
               onChange={(e) => {
                 setIconUrlError(false);

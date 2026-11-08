@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Upload, UploadProps, message } from "antd";
+import { Upload, UploadProps, message, ColorPicker } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
-import { generateLetterAvatar } from "../../utils/faviconResolver";
+import {
+  generateLetterAvatar,
+  isLetterAvatar,
+  extractAvatarBg,
+} from "../../utils/faviconResolver";
 import { checkImageURL } from "../../utils/imageValidation";
 import { blobToBase64, urlToBase64 } from "../../utils/imageConversion";
 import { formatDestinationUrl } from "../../utils/url";
@@ -33,6 +37,21 @@ interface IconFormProps {
   formId?: string;
 }
 
+const PRESET_COLORS = [
+  "#747ffa", // Brand Primary
+  "#3b82f6", // Blue
+  "#06b6d4", // Cyan
+  "#10b981", // Emerald
+  "#84cc16", // Lime
+  "#eab308", // Yellow
+  "#f97316", // Orange
+  "#ef4444", // Red
+  "#ec4899", // Pink
+  "#8b5cf6", // Violet
+  "#6b7280", // Gray
+  "#1f2937", // Slate
+];
+
 export default function IconForm({
   mode,
   initialData,
@@ -47,12 +66,20 @@ export default function IconForm({
   const [nameInput, setNameInput] = useState(initialData?.name ?? "");
   const [destInput, setDestInput] = useState(initialData?.destination ?? "");
 
-  // The "live preview" src shown in the avatar area
+  // Custom letter avatar background color
+  const initialBg = extractAvatarBg(initialData?.src);
+  const [avatarColor, setAvatarColor] = useState<string>(initialBg || "#747ffa");
+
+  // The "live preview" src shown in the avatar area (null means use letter avatar)
+  const initialIsLetter = isLetterAvatar(initialData?.src);
   const [previewSrc, setPreviewSrc] = useState<string | null>(
-    initialData?.src ?? null,
+    initialIsLetter ? null : initialData?.src ?? null,
   );
-  // The src we'll save (may differ from previewSrc while blob URL is live)
-  const savedSrcRef = useRef<string | null>(initialData?.src ?? null);
+
+  // The src we'll save (may differ from previewSrc while blob URL is live; null means generate letter avatar)
+  const savedSrcRef = useRef<string | null>(
+    initialIsLetter ? null : initialData?.src ?? null,
+  );
 
   // URL input field
   const [iconUrl, setIconUrl] = useState("");
@@ -72,8 +99,24 @@ export default function IconForm({
   useEffect(() => {
     setNameInput(initialData?.name ?? "");
     setDestInput(initialData?.destination ?? "");
-    setPreviewSrc(initialData?.src ?? null);
-    savedSrcRef.current = initialData?.src ?? null;
+
+    const isLetter = isLetterAvatar(initialData?.src);
+    const existingBg = extractAvatarBg(initialData?.src);
+
+    if (existingBg) {
+      setAvatarColor(existingBg);
+    } else if (!initialData?.src) {
+      setAvatarColor("#747ffa");
+    }
+
+    if (isLetter) {
+      setPreviewSrc(null);
+      savedSrcRef.current = null;
+    } else {
+      setPreviewSrc(initialData?.src ?? null);
+      savedSrcRef.current = initialData?.src ?? null;
+    }
+
     setIconUrl("");
     setIconUrlError(false);
     setFileList([]);
@@ -98,8 +141,9 @@ export default function IconForm({
     const timer = setTimeout(async () => {
       const isValid = await checkImageURL(iconUrl);
       if (!isValid) {
-        setPreviewSrc(initialData?.src ?? null);
-        savedSrcRef.current = initialData?.src ?? null;
+        const isLetter = isLetterAvatar(initialData?.src);
+        setPreviewSrc(isLetter ? null : initialData?.src ?? null);
+        savedSrcRef.current = isLetter ? null : initialData?.src ?? null;
         setIconUrlError(true);
       } else {
         setPreviewSrc(iconUrl);
@@ -136,8 +180,9 @@ export default function IconForm({
     beforeUpload,
     onRemove: () => {
       if (previewSrc?.startsWith("blob:")) URL.revokeObjectURL(previewSrc);
-      setPreviewSrc(initialData?.src ?? null);
-      savedSrcRef.current = initialData?.src ?? null;
+      const isLetter = isLetterAvatar(initialData?.src);
+      setPreviewSrc(isLetter ? null : initialData?.src ?? null);
+      savedSrcRef.current = isLetter ? null : initialData?.src ?? null;
       setFileList([]);
     },
     customRequest: ({ file }) => {
@@ -166,6 +211,11 @@ export default function IconForm({
     const rawDest = (formData.get("destination") as string) || "";
     const destination = formatDestinationUrl(rawDest);
 
+    if (!name) {
+      message.error("Please provide an icon name.");
+      return;
+    }
+
     if (!destination) {
       message.error("Please provide a destination URL.");
       return;
@@ -173,9 +223,9 @@ export default function IconForm({
 
     let src = savedSrcRef.current ?? "";
 
+    // If no custom image or URL is provided, generate a letter avatar with the chosen background color
     if (!src) {
-      message.error("You must upload an image or provide an image URL.");
-      return;
+      src = generateLetterAvatar(name, avatarColor);
     }
 
     setPendingAndNotify(true);
@@ -201,7 +251,11 @@ export default function IconForm({
   };
 
   // ── Preview avatar ─────────────────────────────────────────────────────────
-  const avatarSrc = previewSrc || (nameInput.trim() ? generateLetterAvatar(nameInput.trim()) : null);
+  const avatarSrc =
+    previewSrc ||
+    (nameInput.trim()
+      ? generateLetterAvatar(nameInput.trim(), avatarColor)
+      : generateLetterAvatar("?", avatarColor));
 
   return (
     <form
@@ -210,22 +264,59 @@ export default function IconForm({
       onSubmit={handleSubmit}
       name={isEdit ? "editIconForm" : "addIconForm"}
     >
-      {/* ── Icon preview ───────────────────────────────────────────────────── */}
-      <div className="flex flex-col items-center justify-center p-3 bg-gray-800/40 rounded-xl mb-4 border border-gray-700/50">
-        <div className="w-14 h-14 rounded-2xl bg-gray-700/60 flex items-center justify-center p-2 shadow-inner">
-          {avatarSrc ? (
-            <img
-              src={avatarSrc}
-              alt={nameInput || "Icon preview"}
-              className="w-10 h-10 object-contain rounded-md"
-            />
-          ) : (
-            <InboxOutlined className="text-2xl text-gray-400" />
-          )}
+      {/* ── Icon preview & Letter Color Picker ───────────────────────────────── */}
+      <div className="flex items-center justify-between p-3.5 bg-gray-800/40 rounded-xl mb-4 border border-gray-700/50">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-14 h-14 rounded-2xl bg-gray-700/60 flex items-center justify-center p-2 shadow-inner flex-shrink-0">
+            {avatarSrc ? (
+              <img
+                src={avatarSrc}
+                alt={nameInput || "Icon preview"}
+                className="w-10 h-10 object-contain rounded-md"
+              />
+            ) : (
+              <InboxOutlined className="text-2xl text-gray-400" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <span className="text-sm font-medium text-gray-200 block truncate max-w-[170px]">
+              {nameInput.trim() || "Shortcut Preview"}
+            </span>
+            <span className="text-xs text-gray-400 block mt-0.5">
+              {previewSrc ? "Custom Image" : "Letter Avatar"}
+            </span>
+          </div>
         </div>
-        <span className="mt-2 text-sm font-medium text-gray-200 truncate max-w-[220px]">
-          {nameInput.trim() || "Shortcut Preview"}
-        </span>
+
+        {/* Color picker for letter avatar, or reset button if custom image is active */}
+        {!previewSrc ? (
+          <div className="flex flex-col items-end gap-1 flex-shrink-0 transparent-color-picker">
+            <span className="text-xs text-gray-400">Color</span>
+            <ColorPicker
+              showText
+              value={avatarColor}
+              disabledAlpha
+              size="small"
+              presets={[{ label: "Recommended", colors: PRESET_COLORS }]}
+              onChange={(color) => setAvatarColor(`#${color.toHex()}`)}
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="btn btn-xs btn-ghost text-xs text-gray-400 hover:text-white"
+            onClick={() => {
+              if (previewSrc?.startsWith("blob:")) URL.revokeObjectURL(previewSrc);
+              setPreviewSrc(null);
+              savedSrcRef.current = null;
+              setFileList([]);
+              setIconUrl("");
+              setIconUrlError(false);
+            }}
+          >
+           Remove Icon
+          </button>
+        )}
       </div>
 
       {/* ── Name ──────────────────────────────────────────────────────────── */}
@@ -273,7 +364,7 @@ export default function IconForm({
           <p className="ant-upload-text">
             Click or drag an image here to upload your icon
           </p>
-          <p className="ant-upload-hint">Maximum file size: 2MB</p>
+          <p className="ant-upload-hint">Optional • Maximum file size: 2MB</p>
         </Dragger>
       </div>
 
@@ -283,7 +374,7 @@ export default function IconForm({
         <input
           type="text"
           name="iconURL"
-          placeholder="Image URL here"
+          placeholder="Image URL here (optional)"
           value={iconUrl}
           onChange={(e) => {
             setIconUrlError(false);
